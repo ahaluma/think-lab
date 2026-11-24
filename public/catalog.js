@@ -14,6 +14,7 @@ export const CATEGORIES = [
     name: { de: "Zahlen", en: "Numbers", ne: "सङ्ख्या" },
     skills: [
       { id: "zaehlen", name: { de: "Zählen", en: "Counting", ne: "गन्ती" } },
+      { id: "vergleichen", name: { de: "Vergleichen", en: "Comparing", ne: "तुलना" } },
       { id: "erkennen", name: { de: "Zahlen erkennen", en: "Reading numbers", ne: "अङ्क चिन्ने" } },
     ],
   },
@@ -53,6 +54,7 @@ export const CATEGORIES = [
 
 export const GAMES = [
   { id: "wie-viele", skill: "zahlen/zaehlen", name: { de: "Wie viele?", en: "How many?", ne: "कतिवटा?" }, icon: "🍎", color: "#ffc83a" },
+  { id: "wo-sind-mehr", skill: "zahlen/vergleichen", name: { de: "Wo sind mehr?", en: "Where are more?", ne: "कतातिर धेरै?" }, icon: "⚖️", color: "#8fd3ff" },
 ];
 
 /** Games of one category, in catalog order. */
