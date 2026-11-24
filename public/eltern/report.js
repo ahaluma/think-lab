@@ -1,7 +1,7 @@
 // Parents' page: shows the progress report saved on this device (shared/progress.js).
 // Ordered like the catalog: category → skill → game.
 import { CATEGORIES, GAMES } from "../catalog.js";
-import { texts, fill, local, lang } from "../shared/i18n.js";
+import { texts, fill, local, lang, LANGS } from "../shared/i18n.js";
 import { icons } from "../shared/kit.js";
 import * as progress from "../shared/progress.js";
 
@@ -22,7 +22,7 @@ function el(tag, className, text) {
 /** "2026-11-24" → a short local date like "24.11.2026". */
 function showDate(iso) {
   const [y, m, d] = iso.split("-").map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString(lang);
+  return new Date(y, m - 1, d).toLocaleDateString(LANGS[lang].voice);
 }
 
 // ---------- Last 14 days

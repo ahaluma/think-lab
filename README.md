@@ -1,6 +1,6 @@
 # Think Lab 🧪
 
-Small learning games for young children, in German (ready for more languages). Each game is tiny and does one thing well.
+Small learning games for young children, in German and English. Each game is tiny and does one thing well.
 
 - Plain HTML, CSS and JavaScript. **No libraries, no build step, no npm.**
 - Mobile first: big buttons, works on any phone or tablet.
@@ -52,21 +52,19 @@ Rule of thumb: a game only uses its own folder plus `shared/`. Games never impor
 
 ## Languages
 
-Right now everything is German, but every page is built for more languages:
+Every page speaks German and English. The start page has flag buttons; the choice is saved on the device and the read-aloud voice switches with it. Without a choice, the phone's language is used, otherwise German.
 
-- **No text in `game.js`.** Every sentence lives in `lang/de.js` next to it. Sentences with changing parts are small functions, because each language has its own grammar (`ein Apfel`, `zwei Äpfel`).
-- Words every page needs (numbers up to 20, praise, button labels) are in `public/shared/lang/de.js`.
-- Names in `catalog.js` are written per language: `name: { de: "Wie viele?" }`.
+- **No text in `game.js`.** Every sentence lives in `lang/de.js` and `lang/en.js` next to it. Sentences with changing parts are small functions, because each language has its own grammar (`ein Apfel`, `zwei Äpfel`).
+- Words every page needs (numbers up to 20, praise, button labels) are in `public/shared/lang/de.js` and `en.js`.
+- Names in `catalog.js` are written per language: `name: { de: "Wie viele?", en: "How many?" }`.
 - A page loads its texts with `const T = await texts(import.meta.url);`. If a sentence is missing in a language, the German one is used.
 - In HTML, `data-t="key"` fills the text and `data-t-label="key"` fills the `aria-label`.
 
-**To add a language** (for example English):
+**To add a language** (for example French):
 
-1. In `public/shared/i18n.js`, add a line to `LANGS`: `en: { name: "English", flag: "🇬🇧", voice: "en-GB" }`.
-2. Copy every `lang/de.js` to `lang/en.js` and translate it (shared, every game, `eltern/`).
-3. Add `en: "…"` next to every `de: "…"` in `catalog.js`.
-
-The start page then shows flag buttons. The choice is saved on the device, and the read-aloud voice switches too. Without a choice, the phone's language is used, otherwise German.
+1. In `public/shared/i18n.js`, add a line to `LANGS`: `fr: { name: "Français", flag: "🇫🇷", voice: "fr-FR" }`.
+2. Copy every `lang/de.js` to `lang/fr.js` and translate it (shared, every game, `eltern/`).
+3. Add `fr: "…"` next to every `de: "…"` in `catalog.js`.
 
 ## Progress report
 
@@ -122,10 +120,10 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
    ```
 3. Add one line to `GAMES` in `public/catalog.js`, with the skill it trains:
    ```js
-   { id: "plus-aepfel", skill: "rechnen/plus", name: { de: "Plus" }, icon: "➕", color: "#12a564" },
+   { id: "plus-aepfel", skill: "rechnen/plus", name: { de: "Plus", en: "Plus" }, icon: "➕", color: "#12a564" },
    ```
    A new skill or category is one more entry in `CATEGORIES` in the same file.
-4. In `game.js`, set `ID` to the folder name and write the `LEVELS`. Put every sentence in `lang/de.js`.
+4. In `game.js`, set `ID` to the folder name and write the `LEVELS`. Put every sentence in `lang/de.js` and `lang/en.js`.
 5. Check it locally (Step 1), then commit on a new branch and open a pull request. Cloudflare posts a preview link on the pull request (if branch builds are on). Merge it when you are happy.
 
 ### The helpers in `shared/`
@@ -138,7 +136,7 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
 | `shuffle(list)`, `pick(list)`, `randInt(1, 5)` | Random order, random item, random number        |
 | `store.get(key, default)` / `store.set(key, value)` | Remember small things on this device     |
 | `icons.home`, `icons.speaker`, `icons.play`, `icons.again`, `icons.chart` | Ready-made SVG icons |
-| `T.numbers[3]`             | `"drei"` (from `shared/lang/de.js`)                               |
+| `T.numbers[3]`             | `"drei"` / `"three"` (from `shared/lang/`)                         |
 | `T.praise`                 | `["Super!", "Toll!", …]`, use with `pick()`                       |
 
 ## Guidelines for every game
@@ -153,4 +151,4 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
 
 | Game        | Folder              | Skill            | For the child                                                                                             |
 | ----------- | ------------------- | ---------------- | --------------------------------------------------------------------------------------------------------- |
-| Wie viele?  | `games/wie-viele/`  | `zahlen/zaehlen` | Count the things (tap each one to hear "eins, zwei, drei…"), then tap the right number. Starts with 1–3 and allows one more after each 5 stars, up to 10. |
+| Wie viele?  | `games/wie-viele/`  | `zahlen/zaehlen` | Count the things (tap each one to hear "eins, zwei, drei…"), then tap the right number. 26 things to count (apples, elephants, rhinos, unicorns…). Starts with 1–3 and allows one more after each 5 stars, up to 10. |

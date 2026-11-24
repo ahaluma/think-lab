@@ -13,7 +13,7 @@ import { store } from "./store.js";
 
 export const LANGS = {
   de: { name: "Deutsch", flag: "🇩🇪", voice: "de-DE" },
-  // en: { name: "English", flag: "🇬🇧", voice: "en-GB" },
+  en: { name: "English", flag: "🇬🇧", voice: "en-GB" },
 };
 
 export const DEFAULT_LANG = "de";
