@@ -1,0 +1,6 @@
+/* Styles only for this game. Shared buttons and colours come from /shared/base.css. */
+.stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+}

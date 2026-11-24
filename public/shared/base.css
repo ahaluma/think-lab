@@ -1,0 +1,223 @@
+/* Think Lab – shared look for the start page and every game.
+   Games may add their own game.css, but should reuse these tokens and classes. */
+
+:root {
+  --paper: #e9eef2;
+  --grid: rgba(27, 33, 64, 0.07);
+  --ink: #1b2140;
+  --card: #fbfcfe;
+  --muted: #535b7b;
+  --go: #ff5a36;
+  --ok: #12a564;
+  --sun: #ffc83a;
+  --blue: #2456b8;
+  --pink: #e8488a;
+  --radius: 20px;
+  --font: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 18px;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+/* One centred column that fits any phone, and stays readable on a tablet. */
+.app {
+  max-width: 560px;
+  min-height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding:
+    calc(env(safe-area-inset-top) + 12px)
+    max(16px, env(safe-area-inset-right))
+    calc(env(safe-area-inset-bottom) + 16px)
+    max(16px, env(safe-area-inset-left));
+}
+
+button,
+a {
+  font: inherit;
+  color: inherit;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 4px solid var(--go);
+  outline-offset: 3px;
+}
+
+/* Chunky "toy" button: dark outline and a shadow that presses in. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 0 20px;
+  border: 3px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: 0 5px 0 var(--ink);
+  font-size: 22px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.08s, box-shadow 0.08s, opacity 0.2s;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.btn.go { background: var(--go); color: #fff; }
+.btn.ok { background: var(--ok); color: #fff; }
+.btn.sun { background: var(--sun); }
+
+/* Round icon button (home, speaker). 56px is an easy target for small fingers. */
+.icon-btn {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--card);
+  box-shadow: 0 4px 0 var(--ink);
+  text-decoration: none;
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+
+.icon-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.icon-btn svg {
+  width: 28px;
+  height: 28px;
+}
+
+.icon-btn.sun { background: var(--sun); }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar .spacer { flex: 1; }
+
+.card {
+  background: var(--card);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 0 5px 0 var(--ink);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Little animations shared by all games. */
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-14px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.pop { animation: pop 0.35s ease-out both; }
+.shake { animation: shake 0.3s ease-in-out 2; }
+.bounce { animation: bounce 0.5s ease-in-out; }
+.pulse { animation: pulse 1.4s ease-in-out infinite; }
+
+/* Confetti pieces made by kit.js celebrate(). */
+.confetti {
+  position: fixed;
+  top: -20px;
+  width: 12px;
+  height: 18px;
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 50;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(720deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Simple centred page (used by 404.html). */
+.app.center {
+  align-items: center;
+  justify-content: center;
+}
+
+.big-emoji {
+  font-size: 96px;
+  line-height: 1;
+}

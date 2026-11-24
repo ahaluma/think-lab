@@ -1,0 +1,14 @@
+{
+  "name": "Think Lab",
+  "short_name": "Think Lab",
+  "lang": "de",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#e9eef2",
+  "theme_color": "#e9eef2",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

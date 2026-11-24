@@ -5,7 +5,7 @@ Small learning games for young children, in German. Each game is tiny and does o
 - Plain HTML, CSS and JavaScript. **No libraries, no build step, no npm.**
 - Mobile first: big buttons, works on any phone or tablet.
 - Little or no reading needed: pictures, spoken German (the browser's own voice) and sounds.
-- Hosted for free on Cloudflare Pages.
+- Hosted for free as a Cloudflare Worker that only serves static files (`wrangler.jsonc`).
 
 ## How the project is laid out
 
@@ -26,8 +26,9 @@ think-lab/
 │   ├── _headers             ← security and cache settings for Cloudflare
 │   ├── 404.html             ← "page not found"
 │   └── favicon.svg, icon-*.png, manifest.webmanifest  ← app icon for the home screen
-└── templates/
-    └── game/                ← copy this folder to start a new game
+├── templates/
+│   └── game/                ← copy this folder to start a new game
+└── wrangler.jsonc           ← Cloudflare settings: serve public/ as a website
 ```
 
 Rule of thumb: a game only uses its own folder plus `shared/`. Games never import from each other, so you can change or delete one without breaking the others.
@@ -45,26 +46,25 @@ Open <http://localhost:8000> in your browser. Press `Ctrl+C` in the terminal to 
 
 **On your phone:** while the server runs, open `http://<your-computer's-IP>:8000` on a phone in the same Wi-Fi. (Speech and sound need one tap first; that is why each game starts with a big ▶ button.)
 
-## Step 2: Put it online with Cloudflare Pages (free)
+## Step 2: Put it online with Cloudflare Workers (free)
 
-You do this once. After that, every change merged into `main` goes live by itself in about a minute.
+You do this once. After that, every change merged into `main` goes live by itself in about a minute. The settings live in `wrangler.jsonc`: it tells Cloudflare to serve the `public/` folder as it is. No code runs on the server and there is nothing to build.
 
 1. Log in at <https://dash.cloudflare.com> (create a free account if needed).
-2. Go to **Workers & Pages → Create → Pages → Connect to Git**.
+2. Go to **Workers & Pages → Create → Import a repository**.
 3. Allow Cloudflare to see your GitHub account and pick the **think-lab** repository.
-4. Use these build settings:
+4. Check these settings (Cloudflare fills most of them from `wrangler.jsonc`):
 
-   | Setting                | Value                   |
-   | ---------------------- | ----------------------- |
-   | Production branch      | `main`                  |
-   | Framework preset       | `None`                  |
-   | Build command          | *(leave empty)*         |
-   | Build output directory | `public`                |
-   | Root directory         | *(leave empty)*         |
+   | Setting         | Value                  |
+   | --------------- | ---------------------- |
+   | Project name    | `think-lab`            |
+   | Build command   | *(leave empty)*        |
+   | Deploy command  | `npx wrangler deploy`  |
+   | Root directory  | `/`                    |
 
-5. Click **Save and Deploy**. Your site will be at `https://think-lab-xxx.pages.dev` (Cloudflare shows the exact name).
+5. Click **Deploy**. Your site will be at `https://think-lab.<your-name>.workers.dev` (Cloudflare shows the exact address).
 
-Bonus: every pull request also gets its own preview link, so you can try a new game on the phone before it goes live.
+Bonus: under **Settings → Build**, turn on builds for non-production branches. Then every pull request gets its own preview link, so you can try a new game on the phone before it goes live.
 
 On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"Zum Startbildschirm hinzufügen"** (Chrome). Think Lab then opens full screen like an app.
 
@@ -80,7 +80,7 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
    { id: "farben", name: "Farben", icon: "🎨", color: "#e8488a" },
    ```
 4. Build the game in `public/games/farben/game.js` and `game.css`. The template already has the home button, the "read again" button and an example of `say()`, `sound` and `celebrate()`.
-5. Check it locally (Step 1), then commit on a new branch and open a pull request. Cloudflare posts a preview link on the pull request. Merge it when you are happy.
+5. Check it locally (Step 1), then commit on a new branch and open a pull request. Cloudflare posts a preview link on the pull request (if branch builds are on). Merge it when you are happy.
 
 ### The helpers in `shared/kit.js`
 
