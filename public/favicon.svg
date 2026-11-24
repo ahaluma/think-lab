@@ -1,9 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- AnkaPlay logo: a play button that holds three counting dots ("anka" = number). -->
-  <rect x="28" y="44" width="456" height="440" rx="112" fill="#1b2140"/>
-  <rect x="28" y="28" width="456" height="440" rx="112" fill="#ff5a36" stroke="#1b2140" stroke-width="24"/>
-  <path d="M182 112 Q154 96 154 128 V368 Q154 400 182 384 L392 266 Q418 248 392 230 Z" fill="#fff" stroke="#1b2140" stroke-width="22" stroke-linejoin="round"/>
-  <circle cx="212" cy="186" r="32" fill="#2456b8"/>
-  <circle cx="212" cy="310" r="32" fill="#12a564"/>
-  <circle cx="300" cy="248" r="32" fill="#ffc83a" stroke="#1b2140" stroke-width="8"/>
+  <!-- AnkaPlay logo: a counting caterpillar made of colourful beads. -->
+  <rect x="28" y="44" width="456" height="440" rx="112" fill="#1b2140"/><rect x="28" y="28" width="456" height="440" rx="112" fill="#ffc83a" stroke="#1b2140" stroke-width="24"/>
+  <g stroke="#1b2140" stroke-width="14">
+    <circle cx="108" cy="318" r="50" fill="#2456b8"/>
+    <circle cx="190" cy="292" r="54" fill="#12a564"/>
+    <circle cx="280" cy="300" r="58" fill="#e8488a"/>
+    <circle cx="368" cy="238" r="74" fill="#ff5a36"/>
+  </g>
+  <path d="M340 168 Q326 120 300 112 M396 168 Q410 120 436 112" fill="none" stroke="#1b2140" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="300" cy="112" r="14" fill="#1b2140"/><circle cx="436" cy="112" r="14" fill="#1b2140"/>
+  <circle cx="344" cy="226" r="16" fill="#fff"/><circle cx="398" cy="226" r="16" fill="#fff"/>
+  <circle cx="348" cy="228" r="8" fill="#1b2140"/><circle cx="402" cy="228" r="8" fill="#1b2140"/>
+  <path d="M346 266 Q372 290 398 266" fill="none" stroke="#1b2140" stroke-width="10" stroke-linecap="round"/>
 </svg>
