@@ -15,6 +15,7 @@ export const CATEGORIES = [
     skills: [
       { id: "zaehlen", name: { de: "Zählen", en: "Counting", ne: "गन्ती" } },
       { id: "simultan", name: { de: "Auf einen Blick", en: "At a glance", ne: "एकै नजरमा" } },
+      { id: "reihe", name: { de: "Zahlenreihe", en: "Number order", ne: "अङ्कको क्रम" } },
       { id: "vergleichen", name: { de: "Vergleichen", en: "Comparing", ne: "तुलना" } },
       { id: "erkennen", name: { de: "Zahlen erkennen", en: "Reading numbers", ne: "अङ्क चिन्ने" } },
     ],
@@ -57,6 +58,7 @@ export const GAMES = [
   { id: "wie-viele", skill: "zahlen/zaehlen", name: { de: "Wie viele?", en: "How many?", ne: "कतिवटा?" }, icon: "🍎", color: "#ffc83a" },
   { id: "wo-sind-mehr", skill: "zahlen/vergleichen", name: { de: "Wo sind mehr?", en: "Where are more?", ne: "कतातिर धेरै?" }, icon: "⚖️", color: "#8fd3ff" },
   { id: "blitzblick", skill: "zahlen/simultan", name: { de: "Blitzblick", en: "Quick look", ne: "झट्ट हेर" }, icon: "⚡", color: "#c9b6ff" },
+  { id: "zahlenzug", skill: "zahlen/reihe", name: { de: "Zahlenzug", en: "Number train", ne: "अङ्क रेल" }, icon: "🚂", color: "#ffb3c7" },
 ];
 
 /** Games of one category, in catalog order. */
