@@ -1,0 +1,152 @@
+/* Parents' page. Text is meant to be read here, so it may be selected. */
+.report {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.report h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.report h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.report h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.report p {
+  margin: 0;
+}
+
+.days,
+.skill {
+  padding: 16px;
+}
+
+.category {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+/* ---------- 14-day bars */
+.bars {
+  height: 120px;
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 4px;
+  align-items: end;
+}
+
+.bar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stack {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.part.right { background: var(--ok); }
+.part.wrong { background: var(--sun); }
+
+.day {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.days .legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.key {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.key.right { background: var(--ok); }
+.key.wrong { background: var(--sun); margin-left: 10px; }
+
+.days .today {
+  margin-top: 6px;
+  font-size: 16px;
+}
+
+/* ---------- One game */
+.game {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 8px 0;
+}
+
+.game + .game {
+  border-top: 2px solid var(--paper);
+}
+
+.game-icon {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.game-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 16px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.meter {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  background: var(--blue);
+}
+
+.note {
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+#reset {
+  align-self: center;
+  font-size: 18px;
+  min-height: 56px;
+}

@@ -1,32 +1,60 @@
 // "Wie viele?" – a counting game for about 4 to 6 years.
 // The child sees some things, can tap each one to count out loud, then taps the right number.
-// It starts with 1 to 3 things and allows one more after every 5 stars (up to 10).
+// It starts with 1 to 3 things and allows one more after every 5 stars (up to 10), see LEVELS.
+// All texts are in lang/<language>.js.
 
-import { say, sound, celebrate, shuffle, randInt, store, icons, NUMBER_WORDS } from "../../shared/kit.js";
+import { say, sound, celebrate, shuffle, randInt, store, icons } from "../../shared/kit.js";
+import { texts, fill } from "../../shared/i18n.js";
+import * as progress from "../../shared/progress.js";
+
+const ID = "wie-viele";
+const T = await texts(import.meta.url);
 
 const STARS_PER_GAME = 5;
-const START_MAX = 3;
-const TOP_MAX = 10;
 const SLOTS = 12; // 4 x 3 places in the tray
 
-// Things to count. "many" is the plural, "one" is how to say a single one.
-const THINGS = [
-  { icon: "🍎", many: "Äpfel", one: "ein Apfel" },
-  { icon: "🐟", many: "Fische", one: "ein Fisch" },
-  { icon: "🚢", many: "Schiffe", one: "ein Schiff" },
-  { icon: "🐞", many: "Marienkäfer", one: "ein Marienkäfer" },
-  { icon: "🌼", many: "Blumen", one: "eine Blume" },
-  { icon: "🦆", many: "Enten", one: "eine Ente" },
-  { icon: "⭐", many: "Sterne", one: "ein Stern" },
-  { icon: "🎈", many: "Luftballons", one: "ein Luftballon" },
-  { icon: "🐌", many: "Schnecken", one: "eine Schnecke" },
-  { icon: "🍓", many: "Erdbeeren", one: "eine Erdbeere" },
+// Levels = the parameters of this game. After every 5 stars the child moves up one level.
+//   max – the most things to count
+const LEVELS = [
+  { max: 3 },
+  { max: 4 },
+  { max: 5 },
+  { max: 6 },
+  { max: 7 },
+  { max: 8 },
+  { max: 9 },
+  { max: 10 },
 ];
+
+// Things to count. Their names are in lang/<language>.js under "things".
+const THINGS = [
+  { id: "apple", icon: "🍎" },
+  { id: "fish", icon: "🐟" },
+  { id: "ship", icon: "🚢" },
+  { id: "ladybird", icon: "🐞" },
+  { id: "flower", icon: "🌼" },
+  { id: "duck", icon: "🦆" },
+  { id: "star", icon: "⭐" },
+  { id: "balloon", icon: "🎈" },
+  { id: "snail", icon: "🐌" },
+  { id: "strawberry", icon: "🍓" },
+]
+  .filter((t) => T.things[t.id])
+  .map((t) => ({ ...t, ...T.things[t.id] }));
+
+// Older versions saved only the highest number ("wie-viele:max"). Take it over once.
+const oldMax = store.get("wie-viele:max", null);
+if (oldMax !== null) {
+  const old = LEVELS.findIndex((l) => l.max >= oldMax);
+  progress.setLevel(ID, old === -1 ? LEVELS.length - 1 : old, LEVELS.length);
+  store.remove("wie-viele:max");
+}
 
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let max = store.get("wie-viele:max", START_MAX);
+let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let max = LEVELS[level].max;
 let stars = 0;
 let answer = 0;
 let thing = null;
@@ -53,11 +81,11 @@ function drawStars() {
 // ---------- One round
 
 function question() {
-  return `Wie viele ${thing.many} siehst du?`;
+  return T.question(thing);
 }
 
 function amount(n) {
-  return n === 1 ? thing.one : `${NUMBER_WORDS[n]} ${thing.many}`;
+  return T.amount(n, thing, T.numbers[n]);
 }
 
 function newRound() {
@@ -101,7 +129,7 @@ function newRound() {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "btn answer";
-    b.setAttribute("aria-label", NUMBER_WORDS[n]);
+    b.setAttribute("aria-label", T.numbers[n]);
     b.innerHTML = `<span class="num">${n}</span><span class="dots">${"<i></i>".repeat(n)}</span>`;
     b.addEventListener("click", () => choose(b, n));
     answers.append(b);
@@ -121,15 +149,16 @@ function countThing(b) {
   badge.textContent = tapped;
   b.append(badge);
   sound.tap();
-  say(NUMBER_WORDS[tapped]);
+  say(T.numbers[tapped]);
 }
 
 function choose(b, n) {
   if (locked) return;
 
   if (n !== answer) {
+    progress.answer(ID, false);
     sound.wrong();
-    say("Hmm, zähl nochmal!");
+    say(T.countAgain);
     b.classList.remove("shake");
     void b.offsetWidth; // restart the animation
     b.classList.add("shake");
@@ -138,22 +167,24 @@ function choose(b, n) {
   }
 
   locked = true;
+  progress.answer(ID, true);
   b.classList.add("right", "bounce");
   sound.right();
   stars++;
   drawStars();
-  say(`Super! ${amount(answer)}.`);
+  say(T.right(amount(answer)));
 
   setTimeout(stars >= STARS_PER_GAME ? finish : newRound, 1800);
 }
 
 function finish() {
-  max = Math.min(max + 1, TOP_MAX);
-  store.set("wie-viele:max", max);
+  level = Math.min(level + 1, LEVELS.length - 1);
+  max = LEVELS[level].max;
+  progress.round(ID, level, LEVELS.length);
   show("done");
   sound.win();
   celebrate();
-  say("Toll gemacht! Fünf Sterne!");
+  say(T.wellDone);
 }
 
 function startGame() {
@@ -164,6 +195,8 @@ function startGame() {
 
 // ---------- Wire up buttons
 
+fill(T);
+document.title = `${T.title} · Think Lab`;
 $("home").innerHTML = icons.home;
 $("speak").innerHTML = icons.speaker;
 $("play").innerHTML = icons.play;
@@ -173,8 +206,8 @@ $("play").addEventListener("click", startGame);
 $("again").addEventListener("click", startGame);
 $("speak").addEventListener("click", () => {
   if (!screens.round.hidden) say(question());
-  else if (!screens.done.hidden) say("Nochmal spielen?");
-  else say("Wie viele? Drück auf Start!");
+  else if (!screens.done.hidden) say(T.playAgainQuestion);
+  else say(T.intro);
 });
 
 drawStars();

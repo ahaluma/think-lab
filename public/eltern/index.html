@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Fortschritt · Think Lab</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#e9eef2" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/shared/base.css" />
+    <link rel="stylesheet" href="report.css" />
+    <script type="module" src="report.js"></script>
+  </head>
+  <body>
+    <main class="app report">
+      <div class="topbar">
+        <a class="icon-btn" id="home" href="/" data-t-label="home" aria-label="Zurück zur Startseite"></a>
+        <h1 data-t="title">Fortschritt</h1>
+      </div>
+
+      <section class="card days">
+        <h2 data-t="last14">Letzte 14 Tage</h2>
+        <div class="bars" id="bars"></div>
+        <p class="legend">
+          <span class="key right"></span><span data-t="legendRight">richtig</span>
+          <span class="key wrong"></span><span data-t="legendWrong">falsch</span>
+        </p>
+        <p class="today" id="today"></p>
+      </section>
+
+      <div id="categories"></div>
+
+      <p class="note" data-t="note"></p>
+      <button class="btn" id="reset" type="button" data-t="reset">Fortschritt löschen</button>
+    </main>
+  </body>
+</html>
