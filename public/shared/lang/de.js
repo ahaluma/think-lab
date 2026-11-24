@@ -16,6 +16,7 @@ export default {
   games: "Spiele",
   language: "Sprache",
   forParents: "Für Eltern: Fortschritt",
+  privacy: "Datenschutz",
 
   // "3 elephants" for speaking. n = how many, word = the number word,, word = the number word ("drei")
   amount: (n, thing, word) => (n === 1 ? thing.one : `${word} ${thing.many}`),

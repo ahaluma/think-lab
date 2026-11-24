@@ -1,6 +1,7 @@
 {
-  "name": "Think Lab",
-  "short_name": "Think Lab",
+  "name": "AnkaPlay",
+  "short_name": "AnkaPlay",
+  "description": "Kleine Zahlen- und Logikspiele für Kinder. Ohne Werbung, ohne Tracking.",
   "lang": "de",
   "start_url": "/",
   "display": "standalone",

@@ -1,4 +1,4 @@
-// Think Lab kit: small helpers every game can import.
+// AnkaPlay kit: small helpers every game can import.
 // No libraries: only what the browser already has (speech, Web Audio, localStorage).
 //
 //   import { say, sound, celebrate, shuffle, randInt, pick, store, icons } from "../../shared/kit.js";

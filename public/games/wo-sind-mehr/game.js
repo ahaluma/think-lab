@@ -192,7 +192,7 @@ function startGame() {
 // ---------- Wire up buttons
 
 fill(T);
-document.title = `${T.title} · Think Lab`;
+document.title = `${T.title} · AnkaPlay`;
 $("home").innerHTML = icons.home;
 $("speak").innerHTML = icons.speaker;
 $("play").innerHTML = icons.play;

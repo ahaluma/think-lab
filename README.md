@@ -1,6 +1,6 @@
-# Think Lab 🧪
+# AnkaPlay
 
-Small learning games for young children, in German, English and Nepali. Each game is tiny and does one thing well.
+Small number and logic games for young children („अङ्क“ / *anka* = number), in German, English and Nepali. Each game is tiny and does one thing well.
 
 - Plain HTML, CSS and JavaScript. **No libraries, no build step, no npm.**
 - Mobile first: big buttons, works on any phone or tablet.
@@ -41,9 +41,10 @@ think-lab/
 │   │       ├── game.js      ← the game and its LEVELS, no texts
 │   │       └── lang/de.js   ← every sentence of this game
 │   ├── eltern/              ← parents' page: the progress report
+│   ├── datenschutz/         ← privacy policy (DE/EN/NE); your contact details go in contact.js
 │   ├── _headers             ← security and cache settings for Cloudflare
 │   ├── 404.html             ← "page not found"
-│   └── favicon.svg, icon-*.png, manifest.webmanifest  ← app icon for the home screen
+│   └── favicon.svg, icon-*.png, manifest.webmanifest  ← the AnkaPlay logo and home-screen icon
 ├── templates/
 │   └── game/                ← copy this folder to start a new game
 └── wrangler.jsonc           ← Cloudflare settings: serve public/ as a website
@@ -79,6 +80,14 @@ Every game reports to `shared/progress.js`, which saves on this device only (loc
 
 Parents open it with the chart button on the start page (`/eltern/`): the last 14 days, and for every category → skill → game the level, rounds, share of right answers and the last day played. "Fortschritt löschen" clears it.
 
+## Privacy
+
+AnkaPlay loads nothing from other servers: no analytics, no cookies, no ads, no fonts or libraries from a CDN. The only data stored is the progress in the browser's localStorage on the device. The privacy policy at `/datenschutz/` explains this in German (binding), English and Nepali.
+
+**Before going public:** put your name, postal address and e-mail (phone optional) in `public/datenschutz/contact.js`. While they are empty, the "Verantwortlicher" section is hidden. Also make sure Cloudflare Web Analytics is switched off for this site in the Cloudflare dashboard. The policy is a careful template, not legal advice.
+
+If you ever add something that sends data elsewhere (analytics, a font from Google, a video), update the policy in the same pull request.
+
 ## Step 1: Look at it on your computer
 
 You need any small web server, because the pages use JavaScript modules (double-clicking `index.html` will not work). Python is already installed on most Macs and Linux machines:
@@ -112,7 +121,7 @@ You do this once. After that, every change merged into `main` goes live by itsel
 
 Bonus: under **Settings → Build**, turn on builds for non-production branches. Then every pull request gets its own preview link, so you can try a new game on the phone before it goes live.
 
-On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"Zum Startbildschirm hinzufügen"** (Chrome). Think Lab then opens full screen like an app.
+On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"Zum Startbildschirm hinzufügen"** (Chrome). AnkaPlay then opens full screen like an app.
 
 ## Step 3: Add a new game
 

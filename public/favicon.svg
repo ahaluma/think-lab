@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#ffc83a"/><path d="M25 12h14M28 12v14L15 48a5 5 0 0 0 4.3 7.5h25.4A5 5 0 0 0 49 48L36 26V12" fill="#fbfcfe" stroke="#1b2140" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><path d="M20.5 43h23l3.6 6.2A2.5 2.5 0 0 1 45 53H19a2.5 2.5 0 0 1-2.1-3.8z" fill="#ff5a36"/><circle cx="29" cy="47" r="2" fill="#fbfcfe"/><circle cx="36" cy="44" r="1.5" fill="#fbfcfe"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- AnkaPlay logo: a play button that holds three counting dots ("anka" = number). -->
+  <rect x="28" y="44" width="456" height="440" rx="112" fill="#1b2140"/>
+  <rect x="28" y="28" width="456" height="440" rx="112" fill="#ff5a36" stroke="#1b2140" stroke-width="24"/>
+  <path d="M182 112 Q154 96 154 128 V368 Q154 400 182 384 L392 266 Q418 248 392 230 Z" fill="#fff" stroke="#1b2140" stroke-width="22" stroke-linejoin="round"/>
+  <circle cx="212" cy="186" r="32" fill="#2456b8"/>
+  <circle cx="212" cy="310" r="32" fill="#12a564"/>
+  <circle cx="300" cy="248" r="32" fill="#ffc83a" stroke="#1b2140" stroke-width="8"/>
+</svg>

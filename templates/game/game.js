@@ -1,4 +1,4 @@
-// A new Think Lab game. Start here and replace the "Hallo!" button with your game.
+// A new AnkaPlay game. Start here and replace the "Hallo!" button with your game.
 // Texts:     lang/de.js (one file per language)
 // Progress:  progress.answer() after every answer, progress.round() after a finished round
 import { say, sound, celebrate, icons, pick } from "../../shared/kit.js";
@@ -15,7 +15,7 @@ let level = Math.min(progress.level(ID), LEVELS.length - 1);
 const $ = (id) => document.getElementById(id);
 
 fill(T);
-document.title = `${T.title} · Think Lab`;
+document.title = `${T.title} · AnkaPlay`;
 $("home").innerHTML = icons.home;
 $("speak").innerHTML = icons.speaker;
 

@@ -1,0 +1,42 @@
+/* Privacy policy: plain readable text for parents. */
+.legal {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.legal h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.text {
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.text h2 {
+  margin: 22px 0 6px;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.text p {
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
+
+.text ul {
+  margin: 0 0 10px;
+  padding-left: 20px;
+}
+
+.text li {
+  margin-bottom: 6px;
+}
+
+.text > p:first-child {
+  color: var(--muted);
+  font-size: 14px;
+}
