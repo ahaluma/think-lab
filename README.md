@@ -1,6 +1,6 @@
 # Think Lab 🧪
 
-Small learning games for young children, in German and English. Each game is tiny and does one thing well.
+Small learning games for young children, in German, English and Nepali. Each game is tiny and does one thing well.
 
 - Plain HTML, CSS and JavaScript. **No libraries, no build step, no npm.**
 - Mobile first: big buttons, works on any phone or tablet.
@@ -52,13 +52,15 @@ Rule of thumb: a game only uses its own folder plus `shared/`. Games never impor
 
 ## Languages
 
-Every page speaks German and English. The start page has flag buttons; the choice is saved on the device and the read-aloud voice switches with it. Without a choice, the phone's language is used, otherwise German.
+Every page speaks German, English and Nepali (नेपाली). The start page has flag buttons; the choice is saved on the device and the read-aloud voice switches with it. Without a choice, the phone's language is used, otherwise German.
 
-- **No text in `game.js`.** Every sentence lives in `lang/de.js` and `lang/en.js` next to it. Sentences with changing parts are small functions, because each language has its own grammar (`ein Apfel`, `zwei Äpfel`).
-- Words every page needs (numbers up to 20, praise, button labels) are in `public/shared/lang/de.js` and `en.js`.
+- **No text in `game.js`.** Every sentence lives in `lang/de.js`, `lang/en.js` and `lang/ne.js` next to it. Sentences with changing parts are small functions, because each language has its own grammar (`ein Apfel`, `zwei Äpfel`).
+- Words every page needs (numbers up to 20, praise, button labels) are in `public/shared/lang/de.js`, `en.js` and `ne.js`.
 - Names in `catalog.js` are written per language: `name: { de: "Wie viele?", en: "How many?" }`.
 - A page loads its texts with `const T = await texts(import.meta.url);`. If a sentence is missing in a language, the German one is used.
 - In HTML, `data-t="key"` fills the text and `data-t-label="key"` fills the `aria-label`.
+
+**Nepali:** numbers on screen use Devanagari digits (३) via `num(n)` (the `digits` in `LANGS`) from `i18n.js`. Many phones have no Nepali voice; then a Hindi voice reads the text (`fallbackVoices` in `LANGS`). On Android you can add the Nepali voice under Settings → Text-to-speech → Google → Install voice data → नेपाली.
 
 **To add a language** (for example French):
 
@@ -123,7 +125,7 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
    { id: "plus-aepfel", skill: "rechnen/plus", name: { de: "Plus", en: "Plus" }, icon: "➕", color: "#12a564" },
    ```
    A new skill or category is one more entry in `CATEGORIES` in the same file.
-4. In `game.js`, set `ID` to the folder name and write the `LEVELS`. Put every sentence in `lang/de.js` and `lang/en.js`.
+4. In `game.js`, set `ID` to the folder name and write the `LEVELS`. Put every sentence in `lang/de.js`, `lang/en.js` and `lang/ne.js`. Write numbers on screen with `num(n)`.
 5. Check it locally (Step 1), then commit on a new branch and open a pull request. Cloudflare posts a preview link on the pull request (if branch builds are on). Merge it when you are happy.
 
 ### The helpers in `shared/`

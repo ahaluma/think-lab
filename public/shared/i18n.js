@@ -14,7 +14,14 @@ import { store } from "./store.js";
 export const LANGS = {
   de: { name: "Deutsch", flag: "🇩🇪", voice: "de-DE" },
   en: { name: "English", flag: "🇬🇧", voice: "en-GB" },
+  // Not every phone has a Nepali voice: then a Hindi voice reads the Devanagari text.
+  ne: { name: "नेपाली", flag: "🇳🇵", voice: "ne-NP", fallbackVoices: ["hi-IN"], digits: "०१२३४५६७८९" },
 };
+
+//   name           – shown to screen readers on the language button
+//   voice          – the read-aloud voice, as a language code
+//   fallbackVoices – voices to try when the phone has none for `voice`
+//   digits         – the ten digits for numbers on screen, if not 0123456789
 
 export const DEFAULT_LANG = "de";
 
@@ -31,6 +38,12 @@ function detect() {
 /** The language of this device, for example "de". */
 export const lang = detect();
 document.documentElement.lang = lang;
+
+/** A number written in this language's digits: 3 → "3", or "३" in Nepali. */
+export function num(n) {
+  const digits = LANGS[lang].digits;
+  return digits ? String(n).replace(/[0-9]/g, (d) => digits[d]) : String(n);
+}
 
 /** Choose a language for this device and reload the page in it. */
 export function setLang(code) {

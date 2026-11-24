@@ -5,40 +5,40 @@
 //   Game     – one folder in public/games/<id>/ with one game idea. Several games may train the same skill.
 //   Levels   – the difficulty parameters, defined inside each game's game.js (LEVELS). Not here.
 //
-// Names are written per language: { de: "…", en: "…" }. Add more languages next to them (see shared/i18n.js).
+// Names are written per language: { de: "…", en: "…", ne: "…" }. Add more languages next to them (see shared/i18n.js).
 // Categories without games are not shown on the start page.
 
 export const CATEGORIES = [
   {
     id: "zahlen",
-    name: { de: "Zahlen", en: "Numbers" },
+    name: { de: "Zahlen", en: "Numbers", ne: "सङ्ख्या" },
     skills: [
-      { id: "zaehlen", name: { de: "Zählen", en: "Counting" } },
-      { id: "erkennen", name: { de: "Zahlen erkennen", en: "Reading numbers" } },
+      { id: "zaehlen", name: { de: "Zählen", en: "Counting", ne: "गन्ती" } },
+      { id: "erkennen", name: { de: "Zahlen erkennen", en: "Reading numbers", ne: "अङ्क चिन्ने" } },
     ],
   },
   {
     id: "rechnen",
-    name: { de: "Rechnen", en: "Maths" },
+    name: { de: "Rechnen", en: "Maths", ne: "हिसाब" },
     skills: [
-      { id: "plus", name: { de: "Plus", en: "Plus" } },
-      { id: "minus", name: { de: "Minus", en: "Minus" } },
+      { id: "plus", name: { de: "Plus", en: "Plus", ne: "जोड" } },
+      { id: "minus", name: { de: "Minus", en: "Minus", ne: "घटाउ" } },
     ],
   },
   {
     id: "sprache",
-    name: { de: "Sprache", en: "Language" },
+    name: { de: "Sprache", en: "Language", ne: "भाषा" },
     skills: [
-      { id: "buchstaben", name: { de: "Buchstaben", en: "Letters" } },
-      { id: "reime", name: { de: "Reime", en: "Rhymes" } },
+      { id: "buchstaben", name: { de: "Buchstaben", en: "Letters", ne: "अक्षर" } },
+      { id: "reime", name: { de: "Reime", en: "Rhymes", ne: "मिल्दा शब्द" } },
     ],
   },
   {
     id: "logik",
-    name: { de: "Logik", en: "Logic" },
+    name: { de: "Logik", en: "Logic", ne: "तर्क" },
     skills: [
-      { id: "muster", name: { de: "Muster", en: "Patterns" } },
-      { id: "formen", name: { de: "Formen", en: "Shapes" } },
+      { id: "muster", name: { de: "Muster", en: "Patterns", ne: "ढाँचा" } },
+      { id: "formen", name: { de: "Formen", en: "Shapes", ne: "आकार" } },
     ],
   },
 ];
@@ -52,7 +52,7 @@ export const CATEGORIES = [
 //   color – tile background
 
 export const GAMES = [
-  { id: "wie-viele", skill: "zahlen/zaehlen", name: { de: "Wie viele?", en: "How many?" }, icon: "🍎", color: "#ffc83a" },
+  { id: "wie-viele", skill: "zahlen/zaehlen", name: { de: "Wie viele?", en: "How many?", ne: "कतिवटा?" }, icon: "🍎", color: "#ffc83a" },
 ];
 
 /** Games of one category, in catalog order. */

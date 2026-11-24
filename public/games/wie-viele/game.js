@@ -4,7 +4,7 @@
 // All texts are in lang/<language>.js.
 
 import { say, sound, celebrate, shuffle, randInt, store, icons } from "../../shared/kit.js";
-import { texts, fill } from "../../shared/i18n.js";
+import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 
 const ID = "wie-viele";
@@ -147,7 +147,7 @@ function newRound() {
     b.type = "button";
     b.className = "btn answer";
     b.setAttribute("aria-label", T.numbers[n]);
-    b.innerHTML = `<span class="num">${n}</span><span class="dots">${"<i></i>".repeat(n)}</span>`;
+    b.innerHTML = `<span class="num">${num(n)}</span><span class="dots">${"<i></i>".repeat(n)}</span>`;
     b.addEventListener("click", () => choose(b, n));
     answers.append(b);
   }
@@ -163,7 +163,7 @@ function countThing(b) {
   b.classList.add("counted");
   const badge = document.createElement("span");
   badge.className = "badge";
-  badge.textContent = tapped;
+  badge.textContent = num(tapped);
   b.append(badge);
   sound.tap();
   say(T.numbers[tapped]);

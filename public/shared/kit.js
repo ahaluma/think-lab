@@ -11,17 +11,20 @@ export { store } from "./store.js";
 // ---------- Speech (in the language of this device, see i18n.js) ----------
 
 let voice = null;
-const voiceLang = LANGS[lang].voice; // e.g. "de-DE"
+const wanted = [LANGS[lang].voice, ...(LANGS[lang].fallbackVoices || [])]; // e.g. ["ne-NP", "hi-IN"]
 
 function pickVoice() {
   if (!("speechSynthesis" in window)) return;
   const voices = speechSynthesis.getVoices();
-  const short = voiceLang.slice(0, 2);
-  voice =
-    voices.find((v) => v.lang === voiceLang && v.localService) ||
-    voices.find((v) => v.lang === voiceLang) ||
-    voices.find((v) => v.lang.startsWith(short)) ||
-    null;
+  voice = null;
+  for (const code of wanted) {
+    voice =
+      voices.find((v) => v.lang.replace("_", "-") === code && v.localService) ||
+      voices.find((v) => v.lang.replace("_", "-") === code) ||
+      voices.find((v) => v.lang.startsWith(code.slice(0, 2))) ||
+      null;
+    if (voice) return;
+  }
 }
 
 if ("speechSynthesis" in window) {
@@ -43,7 +46,7 @@ export function say(text) {
   if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
 
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = voiceLang;
+  u.lang = voice ? voice.lang : wanted[0];
   if (voice) u.voice = voice;
   u.rate = 0.9; // a little slower for small children
   u.pitch = 1.1;
