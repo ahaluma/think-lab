@@ -11,6 +11,9 @@
     // /games/wie-viele/ serves games/wie-viele/index.html.
     "html_handling": "auto-trailing-slash"
   },
+  // Preview links for pull requests (Cloudflare runs "npx wrangler preview" on branches).
+  // Empty on purpose: the preview uses the same settings as above.
+  "previews": {},
   // Nothing to log: no code runs, and no tracking.
   "observability": { "enabled": false }
 }
