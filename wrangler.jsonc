@@ -1,0 +1,16 @@
+// Cloudflare Worker that only serves the static files in public/.
+// No worker script, no build step: Cloudflare serves the files directly (free tier).
+// Docs: https://developers.cloudflare.com/workers/static-assets/
+{
+  "name": "think-lab",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./public",
+    // Unknown address -> show public/404.html with status 404.
+    "not_found_handling": "404-page",
+    // /games/wie-viele/ serves games/wie-viele/index.html.
+    "html_handling": "auto-trailing-slash"
+  },
+  // Nothing to log: no code runs, and no tracking.
+  "observability": { "enabled": false }
+}
