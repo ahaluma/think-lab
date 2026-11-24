@@ -29,16 +29,32 @@ if ("speechSynthesis" in window) {
   speechSynthesis.addEventListener("voiceschanged", pickVoice);
 }
 
-/** Read a sentence out loud. Stops whatever was being said before. */
+/**
+ * Read a sentence out loud. Stops whatever was being said before.
+ * Returns a promise that resolves when the voice is done, so a game can move on
+ * right after the sentence instead of waiting a fixed time.
+ */
 export function say(text) {
-  if (!("speechSynthesis" in window)) return;
-  speechSynthesis.cancel();
+  const done = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  if (!("speechSynthesis" in window)) return done(1200);
+
+  // Only cancel when something is playing: on Android, cancel() on an idle voice
+  // adds a noticeable pause before the next sentence starts.
+  if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+
   const u = new SpeechSynthesisUtterance(text);
   u.lang = voiceLang;
   if (voice) u.voice = voice;
   u.rate = 0.9; // a little slower for small children
   u.pitch = 1.1;
+
+  const ended = new Promise((resolve) => {
+    u.onend = resolve;
+    u.onerror = resolve;
+  });
   speechSynthesis.speak(u);
+  // Some phones never fire "end": never wait longer than the sentence could take.
+  return Promise.race([ended, done(1500 + text.length * 90)]);
 }
 
 // ---------- Sounds (made with Web Audio, no sound files to download) ----------
