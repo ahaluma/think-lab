@@ -1,0 +1,152 @@
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.screen[hidden] {
+  display: none;
+}
+
+/* ---------- Stars (progress) */
+.stars {
+  display: flex;
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: clamp(18px, 6.5vw, 30px);
+  line-height: 1;
+}
+
+.stars li {
+  filter: grayscale(1);
+  opacity: 0.3;
+  transition: opacity 0.3s, filter 0.3s;
+}
+
+.stars li.on {
+  filter: none;
+  opacity: 1;
+}
+
+/* ---------- Start and done screens */
+.start-art {
+  font-size: 64px;
+  letter-spacing: 8px;
+}
+
+.trophy {
+  font-size: 120px;
+  line-height: 1;
+}
+
+.btn.play {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  box-shadow: 0 8px 0 var(--ink);
+}
+
+.btn.play svg {
+  width: 64px;
+  height: 64px;
+}
+
+/* ---------- Tray with the things to count */
+.tray {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 14px;
+}
+
+.slot {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.thing {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font-size: clamp(40px, 14vw, 66px);
+  line-height: 1;
+}
+
+/* After a tap, the thing gets a number badge, so the child can count along. */
+.thing.counted {
+  background: rgba(255, 200, 58, 0.35);
+}
+
+.thing .badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--sun);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+/* ---------- Answer buttons: number plus dots (a mini ten-frame) */
+.answers {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.answer {
+  min-height: 120px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 6px;
+}
+
+.answer .num {
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.dots {
+  max-width: 66px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.answer.right {
+  background: var(--ok);
+  color: #fff;
+}
+
+.answer.right .dots i {
+  background: #fff;
+}
