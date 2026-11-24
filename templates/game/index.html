@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <!-- TODO: put the game name here -->
-    <title>Neues Spiel · Think Lab</title>
+    <!-- The title is set from lang/<language>.js by game.js -->
+    <title>Think Lab</title>
     <meta name="theme-color" content="#e9eef2" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/shared/base.css" />
@@ -14,13 +14,13 @@
   <body>
     <main class="app">
       <div class="topbar">
-        <a class="icon-btn" id="home" href="/" aria-label="Zurück zur Startseite"></a>
+        <a class="icon-btn" id="home" href="/" data-t-label="home" aria-label="Zurück zur Startseite"></a>
         <div class="spacer"></div>
-        <button class="icon-btn sun" id="speak" type="button" aria-label="Nochmal vorlesen"></button>
+        <button class="icon-btn sun" id="speak" type="button" data-t-label="readAgain" aria-label="Nochmal vorlesen"></button>
       </div>
 
       <section class="stage">
-        <button class="btn go" id="hello" type="button">Hallo!</button>
+        <button class="btn go" id="hello" type="button" data-t="hello">Hallo!</button>
       </section>
     </main>
   </body>

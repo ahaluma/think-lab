@@ -13,29 +13,29 @@
   <body>
     <main class="app">
       <div class="topbar">
-        <a class="icon-btn" id="home" href="/" aria-label="Zurück zur Startseite"></a>
+        <a class="icon-btn" id="home" href="/" data-t-label="home" aria-label="Zurück zur Startseite"></a>
         <div class="spacer"></div>
-        <ol class="stars" id="stars" aria-label="Sterne"></ol>
+        <ol class="stars" id="stars" data-t-label="stars" aria-label="Sterne"></ol>
         <div class="spacer"></div>
-        <button class="icon-btn sun" id="speak" type="button" aria-label="Nochmal vorlesen"></button>
+        <button class="icon-btn sun" id="speak" type="button" data-t-label="readAgain" aria-label="Nochmal vorlesen"></button>
       </div>
 
       <!-- Start: one big button. The first tap also switches on sound in the browser. -->
       <section class="screen" id="start">
         <div class="start-art" aria-hidden="true">🍎🐟🚢</div>
-        <button class="btn go play pulse" id="play" type="button" aria-label="Spielen"></button>
+        <button class="btn go play pulse" id="play" type="button" data-t-label="play" aria-label="Spielen"></button>
       </section>
 
       <!-- Play: count the things, then tap the right number. -->
       <section class="screen" id="round" hidden>
-        <div class="tray card" id="tray" aria-label="Zähle die Dinge"></div>
+        <div class="tray card" id="tray" data-t-label="trayLabel" aria-label="Zähle die Dinge"></div>
         <div class="answers" id="answers"></div>
       </section>
 
       <!-- Done: five stars collected. -->
       <section class="screen" id="done" hidden>
         <div class="trophy pop" aria-hidden="true">🏆</div>
-        <button class="btn ok play" id="again" type="button" aria-label="Nochmal spielen"></button>
+        <button class="btn ok play" id="again" type="button" data-t-label="playAgain" aria-label="Nochmal spielen"></button>
       </section>
     </main>
   </body>
