@@ -34,7 +34,7 @@ export default {
     strawberry: { many: "स्ट्रबेरी", one: "एउटा स्ट्रबेरी" },
     elephant: { many: "हात्ती", one: "एउटा हात्ती" },
     rhino: { many: "गैँडा", one: "एउटा गैँडा" },
-    unicorn: { many: "एकसिङ्गे घोडा", one: "एउटा एकसिङ्गे घोडा" },
+    unicorn: { many: "युनिकर्न", one: "एउटा युनिकर्न" },
     giraffe: { many: "जिराफ", one: "एउटा जिराफ" },
     lion: { many: "सिंह", one: "एउटा सिंह" },
     dinosaur: { many: "डाइनोसर", one: "एउटा डाइनोसर" },
