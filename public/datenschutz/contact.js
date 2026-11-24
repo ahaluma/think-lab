@@ -1,9 +1,11 @@
 // Who is responsible for this website (the "controller" under the GDPR / DSGVO).
-// TODO: replace the three placeholders with your real details before going public.
+// Fill these in before the site is used publicly. Empty fields are left out of the page;
+// while all are empty, the "Verantwortlicher" section is not shown.
 export const CONTACT = {
-  name: "[Vor- und Nachname]",
-  address: "[Straße Hausnummer, PLZ Ort]",
-  email: "[E-Mail-Adresse]",
+  name: "",
+  address: "",
+  email: "",
+  phone: "",
 };
 
 // Date of this version of the privacy policy (YYYY-MM-DD).

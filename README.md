@@ -84,7 +84,7 @@ Parents open it with the chart button on the start page (`/eltern/`): the last 1
 
 AnkaPlay loads nothing from other servers: no analytics, no cookies, no ads, no fonts or libraries from a CDN. The only data stored is the progress in the browser's localStorage on the device. The privacy policy at `/datenschutz/` explains this in German (binding), English and Nepali.
 
-**Before going public:** put your name, postal address and e-mail in `public/datenschutz/contact.js`, and make sure Cloudflare Web Analytics is switched off for this site in the Cloudflare dashboard. The policy is a careful template, not legal advice.
+**Before going public:** put your name, postal address and e-mail (phone optional) in `public/datenschutz/contact.js`. While they are empty, the "Verantwortlicher" section is hidden. Also make sure Cloudflare Web Analytics is switched off for this site in the Cloudflare dashboard. The policy is a careful template, not legal advice.
 
 If you ever add something that sends data elsewhere (analytics, a font from Google, a video), update the policy in the same pull request.
 

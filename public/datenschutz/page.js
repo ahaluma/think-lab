@@ -19,7 +19,7 @@ const text = document.getElementById("text");
 text.append(el("p", T.updated(new Date(y, m - 1, d).toLocaleDateString(LANGS[lang].voice))));
 if (lang !== DEFAULT_LANG && T.note) text.append(el("p", T.note));
 
-for (const s of T.sections(CONTACT)) {
+for (const s of T.sections(CONTACT).filter(Boolean)) {
   text.append(el("h2", s.h));
   for (const p of s.p || []) text.append(el("p", p));
   if (s.list) {
