@@ -38,6 +38,22 @@ const THINGS = [
   { id: "balloon", icon: "🎈" },
   { id: "snail", icon: "🐌" },
   { id: "strawberry", icon: "🍓" },
+  { id: "elephant", icon: "🐘" },
+  { id: "rhino", icon: "🦏" },
+  { id: "unicorn", icon: "🦄" },
+  { id: "giraffe", icon: "🦒" },
+  { id: "lion", icon: "🦁" },
+  { id: "dinosaur", icon: "🦕" },
+  { id: "turtle", icon: "🐢" },
+  { id: "penguin", icon: "🐧" },
+  { id: "octopus", icon: "🐙" },
+  { id: "butterfly", icon: "🦋" },
+  { id: "frog", icon: "🐸" },
+  { id: "owl", icon: "🦉" },
+  { id: "crab", icon: "🦀" },
+  { id: "car", icon: "🚗" },
+  { id: "banana", icon: "🍌" },
+  { id: "carrot", icon: "🥕" },
 ]
   .filter((t) => T.things[t.id])
   .map((t) => ({ ...t, ...T.things[t.id] }));
