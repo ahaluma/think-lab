@@ -14,8 +14,24 @@
 }
 
 .logo {
-  font-size: 40px;
-  line-height: 1;
+  width: 56px;
+  height: 56px;
+}
+
+.play-word {
+  color: var(--go);
+}
+
+/* Small link to the privacy policy at the bottom of the start page. */
+.hub-foot {
+  margin-top: auto;
+  padding-top: 24px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.hub-foot a {
+  color: var(--muted);
 }
 
 /* Two big tiles per row on a phone, three on a wide screen. */

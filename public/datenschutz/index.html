@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Datenschutz · AnkaPlay</title>
+    <meta name="theme-color" content="#e9eef2" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/shared/base.css" />
+    <link rel="stylesheet" href="page.css" />
+    <!-- Load all modules at once instead of one after another (faster start on phones). -->
+    <link rel="modulepreload" href="/shared/kit.js" />
+    <link rel="modulepreload" href="/shared/i18n.js" />
+    <link rel="modulepreload" href="/shared/store.js" />
+    <link rel="modulepreload" href="/shared/lang/de.js" />
+    <link rel="modulepreload" href="contact.js" />
+    <link rel="modulepreload" href="lang/de.js" />
+    <script type="module" src="page.js"></script>
+  </head>
+  <body>
+    <main class="app legal">
+      <div class="topbar">
+        <a class="icon-btn" id="home" href="/" data-t-label="home" aria-label="Zurück zur Startseite"></a>
+        <h1 data-t="title">Datenschutz</h1>
+      </div>
+      <article class="card text" id="text"></article>
+    </main>
+  </body>
+</html>

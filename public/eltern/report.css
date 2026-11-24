@@ -150,3 +150,7 @@
   font-size: 18px;
   min-height: 56px;
 }
+
+.note a {
+  color: var(--muted);
+}

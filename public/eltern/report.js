@@ -7,7 +7,7 @@ import * as progress from "../shared/progress.js";
 
 const T = await texts(import.meta.url);
 fill(T);
-document.title = `${T.title} · Think Lab`;
+document.title = `${T.title} · AnkaPlay`;
 document.getElementById("home").innerHTML = icons.home;
 
 const data = progress.all();
