@@ -6,6 +6,7 @@
 import { say, sound, celebrate, shuffle, randInt, store, icons } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { things } from "../../shared/things.js";
 
 const ID = "wie-viele";
 const T = await texts(import.meta.url);
@@ -26,37 +27,7 @@ const LEVELS = [
   { max: 10 },
 ];
 
-// Things to count. Their names are in lang/<language>.js under "things".
-const THINGS = [
-  { id: "apple", icon: "🍎" },
-  { id: "fish", icon: "🐟" },
-  { id: "ship", icon: "🚢" },
-  { id: "ladybird", icon: "🐞" },
-  { id: "flower", icon: "🌼" },
-  { id: "duck", icon: "🦆" },
-  { id: "star", icon: "⭐" },
-  { id: "balloon", icon: "🎈" },
-  { id: "snail", icon: "🐌" },
-  { id: "strawberry", icon: "🍓" },
-  { id: "elephant", icon: "🐘" },
-  { id: "rhino", icon: "🦏" },
-  { id: "unicorn", icon: "🦄" },
-  { id: "giraffe", icon: "🦒" },
-  { id: "lion", icon: "🦁" },
-  { id: "dinosaur", icon: "🦕" },
-  { id: "turtle", icon: "🐢" },
-  { id: "penguin", icon: "🐧" },
-  { id: "octopus", icon: "🐙" },
-  { id: "butterfly", icon: "🦋" },
-  { id: "frog", icon: "🐸" },
-  { id: "owl", icon: "🦉" },
-  { id: "crab", icon: "🦀" },
-  { id: "car", icon: "🚗" },
-  { id: "banana", icon: "🍌" },
-  { id: "carrot", icon: "🥕" },
-]
-  .filter((t) => T.things[t.id])
-  .map((t) => ({ ...t, ...T.things[t.id] }));
+const THINGS = things(T);
 
 // Older versions saved only the highest number ("wie-viele:max"). Take it over once.
 const oldMax = store.get("wie-viele:max", null);

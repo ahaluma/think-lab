@@ -31,8 +31,9 @@ think-lab/
 │   │   ├── kit.js           ← helpers: say(), sound, celebrate(), shuffle(), pick(), icons
 │   │   ├── i18n.js          ← languages: texts(), fill(), local()
 │   │   ├── progress.js      ← progress report saved on this device
+│   │   ├── things.js        ← the 26 animals and things that number games count and compare
 │   │   ├── store.js         ← safe localStorage
-│   │   └── lang/de.js       ← words every page needs (numbers, praise, button labels)
+│   │   └── lang/de.js       ← words every page needs (numbers, praise, names of the things)
 │   ├── games/
 │   │   └── wie-viele/       ← one folder = one game (flat: the category is in catalog.js)
 │   │       ├── index.html
@@ -140,6 +141,8 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
 | `icons.home`, `icons.speaker`, `icons.play`, `icons.again`, `icons.chart` | Ready-made SVG icons |
 | `T.numbers[3]`             | `"drei"` / `"three"` (from `shared/lang/`)                         |
 | `T.praise`                 | `["Super!", "Toll!", …]`, use with `pick()`                       |
+| `things(T)` (`shared/things.js`) | The 26 animals and things with icon and names in the current language |
+| `T.amount(n, thing, T.numbers[n])` | `"drei Elefanten"`, `"one elephant"`, `"तीनवटा हात्ती"` |
 
 ## Guidelines for every game
 
@@ -154,3 +157,4 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
 | Game        | Folder              | Skill            | For the child                                                                                             |
 | ----------- | ------------------- | ---------------- | --------------------------------------------------------------------------------------------------------- |
 | Wie viele?  | `games/wie-viele/`  | `zahlen/zaehlen` | Count the things (tap each one to hear "eins, zwei, drei…"), then tap the right number. 26 things to count (apples, elephants, rhinos, unicorns…). Starts with 1–3 and allows one more after each 5 stars, up to 10. |
+| Wo sind mehr? | `games/wo-sind-mehr/` | `zahlen/vergleichen` | Two groups of the same animal: tap the one with more. Levels go from big differences (5 vs 2) to close ones (7 vs 6), then add a "the same" button, then sometimes ask "where are fewer?". After the answer both groups show their number. |
