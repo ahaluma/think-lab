@@ -66,6 +66,7 @@ if (oldMax !== null) {
   store.remove("wie-viele:max");
 }
 
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
@@ -188,9 +189,9 @@ function choose(b, n) {
   sound.right();
   stars++;
   drawStars();
-  say(T.right(amount(answer)));
-
-  setTimeout(stars >= STARS_PER_GAME ? finish : newRound, 1800);
+  // Next task as soon as the praise is spoken (at least 0.8 s, so the green answer is seen).
+  const next = stars >= STARS_PER_GAME ? finish : newRound;
+  Promise.all([say(T.right(amount(answer))), wait(800)]).then(() => setTimeout(next, 250));
 }
 
 function finish() {

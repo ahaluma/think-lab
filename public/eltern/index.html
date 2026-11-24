@@ -9,6 +9,14 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/shared/base.css" />
     <link rel="stylesheet" href="report.css" />
+    <!-- Load all modules at once instead of one after another (faster start on phones). -->
+    <link rel="modulepreload" href="/catalog.js" />
+    <link rel="modulepreload" href="/shared/kit.js" />
+    <link rel="modulepreload" href="/shared/i18n.js" />
+    <link rel="modulepreload" href="/shared/store.js" />
+    <link rel="modulepreload" href="/shared/progress.js" />
+    <link rel="modulepreload" href="/shared/lang/de.js" />
+    <link rel="modulepreload" href="lang/de.js" />
     <script type="module" src="report.js"></script>
   </head>
   <body>
