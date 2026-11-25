@@ -1,0 +1,152 @@
+/* "Formen" only. Screens, stars, play button, number answers and animations are in /shared/base.css. */
+
+#round {
+  justify-content: flex-start;
+  padding-top: 8px;
+  gap: 20px;
+}
+
+/* Find and riddle: no board, the shapes in the middle. */
+#round[data-kind="find"],
+#round[data-kind="riddle"] {
+  justify-content: center;
+}
+
+.board[hidden] {
+  display: none;
+}
+
+.start-art {
+  display: grid;
+  grid-template-columns: repeat(4, 64px);
+  gap: 10px;
+  letter-spacing: 0;
+}
+
+.start-art svg {
+  width: 64px;
+  height: 64px;
+}
+
+/* The board: a picture made of shapes (build, count) or nine shapes to tap (all). */
+.board {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 10px;
+}
+
+.board .picture {
+  width: min(100%, 44vh, 340px);
+  aspect-ratio: 1;
+  overflow: visible;
+}
+
+/* Build: the gaps are dashed, the next one glows. */
+.shape.ghost,
+.shape.gap {
+  stroke-dasharray: 3 2.2;
+  stroke-opacity: 0.35;
+}
+
+.shape.gap {
+  stroke: var(--go);
+  stroke-opacity: 1;
+  stroke-width: 2.4;
+  fill: rgba(255, 90, 54, 0.12);
+  animation: glow 1.2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  50% { fill: rgba(255, 90, 54, 0.32); }
+}
+
+.shape.filled {
+  animation: pop 0.35s ease-out both;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Help after two wrong answers: the corners get dots. */
+.corner {
+  display: none;
+  fill: var(--go);
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
+.show-corners .corner {
+  display: inline;
+}
+
+/* Counting help: only the shapes to count stay bright. */
+.only-counted .shape:not(.counted) {
+  opacity: 0.18;
+}
+
+.only-counted .shape.counted {
+  stroke-width: 3;
+}
+
+/* All: nine shapes in a 3 × 3 grid, each one a button. */
+.board.grid {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: min(100%, 46vh);
+  margin: 0 auto;
+  gap: 6px;
+  padding: 8px;
+}
+
+.cell {
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 4px;
+  border: 3px solid transparent;
+  border-radius: 16px;
+  background: transparent;
+}
+
+.cell svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.cell.found {
+  border-color: var(--ok);
+  background: #d6f5c9;
+}
+
+/* The shapes to pick: big square buttons. 3 in a row, 4 as 2 × 2 (in a row under a picture). */
+.choices {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.choices.n4 {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 360px;
+}
+
+#round[data-kind="build"] .choices.n4 {
+  grid-template-columns: repeat(4, 1fr);
+  max-width: none;
+}
+
+.btn.choice {
+  min-width: 0;
+  padding: 8px;
+  aspect-ratio: 1;
+}
+
+.btn.choice svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.btn.choice.right {
+  background: #d6f5c9;
+}
