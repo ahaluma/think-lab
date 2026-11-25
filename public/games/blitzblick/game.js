@@ -1,23 +1,26 @@
 // "Blitzblick" – seeing small amounts at a glance (subitizing), for about 4 to 6 years.
 // A picture flashes up for a moment and hides again. The child taps how many there were.
 // There is no time to count: the eyes learn to "see" 3 or 5 at once.
-// Levels go from dice patterns to scattered animals to 5 + x in a frame (see LEVELS).
+// Levels go from dice patterns to scattered things to 5 + x in a frame (see LEVELS).
+// Every round shows other animals, fruit or things, like in "Wie viele?".
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
-import { say, sound, celebrate, shuffle, randInt, icons } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, shuffle, randInt, icons } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 import { things } from "../../shared/things.js";
 
 const ID = "blitzblick";
 const T = await texts(import.meta.url);
+const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Drei Äpfel." – a different praise each time
+const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal!"
 const THINGS = things(T);
-const DOT = { id: "dot", ...T.dot };
 
 const STARS_PER_GAME = 5;
 
 // Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   kind – "dice": dots like on a dice, "scatter": animals in random places, "frame": 5 + x in a 2 x 5 frame
+//   kind – "dice": placed like the dots on a dice, "scatter": random places, "frame": 5 + x in a 2 x 5 frame
+//   Every round shows a different animal or thing (apples, flowers, pandas…).
 //   min, max – the amounts
 //   ms – how long the picture is shown (milliseconds)
 const LEVELS = [
@@ -49,7 +52,7 @@ const screens = { start: $("start"), round: $("round"), done: $("done") };
 let level = Math.min(progress.level(ID), LEVELS.length - 1);
 let stars = 0;
 let answer = 0;
-let thing = DOT;
+let thing = null;
 let lastThing = null;
 let showing = false;
 let locked = false;
@@ -88,7 +91,7 @@ function drawPicture(kind, n) {
 
   if (kind === "dice") {
     const flip = Math.random() < 0.5; // mirror sometimes, so 2, 3 and 6 are not always the same way round
-    for (const [c, r] of DICE[n]) field.append(mark("dot", 30 + (flip ? 2 - c : c) * 20, 22 + r * 28));
+    for (const [c, r] of DICE[n]) field.append(mark("thing", 30 + (flip ? 2 - c : c) * 20, 22 + r * 28, thing.icon));
   } else if (kind === "scatter") {
     // Random places on a 4 x 3 grid, a little shaken so it does not look like a grid.
     const cells = shuffle([...Array(12).keys()]).slice(0, n);
@@ -102,7 +105,7 @@ function drawPicture(kind, n) {
     for (let i = 0; i < 10; i++) {
       const x = 14 + (i % 5) * 18;
       const y = i < 5 ? 34 : 66;
-      field.append(mark(i < n ? "dot" : "empty", x, y));
+      field.append(i < n ? mark("thing", x, y, thing.icon) : mark("empty", x, y));
     }
   }
 }
@@ -130,12 +133,8 @@ async function newRound() {
   const l = LEVELS[level];
   locked = true;
   answer = randInt(l.min, l.max);
-  if (l.kind === "scatter") {
-    thing = shuffle(THINGS.filter((t) => t !== lastThing))[0];
-    lastThing = thing;
-  } else {
-    thing = DOT;
-  }
+  thing = shuffle(THINGS.filter((t) => t !== lastThing))[0];
+  lastThing = thing;
 
   drawPicture(l.kind, answer);
   $("cover").hidden = false;
@@ -184,7 +183,7 @@ async function choose(b, n) {
     b.classList.add("shake");
     b.disabled = true;
     locked = true;
-    await say(T.lookAgain);
+    await say(oops(T.lookAgain));
     await flash(); // show the picture once more
     locked = false;
     return;
@@ -199,7 +198,7 @@ async function choose(b, n) {
   drawStars();
 
   const next = stars >= STARS_PER_GAME ? finish : newRound;
-  Promise.all([say(T.right(amount(answer))), wait(1200)]).then(() => setTimeout(next, 300));
+  Promise.all([say(cheer(T.right(amount(answer)))), wait(1200)]).then(() => setTimeout(next, 300));
 }
 
 function finish() {

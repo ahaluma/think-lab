@@ -6,6 +6,6 @@ export default {
   trayLabel: "चीजहरू गन",
   intro: "कतिवटा? सुरु गर्न थिच!",
   question: (thing) => `कतिवटा ${thing.many} देख्छौ?`,
-  right: (amount) => `स्याबास! ${amount}।`,
+  right: (amount) => `${amount}।`,
   countAgain: "फेरि गन त!",
 };

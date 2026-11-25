@@ -9,8 +9,9 @@ export default {
   play: "खेल",
   playAgain: "फेरि खेल",
   stars: "ताराहरू",
-  praise: ["स्याबास!", "राम्रो!", "धेरै राम्रो!", "वाह!"],
-  tryAgain: "फेरि प्रयास गर!",
+  // A random one is said before every right answer / wrong answer (see oneOf in kit.js).
+  praise: ["स्याबास!", "राम्रो!", "धेरै राम्रो!", "वाह!", "ठिक हो!", "एकदम ठिक!", "हो!", "कस्तो राम्रो!", "बधाई छ!", "अति राम्रो!"],
+  oops: ["हम्म।", "झन्डै!", "अहिले होइन।", "ओहो!", "उफ्!"],
   wellDone: "स्याबास! पाँचवटा तारा!",
   playAgainQuestion: "फेरि खेल्ने?",
   games: "खेलहरू",

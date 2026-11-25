@@ -3,13 +3,15 @@
 // Higher levels bring closer amounts, then "the same" as a third answer, then "where are fewer?".
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
-import { say, sound, celebrate, shuffle, randInt, icons } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, shuffle, randInt, icons } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 import { things } from "../../shared/things.js";
 
 const ID = "wo-sind-mehr";
 const T = await texts(import.meta.url);
+const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Drei Äpfel." – a different praise each time
+const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal!"
 const THINGS = things(T);
 
 const STARS_PER_GAME = 5;
@@ -150,7 +152,7 @@ function choose(answer, el) {
   if (answer !== rightAnswer()) {
     progress.answer(ID, false);
     sound.wrong();
-    say(T.lookAgain);
+    say(oops(T.lookAgain));
     el.classList.remove("shake");
     void el.offsetWidth; // restart the animation
     el.classList.add("shake");
@@ -171,7 +173,7 @@ function choose(answer, el) {
 
   // Next task as soon as the praise is spoken (at least 1.2 s, so the numbers can be seen).
   const next = stars >= STARS_PER_GAME ? finish : newRound;
-  Promise.all([say(praise(answer)), wait(1200)]).then(() => setTimeout(next, 300));
+  Promise.all([say(cheer(praise(answer))), wait(1200)]).then(() => setTimeout(next, 300));
 }
 
 function finish() {

@@ -25,17 +25,6 @@
   line-height: 1;
 }
 
-/* A round dot, sized by the card width. */
-.mark.dot {
-  width: 15%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--blue);
-}
-
-.field.frame .mark.dot {
-  width: 12%;
-}
 
 /* Empty place in the 2 x 5 frame. */
 .mark.empty {
@@ -47,6 +36,11 @@
 
 .mark.thing {
   font-size: clamp(32px, 12vw, 64px);
+}
+
+/* In the 2 x 5 frame the places are closer together. */
+.field.frame .mark.thing {
+  font-size: clamp(26px, 9vw, 48px);
 }
 
 /* The cover hides the picture. Tapping it shows the picture once more. */

@@ -4,8 +4,7 @@ export default {
   intro: "झट्ट हेर! छिटो हेर। सुरु गर्न थिच!",
   look: "ध्यान दिएर हेर!",
   question: (thing) => `कतिवटा ${thing.many} देख्यौ?`,
-  right: (amount) => `स्याबास! ${amount}।`,
+  right: (amount) => `${amount}।`,
   lookAgain: "फेरि हेर!",
   showAgain: "फेरि देखाऊ",
-  dot: { one: "एउटा थोप्लो", many: "थोप्लो" },
 };
