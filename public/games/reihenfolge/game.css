@@ -1,0 +1,296 @@
+/* "Zuerst und dann" only. Screens, stars, play button and animations are in /shared/base.css. */
+
+#round {
+  justify-content: flex-start;
+  padding-top: 8px;
+}
+
+.order,
+.pickbox {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.order[hidden],
+.pickbox[hidden],
+.prompt[hidden],
+.week[hidden] {
+  display: none;
+}
+
+/* A picture: a big emoji on a soft card. Times of day and seasons get their own colour. */
+.pic {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  background: #fff8e6;
+  font-size: clamp(34px, 12vw, 56px);
+  line-height: 1;
+}
+
+.t-morning { background: #ffe0b8; }
+.t-midday, .t-day { background: #d9f1ff; }
+.t-evening { background: #f3c6d8; }
+.t-night { background: #2b3466; }
+.t-spring { background: #d7f5c8; }
+.t-summer { background: #fff1a8; }
+.t-autumn { background: #ffd2a6; }
+.t-winter { background: #e3efff; }
+
+/* Ordering: numbered places with an arrow between them. */
+.slots {
+  --n: 3;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  gap: 14px;
+  padding: 16px 12px;
+}
+
+.slot {
+  position: relative;
+  aspect-ratio: 1;
+  border: 3px dashed rgba(27, 33, 64, 0.3);
+  border-radius: 16px;
+}
+
+.slot.filled {
+  border-color: transparent;
+}
+
+.slot + .slot::before {
+  content: "›";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 14px;
+  transform: translateY(-50%);
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  color: rgba(27, 33, 64, 0.4);
+}
+
+.slot .badge {
+  position: absolute;
+  top: -10px;
+  left: -8px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--sun);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.slot .pic {
+  height: 100%;
+}
+
+.pool {
+  --n: 3;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  gap: 12px;
+}
+
+.btn.card-btn {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+}
+
+/* Four pictures: two rows of two, so they stay big. */
+.pool.two-rows {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 340px;
+}
+
+.pool .pic {
+  font-size: clamp(40px, 14vw, 64px);
+}
+
+.pool.two-rows .pic {
+  font-size: clamp(56px, 18vw, 80px);
+}
+
+/* A picture that has moved up keeps its place, so the others don't jump. */
+.btn.card-btn.used {
+  visibility: hidden;
+}
+
+/* Picking: one picture (or a picture and a "?") on top. */
+.prompt {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.prompt .pic {
+  width: min(46vw, 180px);
+  font-size: clamp(64px, 24vw, 104px);
+}
+
+.prompt.pair .pic {
+  width: min(36vw, 150px);
+  font-size: clamp(52px, 18vw, 84px);
+}
+
+.pic.gap {
+  background: transparent;
+  border: 3px dashed rgba(27, 33, 64, 0.35);
+  font-weight: 800;
+  color: rgba(27, 33, 64, 0.45);
+}
+
+.pic.filled {
+  background: #d6f5c9;
+}
+
+.choices {
+  --n: 3;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  gap: 12px;
+}
+
+/* Four times of day or seasons: two rows of two, so they stay big. */
+.choices.two-rows {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.btn.choice {
+  min-width: 0;
+  min-height: 96px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 4px;
+}
+
+.choice-icon {
+  font-size: clamp(40px, 14vw, 60px);
+  line-height: 1;
+}
+
+.choice-label {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.btn.choice.t-night {
+  color: #fff;
+}
+
+.btn.choice.right {
+  background: var(--ok);
+  color: #fff;
+}
+
+/* Days of the week: a coloured button with the name. */
+.choices.words {
+  grid-template-columns: 1fr;
+}
+
+.choices.words .btn.choice {
+  min-height: 64px;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 0 18px;
+}
+
+.choices.words .btn.choice::before {
+  content: "";
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--day);
+}
+
+.choices.words .choice-label {
+  font-size: 24px;
+}
+
+/* The week: seven coloured days in a row, today marked. */
+.week {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 26px 8px 14px;
+}
+
+.day {
+  position: relative;
+  flex: 1;
+  max-width: 64px;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 4;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--day);
+  font-size: clamp(13px, 3.8vw, 18px);
+  font-weight: 900;
+}
+
+.week:not(.strip) .day {
+  flex: none;
+  max-width: none;
+  aspect-ratio: auto;
+  padding: 16px 28px;
+  font-size: 30px;
+}
+
+.day.today {
+  outline: 4px solid var(--go);
+  outline-offset: 2px;
+}
+
+.day.gap {
+  background: transparent;
+  border-style: dashed;
+  color: rgba(27, 33, 64, 0.5);
+  font-size: 22px;
+}
+
+.day.filled {
+  box-shadow: 0 0 0 4px var(--ok);
+}
+
+.today-tag {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--go);
+  white-space: nowrap;
+}
+
+/* Hint after two wrong answers: the right one glows. */
+.hint {
+  animation: glow 1s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 5px 0 var(--ink), 0 0 0 0 rgba(255, 200, 58, 0.9); }
+  50% { box-shadow: 0 5px 0 var(--ink), 0 0 0 10px rgba(255, 200, 58, 0.9); }
+}
