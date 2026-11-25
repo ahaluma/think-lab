@@ -1,0 +1,255 @@
+/* "Gleich machen" only. Screens, stars, play button, answer buttons and the number pad are in /shared/base.css. */
+
+#round {
+  justify-content: flex-start;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+/* 7 − ? = 4 (empty on tapping levels until the end) */
+.eq {
+  font-size: clamp(40px, 13vw, 58px);
+  font-weight: 900;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.eq:empty {
+  display: none;
+}
+
+.eq .gap,
+.eq .found {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.3em;
+  border-radius: 12px;
+}
+
+.eq .gap {
+  border: 4px dashed rgba(27, 33, 64, 0.4);
+  color: rgba(27, 33, 64, 0.5);
+}
+
+/* Typing on the number pad: the digits appear in the box. */
+.eq .gap.typed {
+  border-style: solid;
+  border-color: var(--ink);
+  color: var(--ink);
+  padding: 0 6px;
+}
+
+.eq .found {
+  background: var(--ok);
+  color: #fff;
+}
+
+/* Two meadows, one above the other, and the lines between partners on top. */
+.board {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.lines line {
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 2 6;
+}
+
+.meadow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: #c9efb4;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.grid {
+  --rows: 2;
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: repeat(var(--rows), auto);
+  gap: 2px;
+}
+
+.grid.c10 {
+  gap: 0;
+}
+
+.grid.c5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.grid.c10 {
+  grid-template-columns: repeat(10, 1fr);
+}
+
+.cell {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font: inherit;
+  line-height: 1;
+}
+
+.grid.c5 .cell {
+  font-size: clamp(26px, 9vw, 44px);
+}
+
+.grid.c10 .cell {
+  font-size: clamp(18px, 6.4vw, 32px);
+}
+
+button.cell {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.cell:active {
+  transform: scale(0.9);
+}
+
+/* Came out of the house: a light ring, so the child sees which ones are new. */
+.cell.extra {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* Pairs help: animals without a partner glow and wiggle. */
+.cell.alone {
+  background: var(--sun);
+  box-shadow: 0 0 0 3px #fff, 0 0 12px 4px var(--sun);
+  animation: wiggle 1s ease-in-out infinite;
+}
+
+/* An animal hops home. */
+.cell.hop {
+  animation: hop 0.28s ease-in forwards;
+}
+
+.cell.happy {
+  animation: happy 0.5s ease-in-out 2;
+}
+
+@keyframes hop {
+  to {
+    transform: translate(40px, -30px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes happy {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+
+/* The house at the side of each meadow, with the number sent home on it. */
+.house {
+  position: relative;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fff8e6;
+  font: inherit;
+}
+
+button.house {
+  cursor: pointer;
+}
+
+button.house:active {
+  transform: translateY(2px);
+}
+
+.house-pic {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.house-count {
+  position: absolute;
+  top: -12px;
+  right: -10px;
+  min-width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0 6px;
+  border: 3px solid var(--ink);
+  border-radius: 15px;
+  background: var(--sun);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+/* Numbers only: a sign on the meadow. */
+.meadow.numbers {
+  justify-content: center;
+  min-height: 96px;
+}
+
+.sign {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.sign b {
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.sign-pic {
+  font-size: 34px;
+}
+
+/* Tapping levels: one big ✓ button. */
+.answers.one {
+  grid-template-columns: 1fr;
+}
+
+.btn.check {
+  min-height: 72px;
+}
+
+.btn.check svg {
+  width: 44px;
+  height: 44px;
+}
