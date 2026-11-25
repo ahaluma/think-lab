@@ -8,6 +8,7 @@
 import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
 const ID = "wer-kommt-dazu";
@@ -23,28 +24,13 @@ const ANIMALS = things(T).filter((t) => MEADOW.includes(t.id));
 const STARS_PER_GAME = 5;
 const MAX = 10; // never more than 10 animals on the meadow
 
-// Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   change – "come": animals hop in, "go": animals run away, "mixed": either
-//   step   – how many come or go: [fewest, most]
-//   from   – how many are there at the start: [fewest, most]
-//   bush   – true: the animals hide behind a bush before the change, so the child has to think, not count
-const LEVELS = [
-  { change: "come", step: [1, 1], from: [1, 4], bush: false },
-  { change: "go", step: [1, 1], from: [2, 5], bush: false },
-  { change: "mixed", step: [1, 1], from: [1, 5], bush: false },
-  { change: "come", step: [1, 1], from: [1, 5], bush: true },
-  { change: "go", step: [1, 1], from: [2, 6], bush: true },
-  { change: "mixed", step: [1, 1], from: [2, 8], bush: true },
-  { change: "mixed", step: [2, 2], from: [2, 6], bush: false },
-  { change: "mixed", step: [2, 2], from: [3, 8], bush: true },
-  { change: "mixed", step: [1, 2], from: [3, 9], bush: true },
-];
+// Levels: see levels.js (easy to hard).
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let level = progress.level(ID, LEVELS);
 let stars = 0;
 let animal = ANIMALS[0];
 let lastAnimal = null;
@@ -236,7 +222,7 @@ function choose(b, n) {
 
 function finish() {
   level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   show("done");
   sound.win();
   celebrate();

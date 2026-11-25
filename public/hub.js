@@ -1,9 +1,11 @@
 // Builds the start page from catalog.js: one row of game tiles per category.
 // With children (shared/profiles.js): first "Wer spielt?", then the games of that child.
+// Each child sees the games that fit their age, or that the parents switched on (shared/fit.js).
 import { CATEGORIES, gamesIn } from "./catalog.js";
 import { LANGS, lang, setLang, texts, fill, local } from "./shared/i18n.js";
 import { icons, say } from "./shared/kit.js";
 import * as profiles from "./shared/profiles.js";
+import { visible } from "./shared/fit.js";
 
 const T = await texts();
 fill(T);
@@ -96,6 +98,7 @@ function drawPicker() {
       rememberPicked();
       history.replaceState(null, "", "/");
       showKid();
+      drawGames();
       showPicker(false);
       if (kid.name) say(kid.name);
     });
@@ -115,41 +118,47 @@ if (kids.length > 0) {
 
 // ---------- Categories and game tiles
 
-const root = $("categories");
+function drawGames() {
+  const root = $("categories");
+  root.innerHTML = "";
+  const kid = profiles.current();
 
-for (const category of CATEGORIES) {
-  const games = gamesIn(category.id);
-  if (games.length === 0) continue;
+  for (const category of CATEGORIES) {
+    const games = gamesIn(category.id).filter((g) => visible(g, kid));
+    if (games.length === 0) continue;
 
-  const section = document.createElement("section");
-  section.className = "category";
-  const h2 = document.createElement("h2");
-  h2.textContent = local(category.name);
-  const list = document.createElement("ul");
-  list.className = "tiles";
-  list.setAttribute("aria-label", local(category.name));
+    const section = document.createElement("section");
+    section.className = "category";
+    const h2 = document.createElement("h2");
+    h2.textContent = local(category.name);
+    const list = document.createElement("ul");
+    list.className = "tiles";
+    list.setAttribute("aria-label", local(category.name));
 
-  for (const game of games) {
-    const li = document.createElement("li");
-    const a = document.createElement("a");
-    a.className = "tile pop";
-    a.href = `/games/${game.id}/`;
-    a.style.background = game.color;
+    for (const game of games) {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.className = "tile pop";
+      a.href = `/games/${game.id}/`;
+      a.style.background = game.color;
 
-    const icon = document.createElement("span");
-    icon.className = "tile-icon";
-    icon.setAttribute("aria-hidden", "true");
-    icon.textContent = game.icon;
+      const icon = document.createElement("span");
+      icon.className = "tile-icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = game.icon;
 
-    const name = document.createElement("span");
-    name.className = "tile-name";
-    name.textContent = local(game.name);
+      const name = document.createElement("span");
+      name.className = "tile-name";
+      name.textContent = local(game.name);
 
-    a.append(icon, name);
-    li.append(a);
-    list.append(li);
+      a.append(icon, name);
+      li.append(a);
+      list.append(li);
+    }
+
+    section.append(h2, list);
+    root.append(section);
   }
-
-  section.append(h2, list);
-  root.append(section);
 }
+
+drawGames();

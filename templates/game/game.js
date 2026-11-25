@@ -4,13 +4,13 @@
 import { say, sound, celebrate, icons, pick, homeButton } from "../../shared/kit.js";
 import { texts, fill } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS } from "./levels.js";
 
 const ID = "neues-spiel"; // TODO: the folder name, same as in catalog.js
 const T = await texts(import.meta.url);
 
-// Levels = the parameters of this game, from easy to hard. The child moves up after each round.
-const LEVELS = [{ max: 3 }, { max: 5 }, { max: 10 }];
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+// Levels: see levels.js (easy to hard). The child moves up after each round.
+let level = progress.level(ID, LEVELS);
 
 const $ = (id) => document.getElementById(id);
 
@@ -24,7 +24,7 @@ $("speak").addEventListener("click", () => say(T.intro));
 $("hello").addEventListener("click", () => {
   progress.answer(ID, true);
   level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   sound.right();
   celebrate();
   say(`${pick(T.praise)} ${T.stars(level + 1)}`);

@@ -8,6 +8,7 @@
 import { say, oneOf, sound, celebrate, shuffle, pick, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS } from "./levels.js";
 
 const ID = "zahlenzug";
 const T = await texts(import.meta.url);
@@ -17,29 +18,14 @@ const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal!"
 const STARS_PER_GAME = 5;
 const COLORS = ["#ff8a8a", "#ffc83a", "#7ed68b", "#8fd3ff", "#c9b6ff"];
 
-// Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   kind – "missing": one wagon is missing, "after" / "before": the number after / before one wagon,
-//          "mixed": after or before, "order": hang the wagons on from small to big
-//   from – the first number of the train (or the shown number for after / before): [lowest, highest]
-//   len  – how many wagons ("missing" and "order")
-const LEVELS = [
-  { kind: "missing", from: [1, 1], len: 4 },
-  { kind: "order", from: [1, 1], len: 4 },
-  { kind: "missing", from: [1, 1], len: 5 },
-  { kind: "after", from: [1, 9] },
-  { kind: "order", from: [1, 5], len: 5 },
-  { kind: "before", from: [2, 10] },
-  { kind: "missing", from: [1, 10], len: 5 },
-  { kind: "mixed", from: [2, 19] },
-  { kind: "order", from: [1, 10], len: 5 },
-];
+// Levels: see levels.js (easy to hard).
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 const word = (n) => T.numbers[n];
 
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let level = progress.level(ID, LEVELS);
 let stars = 0;
 let kind = "missing";
 let row = []; // the numbers of the train, small to big
@@ -233,7 +219,7 @@ function win(text) {
 
 function finish() {
   level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   show("done");
   sound.win();
   celebrate();

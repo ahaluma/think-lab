@@ -3,7 +3,7 @@
 //   Category – a big learning area. One row on the start page.            e.g. "zahlen", "rechnen"
 //   Skill    – one ability inside a category. Groups the progress report.  e.g. "zahlen/zaehlen", "rechnen/plus"
 //   Game     – one folder in public/games/<id>/ with one game idea. Several games may train the same skill.
-//   Levels   – the difficulty parameters, defined inside each game's game.js (LEVELS). Not here.
+//   Levels   – the difficulty steps, in each game's levels.js: a fixed id, the age it is made for, a label.
 //
 // Names are written per language: { de: "…", en: "…", ne: "…" }. Add more languages next to them (see shared/i18n.js).
 // Categories without games are not shown on the start page.
@@ -56,17 +56,19 @@ export const CATEGORIES = [
 //   name  – short name per language, shown under the picture
 //   icon  – one emoji: the picture a child recognises without reading
 //   color – tile background
+//   ages  – [from, to]: the ages the game is made for. Younger children don't see it; older ones still
+//           see it for 2 more years (shared/fit.js). Parents can switch any game on or off per child.
 
 export const GAMES = [
-  { id: "wie-viele", skill: "zahlen/zaehlen", name: { de: "Wie viele?", en: "How many?", ne: "कतिवटा?" }, icon: "🍎", color: "#ffc83a" },
-  { id: "wo-sind-mehr", skill: "zahlen/vergleichen", name: { de: "Wo sind mehr?", en: "Where are more?", ne: "कतातिर धेरै?" }, icon: "⚖️", color: "#8fd3ff" },
-  { id: "blitzblick", skill: "zahlen/simultan", name: { de: "Blitzblick", en: "Quick look", ne: "झट्ट हेर" }, icon: "⚡", color: "#c9b6ff" },
-  { id: "zahlenzug", skill: "zahlen/reihe", name: { de: "Zahlenzug", en: "Number train", ne: "अङ्क रेल" }, icon: "🚂", color: "#ffb3c7" },
-  { id: "wer-kommt-dazu", skill: "rechnen/dazu-weg", name: { de: "Wer kommt dazu?", en: "Who's coming?", ne: "को आयो?" }, icon: "🐇", color: "#9fdc8a" },
-  { id: "zahlenhaus", skill: "rechnen/zerlegen", name: { de: "Zahlenhaus", en: "Number house", ne: "अङ्क घर" }, icon: "🏠", color: "#ffd9a8" },
-  { id: "zahlen-memory", skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
-  { id: "muster-kette", skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
-  { id: "sortieren", skill: "logik/sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याऊ" }, icon: "🧺", color: "#d8c8ff" },
+  { id: "wie-viele", ages: [3, 6], skill: "zahlen/zaehlen", name: { de: "Wie viele?", en: "How many?", ne: "कतिवटा?" }, icon: "🍎", color: "#ffc83a" },
+  { id: "wo-sind-mehr", ages: [3, 6], skill: "zahlen/vergleichen", name: { de: "Wo sind mehr?", en: "Where are more?", ne: "कतातिर धेरै?" }, icon: "⚖️", color: "#8fd3ff" },
+  { id: "blitzblick", ages: [3, 8], skill: "zahlen/simultan", name: { de: "Blitzblick", en: "Quick look", ne: "झट्ट हेर" }, icon: "⚡", color: "#c9b6ff" },
+  { id: "zahlenzug", ages: [3, 8], skill: "zahlen/reihe", name: { de: "Zahlenzug", en: "Number train", ne: "अङ्क रेल" }, icon: "🚂", color: "#ffb3c7" },
+  { id: "wer-kommt-dazu", ages: [4, 6], skill: "rechnen/dazu-weg", name: { de: "Wer kommt dazu?", en: "Who's coming?", ne: "को आयो?" }, icon: "🐇", color: "#9fdc8a" },
+  { id: "zahlenhaus", ages: [5, 8], skill: "rechnen/zerlegen", name: { de: "Zahlenhaus", en: "Number house", ne: "अङ्क घर" }, icon: "🏠", color: "#ffd9a8" },
+  { id: "zahlen-memory", ages: [3, 7], skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
+  { id: "muster-kette", ages: [3, 12], skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
+  { id: "sortieren", ages: [3, 12], skill: "logik/sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याऊ" }, icon: "🧺", color: "#d8c8ff" },
 ];
 
 /** Games of one category, in catalog order. */

@@ -1,17 +1,21 @@
-// Children on this device. Parents add them on /eltern/ (name, age, animal). Nothing leaves the phone.
+// Children on this device. Parents add them on /eltern/ (name, birth month, animal). Nothing leaves the phone.
 // Each child has their own progress (see progress.js: key "progress:<id>").
 //
 //   import * as profiles from "/shared/profiles.js";
-//   profiles.all()            → [{ id, name, age, animal, created }, …]
+//   profiles.all()            → [{ id, name, born, animal, created, games }, …]
+//   profiles.age(kid)         → age in whole years today, or null
 //   profiles.current()        → the child playing now, or null (no children yet: "guest")
 //   profiles.choose(id)       → switch child
-//   profiles.add({ name, age, animal }) / profiles.update(id, changes) / profiles.remove(id)
+//   profiles.add({ name, born, animal }) / profiles.update(id, changes) / profiles.remove(id)
+//   profiles.setGame(id, gameId, true / false / null) → parents switch a game on or off (null = by age)
 //
 // Stored shape (localStorage "thinklab:profiles", version 1):
-//   { v: 1, current: "k1", kids: [{ id: "k1", name: "Mila", age: 5, animal: "🐰", created: "2026-11-25" }] }
+//   { v: 1, current: "k1", kids: [{ id: "k1", name: "Mila", born: "2021-05", animal: "🐰", created: "2026-11-25",
+//                                   games: { "wie-viele": false } }] }
 //
-//   age – a whole number of years (3…12). Later the catalog maps ages to games and start levels,
-//         and progress.js adapts the level per child. Both read only this list and "progress:<id>".
+//   born  – birth month "YYYY-MM". The age grows by itself; shared/fit.js uses it for start levels and
+//           which games a child sees. (The first version stored "age" in years: converted once below.)
+//   games – only games the parents switched on (true) or off (false). Missing = decided by age.
 
 import { store } from "./store.js";
 
@@ -22,9 +26,6 @@ export const ANIMALS = [
   "🐰", "🦊", "🐼", "🐨", "🦁", "🐯", "🐸", "🐢", "🦄", "🐬", "🦒", "🐘",
   "🦘", "🐧", "🦉", "🐙", "🦖", "🐝", "🦋", "🐞", "🐳", "🦈", "🐊", "🐜",
 ];
-
-export const MIN_AGE = 3;
-export const MAX_AGE = 12;
 
 function read() {
   const p = store.get(KEY, null);
@@ -41,6 +42,14 @@ function today() {
   return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}`;
 }
 
+/** Age in whole years today from "YYYY-MM", or null. */
+export function age(kid, now = new Date()) {
+  const m = /^(\d{4})-(\d{2})$/.exec(kid?.born || "");
+  if (!m) return null;
+  const months = (now.getFullYear() - Number(m[1])) * 12 + (now.getMonth() + 1 - Number(m[2]));
+  return Math.max(0, Math.floor(months / 12));
+}
+
 function newId(kids) {
   let id;
   do id = "k" + Math.random().toString(36).slice(2, 8);
@@ -51,17 +60,32 @@ function newId(kids) {
 // ---------- Older devices: progress saved before there were profiles
 
 // Before profiles there was one progress for everybody ("thinklab:progress").
-// It becomes the first child, without a name: the parents add name and age on /eltern/.
+// It becomes the first child, without a name: the parents add name and birth month on /eltern/.
 function migrate() {
   if (store.get(KEY, null)) return;
   const old = store.get("progress", null);
   if (!old || !old.games || Object.keys(old.games).length === 0) return;
   const id = newId([]);
   store.set(`progress:${id}`, old);
-  write({ v: 1, current: id, kids: [{ id, name: "", age: null, animal: ANIMALS[0], created: today() }] });
+  write({ v: 1, current: id, kids: [{ id, name: "", born: null, animal: ANIMALS[0], created: today() }] });
   store.remove("progress");
 }
 migrate();
+
+// The first version stored "age" in years. It becomes a birth month: this month, that many years ago.
+// The parents can correct the month on /eltern/.
+function ageToBorn() {
+  const p = store.get(KEY, null);
+  if (!p?.kids?.some((k) => "age" in k)) return;
+  const now = new Date();
+  for (const k of p.kids) {
+    if (!("age" in k)) continue;
+    if (k.age && !k.born) k.born = `${now.getFullYear() - k.age}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    delete k.age;
+  }
+  write(p);
+}
+ageToBorn();
 
 // ---------- Reading
 
@@ -79,9 +103,9 @@ export function current() {
   return p.kids.find((k) => k.id === p.current) || p.kids[0] || null;
 }
 
-/** A child is complete when the parents gave a name and an age. */
+/** A child is complete when the parents gave a name and a birth month. */
 export function complete(kid) {
-  return Boolean(kid && kid.name && kid.age);
+  return Boolean(kid && kid.name && kid.born);
 }
 
 // ---------- Changing
@@ -93,9 +117,9 @@ export function choose(id) {
   write(p);
 }
 
-const clean = ({ name, age, animal }) => ({
+const clean = ({ name, born, animal }) => ({
   name: String(name || "").trim().slice(0, 20),
-  age: Math.min(MAX_AGE, Math.max(MIN_AGE, Math.round(Number(age) || MIN_AGE))),
+  born: /^\d{4}-(0[1-9]|1[0-2])$/.test(born || "") ? born : null,
   animal: ANIMALS.includes(animal) ? animal : ANIMALS[0],
 });
 
@@ -113,6 +137,17 @@ export function update(id, changes) {
   const kid = p.kids.find((k) => k.id === id);
   if (!kid) return;
   Object.assign(kid, clean({ ...kid, ...changes }));
+  write(p);
+}
+
+/** Parents switch a game on (true) or off (false) for one child; null = decided by age again. */
+export function setGame(id, gameId, on) {
+  const p = read();
+  const kid = p.kids.find((k) => k.id === id);
+  if (!kid) return;
+  kid.games = { ...kid.games };
+  if (on === null) delete kid.games[gameId];
+  else kid.games[gameId] = Boolean(on);
   write(p);
 }
 

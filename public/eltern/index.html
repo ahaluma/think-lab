@@ -16,6 +16,7 @@
     <link rel="modulepreload" href="/shared/store.js" />
     <link rel="modulepreload" href="/shared/progress.js" />
     <link rel="modulepreload" href="/shared/profiles.js" />
+    <link rel="modulepreload" href="/shared/fit.js" />
     <link rel="modulepreload" href="/shared/lang/de.js" />
     <link rel="modulepreload" href="lang/de.js" />
     <script type="module" src="report.js"></script>
@@ -27,7 +28,7 @@
         <h1 data-t="title">Fortschritt</h1>
       </div>
 
-      <!-- Children: name, age and animal. Each child has their own progress. -->
+      <!-- Children: name, birth month and animal. Each child has their own progress. -->
       <section class="card kids-card" id="kinder">
         <h2 data-t="kidsTitle">Kinder</h2>
         <p class="muted" id="kidsNote"></p>
@@ -38,10 +39,11 @@
             <span data-t="name">Name</span>
             <input id="kidName" type="text" maxlength="20" autocomplete="off" />
           </label>
-          <label class="field">
-            <span data-t="age">Alter</span>
-            <select id="kidAge"></select>
-          </label>
+          <fieldset class="field born">
+            <legend data-t="born">Geboren</legend>
+            <select id="kidMonth" data-t-label="month" aria-label="Monat"></select>
+            <select id="kidYear" data-t-label="year" aria-label="Jahr"></select>
+          </fieldset>
           <div class="field">
             <span data-t="animal">Tier</span>
             <div class="animals" id="kidAnimals" role="radiogroup"></div>
@@ -69,6 +71,7 @@
         <p class="today" id="today"></p>
       </section>
 
+      <p class="note games-note" id="gamesNote" hidden></p>
       <div id="categories"></div>
 
       <p class="note" data-t="note"></p>

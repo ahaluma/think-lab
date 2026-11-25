@@ -8,6 +8,7 @@
 import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
 const ID = "blitzblick";
@@ -18,22 +19,7 @@ const THINGS = things(T);
 
 const STARS_PER_GAME = 5;
 
-// Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   kind – "dice": placed like the dots on a dice, "scatter": random places, "frame": 5 + x in a 2 x 5 frame
-//   Every round shows a different animal or thing (apples, flowers, pandas…).
-//   min, max – the amounts
-//   ms – how long the picture is shown (milliseconds)
-const LEVELS = [
-  { kind: "dice", min: 1, max: 3, ms: 2000 },
-  { kind: "dice", min: 1, max: 4, ms: 1500 },
-  { kind: "dice", min: 2, max: 5, ms: 1200 },
-  { kind: "dice", min: 2, max: 6, ms: 1000 },
-  { kind: "scatter", min: 1, max: 4, ms: 1500 },
-  { kind: "scatter", min: 2, max: 5, ms: 1200 },
-  { kind: "scatter", min: 3, max: 6, ms: 1000 },
-  { kind: "frame", min: 5, max: 8, ms: 1500 },
-  { kind: "frame", min: 5, max: 10, ms: 1200 },
-];
+// Levels: see levels.js (easy to hard).
 
 // Dice patterns on a 3 x 3 grid: [column, row], 0..2.
 const DICE = {
@@ -49,7 +35,7 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let level = progress.level(ID, LEVELS);
 let stars = 0;
 let answer = 0;
 let thing = null;
@@ -203,7 +189,7 @@ async function choose(b, n) {
 
 function finish() {
   level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   show("done");
   sound.win();
   celebrate();

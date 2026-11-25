@@ -10,6 +10,7 @@
 import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS, COLOR_PAIRS } from "./levels.js";
 
 const ID = "sortieren";
 const T = await texts(import.meta.url);
@@ -68,38 +69,14 @@ const RULES = {
   color3: { attr: "c", groups: ["red", "yellow", "green"], ask: "color" },
   color4: { attr: "c", groups: ["red", "yellow", "green", "blue"], ask: "color" },
 };
-const COLOR_PAIRS = ["redYellow", "redGreen", "yellowGreen"];
 
-// Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   mode   – "sort": things into baskets, "odd": which one does not belong?,
-//            "switch": sort by colour, then the same things by kind, "mix": a round of one of `levels`
-//   rules  – one is picked each round (see RULES)
-//   n      – how many things to sort for one star
-//   tricky – the things look like the other basket (a yellow animal when the fruit basket shows a banana)
-const LEVELS = [
-  { mode: "sort", rules: ["kind"], n: 3 },
-  { mode: "sort", rules: ["vehicle"], n: 3 },
-  { mode: "sort", rules: ["redYellow"], n: 3 },
-  { mode: "sort", rules: ["redGreen", "yellowGreen"], n: 3 },
-  { mode: "sort", rules: ["size"], n: 3 },
-  { mode: "sort", rules: ["kind", "vehicle", "redYellow", "redGreen", "yellowGreen", "size"], n: 4 },
-  { mode: "odd", rules: ["kind", "vehicle"] },
-  { mode: "odd", rules: ["redYellow", "redGreen", "yellowGreen"] },
-  { mode: "odd", rules: ["kind", "vehicle", "redYellow", "redGreen", "yellowGreen", "size"] },
-  { mode: "sort", rules: ["kind3"], n: 4 },
-  { mode: "sort", rules: ["color3"], n: 4 },
-  { mode: "sort", rules: ["kind", "vehicle"], n: 4, tricky: true },
-  { mode: "sort", rules: COLOR_PAIRS, n: 4, tricky: true },
-  { mode: "sort", rules: ["kind4", "color4"], n: 5 },
-  { mode: "switch" },
-  { mode: "mix", levels: [9, 10, 11, 12, 13, 14] },
-];
+// Levels: see levels.js (easy to hard).
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let level = progress.level(ID, LEVELS);
 let stars = 0;
 let rule = null; // the rule of this round, from RULES
 let queue = []; // sorting: the things still to sort
@@ -133,7 +110,10 @@ function question() {
 
 async function newRound() {
   current = LEVELS[level];
-  if (current.mode === "mix") current = LEVELS[oneOf(current.levels)];
+  if (current.mode === "mix") {
+    const id = oneOf(current.levels);
+    current = LEVELS.find((l) => l.id === id);
+  }
   locked = true;
   const sorting = current.mode !== "odd";
   $("item").hidden = $("queue").hidden = $("baskets").hidden = !sorting;
@@ -365,7 +345,7 @@ function win(text) {
 
 function finish() {
   level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   show("done");
   sound.win();
   celebrate();
