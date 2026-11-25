@@ -1,10 +1,13 @@
-// "Sortieren" – sorting and finding the odd one out, for about 4 to 6 years.
+// "Sortieren" – sorting and finding the odd one out, for about 3 to 12 years.
 // Sorting: one thing at a time appears. The child taps the basket where it belongs
 // (animal or fruit, red or yellow, big or small…). Each basket already holds one example.
 // Odd one out: four things, three belong together. The child taps the one that does not fit.
 // Levels go from animal/fruit to colours to big/small, then "Was passt nicht dazu?" (see LEVELS).
 // Harder levels after that: 3 and 4 baskets, tricky things (a yellow animal when the fruit basket
 // shows a banana), and a rule switch: the same things sorted by colour first, then by kind.
+// For older children: two features at once (4 baskets: red animal, red fruit, yellow animal …),
+// finding the rule yourself (each basket shows two examples, nobody says the rule), and hidden
+// rules: "can it fly?", "is it at home in the water?" (a penguin is a bird, but it cannot fly).
 // All texts are in lang/<language>.js. The things here need no names: the game only speaks the rule.
 
 import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../shared/kit.js";
@@ -54,7 +57,26 @@ const ITEMS = [
   { i: "🎈", c: "red" }, { i: "🍅", c: "red" }, { i: "⭐", c: "yellow" }, { i: "🌽", c: "yellow" },
   { i: "🧀", c: "yellow" }, { i: "🥒", c: "green" }, { i: "🥦", c: "green" }, { i: "🌵", c: "green" },
   { i: "🍀", c: "green" }, { i: "🧢", c: "blue" }, { i: "💧", c: "blue" },
+  // More for the hidden rules
+  { i: "🦅", k: "animal", s: "big" }, { i: "🐦", k: "animal", s: "small" }, { i: "🐟", k: "animal" },
+  { i: "🐠", k: "animal" }, { i: "⛵", k: "vehicle" },
 ];
+
+// Hidden rules. f = can it fly?, w = at home in the water or on land? Only clear cases:
+// a duck, a frog or a crocodile is both in the water and on land, so it has no "w".
+const TAGS = {
+  f: {
+    fly: ["🦋", "🐝", "🦉", "🐞", "🦅", "🐦", "✈️", "🚁", "🚀"],
+    nofly: ["🐘", "🦒", "🦏", "🐄", "🐎", "🐌", "🐢", "🐼", "🦊", "🐰", "🐧", "🐳", "🐙", "🦁", "🐻", "🚗", "🚲", "🚂", "🚜", "🚢"],
+  },
+  w: {
+    water: ["🐳", "🐬", "🐙", "🦈", "🐟", "🐠", "🚢", "⛵"],
+    land: ["🐘", "🦒", "🦁", "🐎", "🐄", "🦊", "🐰", "🐼", "🐌", "🐻", "🐭", "🚗", "🚲", "🚜", "🚂", "🦋", "🐝"],
+  },
+};
+for (const [attr, groups] of Object.entries(TAGS)) {
+  for (const [g, icons] of Object.entries(groups)) for (const i of icons) ITEMS.find((x) => x.i === i)[attr] = g;
+}
 
 // The rules. attr = which property counts, groups = the two baskets (or the two kinds in "odd one out").
 const RULES = {
@@ -68,6 +90,8 @@ const RULES = {
   kind4: { attr: "k", groups: ["animal", "fruit", "vehicle", "flower"] },
   color3: { attr: "c", groups: ["red", "yellow", "green"], ask: "color" },
   color4: { attr: "c", groups: ["red", "yellow", "green", "blue"], ask: "color" },
+  fly: { attr: "f", groups: ["fly", "nofly"], hidden: true },
+  water: { attr: "w", groups: ["water", "land"], hidden: true },
 };
 
 // Levels: see levels.js (easy to hard).
@@ -84,9 +108,11 @@ let queue = []; // sorting: the things still to sort
 let odd = null; // odd one out: the thing that does not fit
 let current = null; // the level of this round (in "mix" levels one of the others)
 let switchTo = null; // rule switch: the things to sort again by kind
+let misses = 0; // wrong baskets for the thing on top
 let locked = false;
 
-const group = (item) => item[rule.attr]; // e.g. "red" for 🍎 in a colour round
+// The group of a thing, e.g. "red" for 🍎 in a colour round, "red|fruit" with two features.
+const group = (item) => (rule.of ? rule.of(item) : item[rule.attr]);
 const ask = () => rule.ask || Object.keys(RULES).find((key) => RULES[key] === rule);
 
 // ---------- Screens
@@ -106,7 +132,9 @@ function drawStars() {
 }
 
 function question() {
-  return current.mode === "odd" ? T.odd : T.ask[ask()];
+  if (current.mode === "odd") return T.odd;
+  if (current.mode === "find") return T.findRule;
+  return T.ask[ask()];
 }
 
 async function newRound() {
@@ -121,6 +149,8 @@ async function newRound() {
   $("item").hidden = $("queue").hidden = $("baskets").hidden = !sorting;
   $("four").hidden = sorting;
   if (current.mode === "switch") makeSwitch();
+  else if (current.mode === "two") makeTwo(current.n);
+  else if (current.mode === "find") makeFind(current.n);
   else if (sorting) {
     rule = RULES[oneOf(current.rules)];
     makeSort(current.n, current.tricky);
@@ -167,6 +197,49 @@ function makeSort(n, tricky) {
   drawItem();
 }
 
+// Two features: 4 baskets, one for each colour and kind (red animal, red fruit, yellow animal, yellow fruit).
+// The basket has the colour, its example shows the kind.
+function makeTwo(n) {
+  const colors = RULES[oneOf(COLOR_PAIRS)].groups;
+  const kinds = ["animal", "fruit"];
+  const groups = shuffle(colors.flatMap((c) => kinds.map((k) => `${c}|${k}`)));
+  rule = { of: (x) => `${x.c}|${x.k}`, groups, ask: "two" };
+  const pools = groups.map((g) => shuffle(ITEMS.filter((x) => rule.of(x) === g)));
+  const seeds = pools.map((pool) => pool.shift());
+  queue = shuffle(pools.map((pool) => pool.shift())).slice(0, n);
+  drawBaskets(groups, seeds);
+  drawItem();
+}
+
+// Find the rule: each basket shows two examples that only share the rule (two red things of different kinds,
+// two animals of different colours, two things that fly). Nobody says the rule; the baskets have no colour.
+function makeFind(n) {
+  rule = RULES[oneOf(current.rules)];
+  const groups = shuffle(rule.groups);
+  let things; // what can be sorted this round
+  let other; // the property that must NOT help
+  if (rule.attr === "k" || rule.attr === "c") {
+    const colors = rule.attr === "c" ? rule.groups : RULES[oneOf(COLOR_PAIRS)].groups;
+    const kinds = rule.attr === "k" ? rule.groups : ["animal", "fruit"];
+    things = shuffle(ITEMS.filter((x) => colors.includes(x.c) && kinds.includes(x.k)));
+    other = rule.attr === "k" ? "c" : "k";
+  } else {
+    things = shuffle(ITEMS.filter((x) => x[rule.attr]));
+    other = "k";
+  }
+  const seeds = groups.map((g) => {
+    const own = things.filter((x) => group(x) === g);
+    const a = own[0];
+    return [a, own.find((x) => x[other] !== a[other]) || own[1]];
+  });
+  const pool = things.filter((x) => !seeds.flat().includes(x));
+  const first = groups.map((g) => pool.find((x) => group(x) === g));
+  const rest = pool.filter((x) => !first.includes(x));
+  queue = shuffle([...first, ...rest.slice(0, n - groups.length)]);
+  drawBaskets(groups, seeds, true);
+  drawItem();
+}
+
 // Rule switch: four things, one for each colour and kind (red animal, red fruit, yellow animal, yellow fruit).
 // First sorted by colour, then "Neue Regel!" and the same four by kind.
 // The examples are neutral: a red balloon, a yellow star; then a panda and grapes without a colour.
@@ -202,18 +275,27 @@ async function switchRule() {
   locked = false;
 }
 
-function drawBaskets(groups, seeds) {
+// seeds: one example per basket, or two (find the rule). plain: baskets without colour.
+function drawBaskets(groups, seeds, plain = false) {
   const box = $("baskets");
   box.innerHTML = "";
   box.className = `baskets n${groups.length}`;
   groups.forEach((g, i) => {
-    const seed = seeds[i];
+    const examples = [].concat(seeds[i]);
     const basket = document.createElement("button");
     basket.type = "button";
-    basket.className = `basket ${g}`;
+    basket.className = "basket" + (plain ? "" : ` ${g.split("|")[0]}`) + (examples.length > 1 ? " pair" : "");
     basket.dataset.group = g;
-    basket.setAttribute("aria-label", T.groups[g]);
-    basket.innerHTML = `<span class="inside"><i class="seed">${seed.i}</i></span>`;
+    basket.setAttribute("aria-label", plain ? T.basket(i + 1) : g.split("|").map((x) => T.groups[x]).join(", "));
+    const inside = document.createElement("span");
+    inside.className = "inside";
+    for (const seed of examples) {
+      const el = document.createElement("i");
+      el.className = "seed";
+      el.textContent = seed.i;
+      inside.append(el);
+    }
+    basket.append(inside);
     basket.addEventListener("click", () => drop(basket));
     box.append(basket);
   });
@@ -226,6 +308,7 @@ function drawItem() {
   void item.offsetWidth; // restart the animation
   item.classList.add("pop");
   $("queue").innerHTML = "<li></li>".repeat(queue.length - 1);
+  misses = 0;
 }
 
 async function drop(basket) {
@@ -239,9 +322,12 @@ async function drop(basket) {
     void basket.offsetWidth;
     basket.classList.add("shake");
     locked = true;
+    misses++;
     // Tricky things and the rule switch: say what does not count.
     const trick = current.tricky || current.mode === "switch" ? `${T.trick[rule.attr]} ` : "";
-    await say(oops(trick + T.hint[ask()]));
+    // Find the rule: first a nudge, then the rule itself.
+    const hint = current.mode === "find" && misses < 2 ? T.findHint : T.hint[ask()];
+    await say(oops(trick + hint));
     locked = false;
     return;
   }
@@ -269,7 +355,7 @@ async function drop(basket) {
     return;
   }
   $("item").textContent = "🧺";
-  win(T.allSorted);
+  win(current.mode === "find" ? `${T.allSorted} ${T.found[ask()]}` : T.allSorted);
 }
 
 // ---------- Odd one out
@@ -300,10 +386,11 @@ function makeOdd() {
 
 // True if no other property makes a different thing the odd one.
 function clear(four) {
-  for (const attr of ["k", "c", "s"]) {
+  for (const attr of ["k", "c", "s", "f", "w"]) {
     if (attr === rule.attr) continue;
     for (const item of four) {
-      if (item === odd) continue;
+      // Hidden rules: the odd one must not stand out by its kind or colour too, or the rule stays hidden.
+      if (item === odd && !rule.hidden) continue;
       const others = four.filter((x) => x !== item).map((x) => x[attr]);
       if (others[0] && others.every((v) => v === others[0]) && item[attr] !== others[0]) return false;
     }
