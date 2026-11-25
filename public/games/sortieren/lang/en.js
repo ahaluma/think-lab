@@ -1,0 +1,34 @@
+// English texts for "Sortieren" (Sorting).
+export default {
+  title: "Sorting",
+  intro: "Sorting! Press start!",
+  ask: {
+    kind: "Animal or fruit? Tap the right basket!",
+    vehicle: "Animal or vehicle? Tap the right basket!",
+    color: "What colour is it? Tap the right basket!",
+    size: "Is the animal big or small?",
+  },
+  hint: {
+    kind: "Is it an animal or fruit?",
+    vehicle: "Is it an animal or a vehicle?",
+    color: "Look at the colour!",
+    size: "Is it big or small?",
+  },
+  allSorted: "All sorted!",
+  odd: "Which one does not belong?",
+  oddHint: "Look closely. Three are the same.",
+  why: {
+    animal: "The others are all animals.",
+    fruit: "The others are all fruit.",
+    vehicle: "The others are all vehicles.",
+    red: "The others are all red.",
+    yellow: "The others are all yellow.",
+    green: "The others are all green.",
+    big: "The others are all big.",
+    small: "The others are all small.",
+  },
+  groups: {
+    animal: "animals", fruit: "fruit", vehicle: "vehicles",
+    red: "red", yellow: "yellow", green: "green", big: "big", small: "small",
+  },
+};
