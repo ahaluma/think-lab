@@ -7,9 +7,13 @@
 //   label – short text for the parents' page.
 //
 // Levels = the parameters of this game, easy to hard. The level follows the child: up, down or stay after each round (shared/adapt.js).
-//   pats – the patterns, one is picked each round. Letters stand for things: "ABB" = 🍎🍌🍌🍎🍌🍌…
-//   gap  – "end": what comes next?  "middle": what is missing in the chain?
-//   reps – how many times the pattern is shown before the gap (end only)
+//   kind  – "pattern" (default), "grow", "numbers", "two" or "mix" (see game.js)
+//   pats  – pattern: the patterns, one is picked each round. Letters stand for things: "ABB" = 🍎🍌🍌🍎🍌🍌…
+//   gap   – "end": what comes next?  "middle": what is missing in the chain?
+//   reps  – pattern: how many times the pattern is shown before the gap (end only)
+//   steps, down, max – numbers: the step sizes, also backwards?, the biggest number
+//   pairs – two: shape pattern + colour pattern, e.g. "AB+AABB" (which one is the shape is picked at random)
+//   levels – mix: the ids of the levels to mix
 
 export const LEVELS = [
   { id: "ab", age: 3, label: { de: "AB: was kommt danach?", en: "AB: what comes next?", ne: "AB: अब के आउँछ?" },
@@ -30,4 +34,20 @@ export const LEVELS = [
     pats: ["ABB", "ABC"], gap: "middle" },
   { id: "mitte-alle", age: 7, label: { de: "Alle Muster, Lücke in der Mitte", en: "All patterns, gap in the middle", ne: "सबै ढाँचा, बीचमा खाली" },
     pats: ["AB", "ABB", "ABC", "AABB"], gap: "middle" },
+  { id: "wachsend", age: 7, label: { de: "Wachsende Muster", en: "Growing patterns", ne: "बढ्दै जाने ढाँचा" },
+    kind: "grow", gap: "end" },
+  { id: "zahlen-20", age: 7, label: { de: "Zahlenfolgen bis 20", en: "Number sequences to 20", ne: "२० सम्मको अङ्क क्रम" },
+    kind: "numbers", steps: [1, 2], max: 20, gap: "end" },
+  { id: "form-farbe", age: 8, label: { de: "Form und Farbe", en: "Shape and colour", ne: "आकार र रङ" },
+    kind: "two", pairs: ["AB+AABB", "AB+ABB"], gap: "end" },
+  { id: "zahlen-schritte", age: 8, label: { de: "Zahlenfolgen in Schritten, auch rückwärts", en: "Number steps, also backwards", ne: "फड्को मारेर अङ्क, उल्टो पनि" },
+    kind: "numbers", steps: [2, 3, 5, 10], down: true, max: 50, gap: "end" },
+  { id: "wachsend-mitte", age: 8, label: { de: "Wachsende Muster: Lücke in der Mitte", en: "Growing patterns: gap in the middle", ne: "बढ्दै जाने ढाँचा: बीचमा खाली" },
+    kind: "grow", gap: "middle" },
+  { id: "form-farbe-mitte", age: 9, label: { de: "Form und Farbe: Lücke in der Mitte", en: "Shape and colour: gap in the middle", ne: "आकार र रङ: बीचमा खाली" },
+    kind: "two", pairs: ["AB+AABB", "AB+ABB", "AB+ABC"], gap: "middle" },
+  { id: "zahlen-100", age: 10, label: { de: "Zahlenfolgen bis 100: Lücke in der Mitte", en: "Number sequences to 100: gap in the middle", ne: "१०० सम्मको अङ्क क्रम: बीचमा खाली" },
+    kind: "numbers", steps: [3, 4, 6, 7, 8, 9, 11, 20], down: true, max: 100, gap: "middle" },
+  { id: "knobel-mix", age: 11, label: { de: "Alles Schwere gemischt", en: "All hard ones mixed", ne: "सबै गाह्रो मिसाएर" },
+    kind: "mix", levels: ["wachsend-mitte", "form-farbe-mitte", "zahlen-100", "zahlen-schritte"] },
 ];

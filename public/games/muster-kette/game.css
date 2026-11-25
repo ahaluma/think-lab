@@ -6,20 +6,22 @@
   gap: 24px;
 }
 
-/* The chain: round beads on a string. A row holds whole patterns (4 or 6 beads),
-   so the same things stand under each other (see game.js). */
+/* The chain: round beads on a string, in rows. A row holds whole patterns (4 or 6 beads),
+   so the same things stand under each other; growing patterns get one row per step (see game.js). */
 .chain {
+  --cols: 4;
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px 8px;
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   padding: 18px 10px;
 }
 
-.chain.six {
-  grid-template-columns: repeat(6, 1fr);
-  gap: 12px 6px;
+.chain-row {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: 8px;
+  justify-items: center;
 }
 
 .bead {
@@ -36,8 +38,14 @@
   line-height: 1;
 }
 
-.chain.six .bead {
+.chain.wide .bead {
   font-size: clamp(22px, 7vw, 36px);
+}
+
+/* Numbers instead of things. */
+.chain.kind-numbers .bead {
+  font-size: clamp(16px, 5.4vw, 28px);
+  font-weight: 800;
 }
 
 /* The string between two beads. */
@@ -51,8 +59,8 @@
   background: rgba(27, 33, 64, 0.25);
 }
 
-.chain.six .bead::before {
-  width: 6px;
+.chain.wide .bead::before {
+  width: 8px;
 }
 
 .bead.gap {
@@ -92,8 +100,12 @@
   background: var(--ok);
 }
 
+.choices.nums .btn.choice {
+  font-size: clamp(30px, 11vw, 48px);
+  font-weight: 900;
+}
+
 /* No string in front of the first bead of a row. */
-.chain:not(.six) .bead:nth-child(4n + 1)::before,
-.chain.six .bead:nth-child(6n + 1)::before {
+.chain-row .bead:first-child::before {
   display: none;
 }

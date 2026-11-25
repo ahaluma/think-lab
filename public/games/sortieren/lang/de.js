@@ -10,6 +10,7 @@ export default {
     size: "Ist das Tier groß oder klein?",
     kind3: "Tier, Obst oder Fahrzeug? Tipp auf den richtigen Korb!",
     kind4: "Tier, Obst, Fahrzeug oder Blume? Tipp auf den richtigen Korb!",
+    two: "Welche Farbe, und ist es ein Tier oder Obst? Tipp auf den richtigen Korb!",
   },
   hint: {
     kind: "Ist es ein Tier oder Obst?",
@@ -18,11 +19,24 @@ export default {
     size: "Ist es groß oder klein?",
     kind3: "Ist es ein Tier, Obst oder ein Fahrzeug?",
     kind4: "Ist es ein Tier, Obst, ein Fahrzeug oder eine Blume?",
+    two: "Schau auf die Farbe und ob es ein Tier oder Obst ist!",
+    fly: "Kann es fliegen?",
+    water: "Ist es im Wasser zu Hause oder an Land?",
   },
   allSorted: "Alles sortiert!",
   // Tricky things and the rule switch: said before the hint after a wrong basket. k = sorting by kind, c = by colour.
   trick: { k: "Die Farbe ist egal!", c: "Nur die Farbe zählt!" },
   newRule: "Neue Regel!",
+  findRule: "Wie sind die Körbe sortiert? Wohin gehört es?",
+  findHint: "Schau, was in einem Korb gleich ist!",
+  // Said when all things are sorted in "find the rule".
+  found: {
+    kind: "Die Regel war: Tier oder Obst.",
+    color: "Die Regel war: die Farbe.",
+    fly: "Die Regel war: Kann es fliegen?",
+    water: "Die Regel war: im Wasser oder an Land?",
+  },
+  basket: (n) => `Korb ${n}`,
   odd: "Was passt nicht dazu?",
   oddHint: "Schau genau. Drei sind gleich.",
   // Said after the right odd one: what the other three have in common.
@@ -37,11 +51,16 @@ export default {
     small: "Die anderen sind alle klein.",
     flower: "Die anderen sind alle Blumen.",
     blue: "Die anderen sind alle blau.",
+    fly: "Die anderen können alle fliegen.",
+    nofly: "Die anderen können alle nicht fliegen.",
+    water: "Die anderen sind alle im Wasser zu Hause.",
+    land: "Die anderen sind alle an Land zu Hause.",
   },
   // Names of the baskets (for screen readers).
   groups: {
     animal: "Tiere", fruit: "Obst", vehicle: "Fahrzeuge",
     red: "rot", yellow: "gelb", green: "grün", big: "groß", small: "klein",
     flower: "Blumen", blue: "blau",
+    fly: "kann fliegen", nofly: "kann nicht fliegen", water: "im Wasser", land: "an Land",
   },
 };

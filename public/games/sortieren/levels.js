@@ -8,7 +8,8 @@
 //
 // Levels = the parameters of this game, easy to hard. The level follows the child: up, down or stay after each round (shared/adapt.js).
 //   mode   – "sort": things into baskets, "odd": which one does not belong?,
-//            "switch": sort by colour, then the same things by kind, "mix": a round of one of `levels`
+//            "switch": sort by colour, then the same things by kind, "mix": a round of one of `levels`,
+//            "two": 4 baskets, colour and kind at once, "find": each basket shows 2 examples, find the rule
 //   rules  – one is picked each round (see RULES)
 //   n      – how many things to sort for one star
 //   tricky – the things look like the other basket (a yellow animal when the fruit basket shows a banana)
@@ -49,4 +50,14 @@ export const LEVELS = [
     mode: "switch" },
   { id: "alles", age: 8, label: { de: "Alles gemischt (3–4 Körbe, knifflig, neue Regel)", en: "All mixed (3–4 baskets, tricky, new rule)", ne: "सबै मिसाएर" },
     mode: "mix", levels: ["drei-art", "drei-farbe", "knifflig-art", "knifflig-farbe", "vier", "neue-regel"] },
+  { id: "farbe-und-art", age: 8, label: { de: "Farbe und Art zugleich (4 Körbe)", en: "Colour and kind at once (4 baskets)", ne: "रङ र किसिम एकैचोटि (४ टोकरी)" },
+    mode: "two", n: 4 },
+  { id: "regel-finden", age: 8, label: { de: "Regel selbst finden", en: "Find the rule yourself", ne: "नियम आफैँ पत्ता लगाऊ" },
+    mode: "find", rules: ["kind", ...COLOR_PAIRS], n: 4 },
+  { id: "versteckte-regel", age: 9, label: { de: "Versteckte Regeln: fliegen, Wasser", en: "Hidden rules: flying, water", ne: "लुकेका नियम: उड्ने, पानी" },
+    mode: "find", rules: ["fly", "water"], n: 4 },
+  { id: "passt-nicht-versteckt", age: 9, label: { de: "Was passt nicht? Versteckte Regeln", en: "Odd one out: hidden rules", ne: "कुन मिल्दैन? लुकेका नियम" },
+    mode: "odd", rules: ["fly", "water"] },
+  { id: "knobel-mix", age: 10, label: { de: "Alles Schwere gemischt", en: "All hard ones mixed", ne: "सबै गाह्रो मिसाएर" },
+    mode: "mix", levels: ["farbe-und-art", "regel-finden", "versteckte-regel", "passt-nicht-versteckt", "neue-regel", "vier"] },
 ];
