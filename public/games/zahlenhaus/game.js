@@ -1,7 +1,8 @@
 // "Zahlenhaus" – splitting numbers (part and whole), for about 4 to 6 years.
-// Animals stand in front of a house. First the child counts them; the number goes on the roof.
-// Then some go into the house and the door closes. Some are still outside:
-// how many are in the house? The child learns that 5 is 3 and 2, 4 and 1 …
+// Animals stand in front of a house. The house shows 0. First the child counts the animals;
+// the number appears on the meadow sign. Then some go into the house: the meadow sign shows how many
+// are still outside and the house shows "?". How many are in the house? After the right answer
+// the house shows its number and the total appears in a block next to the house (3 and 2 make 5). The child learns that 5 is 3 and 2, 4 and 1 …
 // Levels go from 3 animals up to 10 (see LEVELS).
 // All texts are in lang/<language>.js; names of the animals are shared (shared/lang).
 
@@ -86,7 +87,7 @@ function animalAt(x, y, className = "animal") {
 function drawYard() {
   const field = $("field");
   field.innerHTML = "";
-  for (let i = 0; i < total; i++) field.append(animalAt(10 + (i % 5) * 20, i < 5 ? 66 : 87));
+  for (let i = 0; i < total; i++) field.append(animalAt(10 + (i % 5) * 20, i < 5 ? 76 : 91));
   $("inside").innerHTML = "";
   for (let i = 0; i < inside; i++) $("inside").append(animalAt(12 + (i % 5) * 19, i < 5 ? 32 : 72, "small"));
 }
@@ -121,7 +122,9 @@ function newRound() {
   inside = randInt(1, total - 1);
   answer = total;
 
-  $("sign").textContent = "";
+  $("sign").textContent = num(0); // nobody in the house yet
+  $("outside").textContent = "";
+  $("total").textContent = "";
   openHouse(false);
   drawYard();
   drawAnswers(answer, []);
@@ -137,6 +140,8 @@ async function intoHouse() {
   answer = inside;
   $("answers").innerHTML = "";
   await Promise.all([say(T.goIn), walkIn()]);
+  $("outside").textContent = num(total - inside); // still on the meadow
+  $("sign").textContent = "?";
   // Common mix-ups: the number outside and the number of all.
   drawAnswers(answer, shuffle([total - inside, total]).filter((n) => n !== answer));
   locked = false;
@@ -188,13 +193,15 @@ function choose(b, n) {
   sound.right();
 
   if (phase === "first") {
-    $("sign").textContent = num(total); // the number of the house
+    $("outside").textContent = num(total); // all of them are on the meadow
     Promise.all([say(cheer(T.firstRight(amount(total)))), wait(900)]).then(() => setTimeout(intoHouse, 300));
     return;
   }
 
   progress.answer(ID, true);
   openHouse(true); // show who is inside, so the child can check
+  $("sign").textContent = num(inside);
+  setTimeout(() => ($("total").textContent = num(total)), 900); // in the house and outside together
   stars++;
   drawStars();
 
