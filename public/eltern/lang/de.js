@@ -43,6 +43,11 @@ export default {
   readAloudOff: (name) => `${name} liest die Aufgaben selbst, die 🔊-Taste liest auf Wunsch vor`,
   readAloudAge: (n) => `ohne Ihre Wahl: unter ${n} Jahren an, ab ${n} aus`,
   readAloudLabel: (name) => `Für ${name} automatisch vorlesen`,
+  typeTitle: "Antwort selbst eintippen",
+  typeOn: (name) => `${name} tippt Rechen-Antworten auf einem Zahlenfeld ein`,
+  typeOff: (name) => `${name} wählt die Antwort aus drei Möglichkeiten`,
+  typeAge: (n) => `ohne Ihre Wahl: ab ${n} Jahren eintippen`,
+  typeLabel: (name) => `${name} tippt die Antwort selbst ein`,
   showGame: (game, name) => `${game} für ${name} zeigen`,
   weekdays: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };

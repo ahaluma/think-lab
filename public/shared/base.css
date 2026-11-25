@@ -328,6 +328,61 @@ a:focus-visible {
   height: 64px;
 }
 
+/* ---------- Number pad (shared/numpad.js): older children type the answer. */
+.numpad-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.numpad-display {
+  min-width: 4.2em;
+  min-height: 1.3em;
+  padding: 4px 16px;
+  border: 4px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.numpad-display:not(.typed) {
+  color: rgba(27, 33, 64, 0.35);
+}
+
+.numpad-display.right {
+  background: var(--ok);
+  color: #fff;
+}
+
+.numpad {
+  width: 100%;
+  max-width: 420px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.numpad .key {
+  min-height: 52px;
+  padding: 0;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.numpad .key svg {
+  width: 30px;
+  height: 30px;
+}
+
+.numpad .key:disabled {
+  opacity: 0.4;
+}
+
 /* ---------- Number answer buttons: number plus dots (a mini ten-frame). Used by number games. */
 .answers {
   width: 100%;

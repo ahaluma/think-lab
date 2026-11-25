@@ -12,6 +12,8 @@ import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import * as rechnen from "../../shared/rechnen.js";
+import { numpad } from "../../shared/numpad.js";
+import * as profiles from "../../shared/profiles.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
@@ -39,6 +41,11 @@ let thing = null;
 let lastThing = null;
 let misses = 0;
 let locked = false;
+// Older children type the answer on a number pad instead of picking one of three (profiles.typeAnswers).
+const typing = profiles.typeAnswers(profiles.current());
+let pad = null;
+/** Typing: after this many wrong answers the answer is shown, so nobody gets stuck. */
+const SHOW_AFTER = 3;
 
 // Number words up to 20, digits above and in the levels up to 100 and 1000 (the voice reads them).
 const word = (n) => (current?.big ? num(n) : T.numbers[n] ?? num(n));
@@ -164,13 +171,26 @@ async function newRound() {
   drawPictures(current.show === "numbers" ? "" : current.show);
   drawAnswers();
   show("round");
+  pad?.lock(true);
   await say(question());
   locked = false;
+  pad?.lock(false);
 }
 
 // Three choices: the answer and typical mistakes, smallest first. Dots only up to 10.
+// Older children: a number pad instead.
 function drawAnswers() {
   const answers = $("answers");
+  pad?.remove();
+  pad = null;
+  if (typing) {
+    const digits = String(Math.max(answer, 9) * 10).length; // one digit more than the answer has room
+    // The typed number shows in the "?" box of the sum.
+    const display = $("sum").querySelector(".gap");
+    pad = numpad(answers, T, { digits: Math.min(digits, 4), onCheck: (n) => choose(null, n), display });
+    return;
+  }
+  answers.className = "answers";
   answers.innerHTML = "";
   answers.classList.toggle("big", answer >= 100);
   for (const n of rechnen.choices({ a, b, sum, gap, answer }, current)) {
@@ -203,26 +223,54 @@ function helpAfterMiss() {
   return sum > 10 ? T.fillTen : T.picturesHelp;
 }
 
-async function choose(btn, n) {
-  if (locked) return;
-
+/** btn: the answer button tapped, or null when typed on the number pad. Returns whether n was right. */
+function choose(btn, n) {
+  if (locked) return false;
   if (n !== answer) {
-    play.answer(false);
-    sound.wrong();
+    wrong(btn);
+    return false;
+  }
+  right(btn);
+  return true;
+}
+
+async function wrong(btn) {
+  play.answer(false);
+  sound.wrong();
+  misses++;
+  locked = true;
+  if (btn) {
     btn.classList.remove("shake");
     void btn.offsetWidth; // restart the animation
     btn.classList.add("shake");
     btn.disabled = true;
-    misses++;
-    locked = true;
-    await say(oops(helpAfterMiss()));
-    locked = false;
-    return;
+  } else {
+    pad.lock(true);
+    if (misses >= SHOW_AFTER) {
+      // Typed wrong three times: show the answer and go on, so nobody gets stuck.
+      drawSum(true);
+      await say(`${oneOf(T.oops)} ${T.answerIs(word(answer))}`);
+      play.solved();
+      setTimeout(next, 600);
+      return;
+    }
+    pad.clear();
   }
+  await say(oops(helpAfterMiss()));
+  locked = false;
+  pad?.lock(false);
+}
 
+/** The next task, or the trophy after five stars. */
+function next() {
+  if (stars >= STARS_PER_GAME) finish();
+  else newRound();
+}
+
+function right(btn) {
   locked = true;
   play.answer(true);
-  btn.classList.add("right", "bounce");
+  if (btn) btn.classList.add("right", "bounce");
   drawSum(true);
   sound.right();
   play.solved();
@@ -244,7 +292,6 @@ async function choose(btn, n) {
   } else {
     text = T.together(word(a), word(b), word(sum));
   }
-  const next = stars >= STARS_PER_GAME ? finish : newRound;
   Promise.all([say(cheer(text)), wait(1500)]).then(() => setTimeout(next, 300));
 }
 

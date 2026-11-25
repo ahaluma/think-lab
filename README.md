@@ -34,6 +34,7 @@ think-lab/
 │   │   ├── profiles.js      ← children on this device (name, age, animal)
 │   │   ├── fit.js           ← which games and start levels fit a child's age
 │   │   ├── rechnen.js       ← arithmetic tasks for Plus (later Minus): numbers, answer choices, column sums
+│   │   ├── numpad.js        ← number pad for typed answers (children from 8, parents can switch it)
 │   │   ├── things.js        ← the 34 animals and things that number games count and compare
 │   │   ├── store.js         ← safe localStorage
 │   │   └── lang/de.js       ← words every page needs (numbers, praise, names of the things)

@@ -11,6 +11,8 @@
 //   profiles.setHarder(id, gameId, true / false) → parents open levels above the child's age (shared/fit.js)
 //   profiles.readAloud(kid)   → do games read tasks and feedback aloud by themselves? (shared/kit.js say())
 //   profiles.setReadAloud(id, true / false / null) → parents decide; null = by age (READ_ALOUD_UNTIL)
+//   profiles.typeAnswers(kid) → type number answers on a number pad instead of picking one of three? (TYPE_FROM)
+//   profiles.setTypeAnswers(id, true / false / null) → parents decide; null = by age
 //
 // Stored shape (localStorage "thinklab:profiles", version 1):
 //   { v: 1, current: "k1", kids: [{ id: "k1", name: "Mila", age: 5, ageSince: "2026-11-25", animal: "🐰",
@@ -22,6 +24,8 @@
 //   games – only games the parents switched on (true) or off (false). Missing = decided by age.
 //   readAloud – the parents' choice: true / false. Missing = by age: on below READ_ALOUD_UNTIL, off from then
 //           on, so older children read the tasks themselves (the 🔊 button still reads aloud on request).
+//   typeAnswers – the parents' choice: true / false. Missing = by age: from TYPE_FROM children type the
+//           answer themselves (shared/numpad.js), younger ones pick one of three.
 //   harder – games where the parents opened the levels above the child's age: { "plus": true }.
 
 import { store } from "./store.js";
@@ -181,6 +185,26 @@ export function readAloud(kid) {
   if (kid?.readAloud === true || kid?.readAloud === false) return kid.readAloud;
   const a = age(kid);
   return a === null || a < READ_ALOUD_UNTIL;
+}
+
+/** From this age children type number answers themselves; picking one of three is too easy then. */
+export const TYPE_FROM = 8;
+
+/** Does this child type number answers (number pad) instead of picking one? Parents' choice, else by age. */
+export function typeAnswers(kid) {
+  if (kid?.typeAnswers === true || kid?.typeAnswers === false) return kid.typeAnswers;
+  const a = age(kid);
+  return a !== null && a >= TYPE_FROM;
+}
+
+/** Parents switch typing on (true) or off (false) for one child; null = by age again. */
+export function setTypeAnswers(id, on) {
+  const p = read();
+  const kid = p.kids.find((k) => k.id === id);
+  if (!kid) return;
+  if (on === null) delete kid.typeAnswers;
+  else kid.typeAnswers = Boolean(on);
+  write(p);
 }
 
 /** Parents switch reading aloud on (true) or off (false) for one child; null = by age again. */

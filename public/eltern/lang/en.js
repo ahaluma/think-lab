@@ -43,6 +43,11 @@ export default {
   readAloudOff: (name) => `${name} reads the tasks; the 🔊 button reads aloud on request`,
   readAloudAge: (n) => `without your choice: on under ${n}, off from ${n}`,
   readAloudLabel: (name) => `Read aloud automatically for ${name}`,
+  typeTitle: "Type the answer",
+  typeOn: (name) => `${name} types arithmetic answers on a number pad`,
+  typeOff: (name) => `${name} picks the answer from three`,
+  typeAge: (n) => `without your choice: typing from age ${n}`,
+  typeLabel: (name) => `${name} types the answer`,
   showGame: (game, name) => `Show ${game} to ${name}`,
   weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
 };
