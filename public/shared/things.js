@@ -31,6 +31,14 @@ const ALL = [
   { id: "car", icon: "🚗" },
   { id: "banana", icon: "🍌" },
   { id: "carrot", icon: "🥕" },
+  { id: "kangaroo", icon: "🦘" },
+  { id: "whale", icon: "🐳" },
+  { id: "crocodile", icon: "🐊" },
+  { id: "ant", icon: "🐜" },
+  { id: "rabbit", icon: "🐰" },
+  { id: "fox", icon: "🦊" },
+  { id: "shark", icon: "🦈" },
+  { id: "panda", icon: "🐼" },
 ];
 
 /** All things that have a name in the loaded texts T, with their names added. */

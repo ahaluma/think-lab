@@ -49,5 +49,13 @@ export default {
     car: { many: "cars", one: "one car" },
     banana: { many: "bananas", one: "one banana" },
     carrot: { many: "carrots", one: "one carrot" },
+    kangaroo: { many: "kangaroos", one: "one kangaroo" },
+    whale: { many: "whales", one: "one whale" },
+    crocodile: { many: "crocodiles", one: "one crocodile" },
+    ant: { many: "ants", one: "one ant" },
+    rabbit: { many: "rabbits", one: "one rabbit" },
+    fox: { many: "foxes", one: "one fox" },
+    shark: { many: "sharks", one: "one shark" },
+    panda: { many: "pandas", one: "one panda" },
   },
 };
