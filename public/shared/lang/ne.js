@@ -49,5 +49,13 @@ export default {
     car: { many: "कार", one: "एउटा कार" },
     banana: { many: "केरा", one: "एउटा केरा" },
     carrot: { many: "गाजर", one: "एउटा गाजर" },
+    kangaroo: { many: "कङ्गारु", one: "एउटा कङ्गारु" },
+    whale: { many: "ह्वेल", one: "एउटा ह्वेल" },
+    crocodile: { many: "गोही", one: "एउटा गोही" },
+    ant: { many: "कमिला", one: "एउटा कमिला" },
+    rabbit: { many: "खरायो", one: "एउटा खरायो" },
+    fox: { many: "फ्याउरो", one: "एउटा फ्याउरो" },
+    shark: { many: "शार्क", one: "एउटा शार्क" },
+    panda: { many: "पान्डा", one: "एउटा पान्डा" },
   },
 };
