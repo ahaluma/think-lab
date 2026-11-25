@@ -42,10 +42,10 @@ export function numpad(container, T, { digits = 2, onCheck, display = null }) {
     keys.append(b);
     return b;
   };
-  // Two rows, so the task above stays in view: 1 2 3 4 5 ⌫ / 6 7 8 9 0 ✓
-  for (const d of [1, 2, 3, 4, 5]) key(num(d), "digit", null, () => press(String(d)));
+  // Like a phone: 1 2 3 / 4 5 6 / 7 8 9 / ⌫ 0 ✓
+  for (const d of [1, 2, 3, 4, 5, 6, 7, 8, 9]) key(num(d), "digit", null, () => press(String(d)));
   const erase = key("⌫", "erase", T.erase, () => press("back"));
-  for (const d of [6, 7, 8, 9, 0]) key(num(d), "digit", null, () => press(String(d)));
+  key(num(0), "digit", null, () => press("0"));
   const check = key(icons.check, "check ok", T.check, () => press("enter"));
 
   function draw(state = "") {
