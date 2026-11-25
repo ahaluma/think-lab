@@ -9,6 +9,7 @@ export default {
   hide: "Whoosh, behind the bush!",
   come: (n, amount) => (n === 1 ? `${big(amount)} comes along!` : `${big(amount)} come along!`),
   go: (n, amount) => (n === 1 ? `${big(amount)} runs away!` : `${big(amount)} run away!`),
+  first: (thing) => `How many ${thing.many} are on the meadow?`,
   question: (thing) => `How many ${thing.many} are there now?`,
   right: (n, amount) => (n === 1 ? `Now there is ${amount}.` : `Now there are ${amount}.`),
   thinkAgain: "Think again!",

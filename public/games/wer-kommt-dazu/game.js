@@ -1,6 +1,6 @@
 // "Wer kommt dazu?" – one more, one less, for about 4 to 6 years.
-// Animals stand on a meadow. The child sees how many there are. Then one animal hops in or runs away,
-// and the child taps how many there are now. No plus or minus signs: just animals coming and going.
+// Animals stand on a meadow. First the child counts them ("Wie viele Hasen sind auf der Wiese?").
+// Then one animal hops in or runs away, and the child taps how many there are now. No plus or minus signs: just animals coming and going.
 // In later levels the animals hide behind a bush first, so the child has to think "one more"
 // instead of counting again. Levels go up to two animals at once and 10 in all (see LEVELS).
 // All texts are in lang/<language>.js; names of the animals are shared (shared/lang).
@@ -122,54 +122,70 @@ async function runAway(k) {
 // ---------- One round
 
 const amount = (n) => T.amount(n, animal, T.numbers[n]);
-const question = () => T.question(animal);
+const question = () => (phase === "first" ? T.first(animal) : T.question(animal));
+
+// A round has two steps:
+//   1. "first"  – count the animals on the meadow ("Wie viele Hasen sind auf der Wiese?")
+//   2. "now"    – after some come or go: "Wie viele Hasen sind jetzt da?"
+let phase = "first";
+let start = 0; // animals at the start
+let step = 0; // how many come or go
+let change = "come";
 
 async function newRound() {
   const l = LEVELS[level];
   locked = true;
+  phase = "first";
   misses = 0;
   animal = shuffle(ANIMALS.filter((t) => t !== lastAnimal))[0];
   lastAnimal = animal;
 
-  const step = randInt(...l.step);
-  let change = l.change === "mixed" ? (Math.random() < 0.5 ? "come" : "go") : l.change;
-  let start = randInt(...l.from);
+  step = randInt(...l.step);
+  change = l.change === "mixed" ? (Math.random() < 0.5 ? "come" : "go") : l.change;
+  start = randInt(...l.from);
   if (change === "come" && start + step > MAX) start = MAX - step;
   if (change === "go" && start - step < 1) start = step + 1; // at least one animal stays
-  answer = change === "come" ? start + step : start - step;
+  answer = start;
 
   const field = $("field");
   field.innerHTML = "";
   for (let i = 0; i < start; i++) field.append(newAnimal(i));
   $("bush").classList.remove("up");
-  $("answers").innerHTML = "";
-  $("answers").classList.add("waiting");
+  drawAnswers(start, []);
   show("round");
-
-  await say(T.here(start, amount(start)));
-  await wait(400);
-  if (l.bush) {
-    $("bush").classList.add("up");
-    await Promise.all([say(T.hide), wait(900)]);
-  }
-
-  const text = change === "come" ? T.come(step, amount(step)) : T.go(step, amount(step));
-  await Promise.all([say(text), change === "come" ? comeIn(step, start) : runAway(step)]);
-
-  drawAnswers(start);
-  $("answers").classList.remove("waiting");
   locked = false;
   say(question());
 }
 
-// Three choices: the right one, the number from before (the most common mix-up) or a neighbour, smallest first.
-function drawAnswers(start) {
-  const choices = new Set([answer, start]);
+// Step 2: maybe hide behind the bush, then animals come or go, then ask again.
+async function change2() {
+  const l = LEVELS[level];
+  phase = "now";
+  misses = 0;
+  answer = change === "come" ? start + step : start - step;
+  $("answers").innerHTML = "";
+
+  if (l.bush) {
+    $("bush").classList.add("up");
+    await Promise.all([say(T.hide), wait(900)]);
+  }
+  const text = change === "come" ? T.come(step, amount(step)) : T.go(step, amount(step));
+  await Promise.all([say(text), change === "come" ? comeIn(step, start) : runAway(step)]);
+
+  drawAnswers(answer, [start]); // the number from before is the most common mix-up
+  locked = false;
+  say(question());
+}
+
+// Three choices: the right one, the given extra ones and neighbours, smallest first.
+function drawAnswers(right, extra) {
+  const choices = new Set([right, ...extra]);
   while (choices.size < 3) {
-    const near = answer + randInt(-2, 2);
+    const near = right + randInt(-2, 2);
     if (near >= 1 && near <= MAX) choices.add(near);
   }
   const answers = $("answers");
+  answers.innerHTML = "";
   for (const n of [...choices].sort((a, b) => a - b)) {
     const b = document.createElement("button");
     b.type = "button";
@@ -185,7 +201,8 @@ function choose(b, n) {
   if (locked) return;
 
   if (n !== answer) {
-    progress.answer(ID, false);
+    // Only step 2 counts for the parents' report: that is the "one more, one less" part.
+    if (phase === "now") progress.answer(ID, false);
     sound.wrong();
     b.classList.remove("shake");
     void b.offsetWidth; // restart the animation
@@ -200,10 +217,16 @@ function choose(b, n) {
   }
 
   locked = true;
-  progress.answer(ID, true);
   b.classList.add("right", "bounce");
-  $("bush").classList.remove("up"); // show the animals, so the child can check
   sound.right();
+
+  if (phase === "first") {
+    Promise.all([say(cheer(T.here(start, amount(start)))), wait(900)]).then(() => setTimeout(change2, 300));
+    return;
+  }
+
+  progress.answer(ID, true);
+  $("bush").classList.remove("up"); // show the animals, so the child can check
   stars++;
   drawStars();
 
@@ -238,7 +261,7 @@ $("again").innerHTML = icons.again;
 $("play").addEventListener("click", startGame);
 $("again").addEventListener("click", startGame);
 $("speak").addEventListener("click", () => {
-  if (!screens.round.hidden) say(locked ? T.hide : question());
+  if (!screens.round.hidden) say(question());
   else if (!screens.done.hidden) say(T.playAgainQuestion);
   else say(T.intro);
 });
