@@ -6,14 +6,16 @@
 //   progress.level("wie-viele", LEVELS)      → index of the current level in LEVELS (see levels.js)
 //   progress.answer("wie-viele", true)       → after every answer (right or wrong)
 //   progress.task("wie-viele", true)         → after every task: right the first time? (shared/adapt.js)
-//   progress.round("wie-viele", 2, LEVELS)   → after a finished round: new level LEVELS[2]
+//   progress.round("wie-viele", 2, LEVELS, { played: 1, good: true }) → after a finished round: new level LEVELS[2]
+//   progress.game("wie-viele")               → the saved entry of one game (or null)
 //   progress.all(kidId)                      → the whole report of one child (default: the child playing)
 //
 // Stored shape (version 1):
 //   {
 //     v: 1,
 //     games: { "wie-viele": { levelId: "bis-5", level: 2, levels: 8, rounds: 3, right: 15, wrong: 4, last: "2026-11-24",
-//                           recent: [1, 1, 0, 1, 1], today: { day: "2026-11-24", tasks: 5, first: 4, rounds: 1 } } },
+//                           recent: [1, 1, 0, 1, 1], today: { day: "2026-11-24", tasks: 5, first: 4, rounds: 1 },
+//                           good: ["2026-11-23", "2026-11-24"], ranges: { "5": 4, "10": 12 } } },
 //     days:  { "2026-11-24": { right: 15, wrong: 4, rounds: 3 } }
 //   }
 //
@@ -21,6 +23,8 @@
 //   level, levels – index and count when it was saved, only for the report. (Older data had only these.)
 //   A child's first time in a game starts at fit.startLevel(): generous, 2 years below their age.
 //   recent – the last 10 tasks: 1 = right the first time, 0 = not. today – counts of this day only.
+//   good – the days of the good rounds in a row on this level (empty again after another round or a new level).
+//   ranges – rounds played per number range (levels.js "range": up to 5, 10, 20 …).
 //   Games don't call these directly: shared/adapt.js does, and moves the level up or down.
 
 import { store } from "./store.js";
@@ -83,6 +87,7 @@ export function level(id, levels) {
 }
 
 function place(g, index, levels) {
+  if (g.levelId && g.levelId !== levels[index].id) g.good = [];
   g.level = index;
   g.levelId = levels[index].id;
   g.levels = levels.length;
@@ -114,10 +119,22 @@ export function task(id, firstTry) {
   });
 }
 
-export function round(id, newLevel, levels) {
+/** The saved entry of one game, or null. */
+export function game(id) {
+  return all().games[id] || null;
+}
+
+/** A finished round: played on level "played", good (4 or 5 of 5 right the first time) or not. */
+export function round(id, newLevel, levels, { played = newLevel, good = false } = {}) {
   update((p) => {
     const g = entry(p, id);
     g.rounds++;
+    g.good = good ? [...(g.good || []), today()].slice(-5) : [];
+    const range = levels[played]?.range;
+    if (range) {
+      g.ranges = { ...g.ranges };
+      g.ranges[range] = (g.ranges[range] || 0) + 1;
+    }
     gameToday(g).rounds++;
     place(g, newLevel, levels);
     g.last = today();

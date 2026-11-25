@@ -34,6 +34,7 @@ export default {
   tooEasy: "लुकाइएको, सायद धेरै सजिलो",
   switchedOn: "तपाईंले खोल्नुभएको",
   switchedOff: "तपाईंले बन्द गर्नुभएको",
+  harder: (age) => `कठिन तहहरू पनि खोल्नुहोस् (${age} वर्षदेखि)`,
   showGame: (game, name) => `${name} लाई ${game} देखाउने`,
   weekdays: ["आ", "सो", "मं", "बु", "बि", "शु", "श"],
 };

@@ -37,6 +37,7 @@ export default {
   tooEasy: "ausgeblendet, eher zu leicht",
   switchedOn: "von Ihnen eingeschaltet",
   switchedOff: "von Ihnen ausgeschaltet",
+  harder: (age) => `Auch schwerere Stufen erlauben (ab ${age} Jahren)`,
   showGame: (game, name) => `${game} für ${name} zeigen`,
   weekdays: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };
