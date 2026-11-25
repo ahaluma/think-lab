@@ -72,6 +72,7 @@ export const GAMES = [
   { id: "zahlen-memory", ages: [3, 7], skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
   { id: "muster-kette", ages: [3, 12], skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
   { id: "sortieren", ages: [3, 12], skill: "logik/sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याऊ" }, icon: "🧺", color: "#d8c8ff" },
+  { id: "formen", ages: [3, 7], skill: "logik/formen", name: { de: "Formen", en: "Shapes", ne: "आकार" }, icon: "🔺", color: "#ffd0e0" },
 ];
 
 /** Games of one category, in catalog order. */
