@@ -9,6 +9,7 @@ export default {
   hide: "Husch, hinter den Busch!",
   come: (n, amount) => (n === 1 ? `${big(amount)} kommt dazu!` : `${big(amount)} kommen dazu!`),
   go: (n, amount) => (n === 1 ? `${big(amount)} läuft weg!` : `${big(amount)} laufen weg!`),
+  first: (thing) => `Wie viele ${thing.many} sind auf der Wiese?`,
   question: (thing) => `Wie viele ${thing.many} sind jetzt da?`,
   right: (n, amount) => (n === 1 ? `Jetzt ist da ${amount}.` : `Jetzt sind da ${amount}.`),
   thinkAgain: "Denk nochmal!",

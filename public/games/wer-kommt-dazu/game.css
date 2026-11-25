@@ -61,8 +61,3 @@
 .bush.up {
   transform: none;
 }
-
-/* Answers wait (invisible, so nothing jumps) until the animals have moved. */
-.answers.waiting {
-  visibility: hidden;
-}

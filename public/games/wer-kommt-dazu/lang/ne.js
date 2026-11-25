@@ -7,6 +7,7 @@ export default {
   hide: "सुटुक्क, झाडीपछाडि!",
   come: (n, amount) => (n === 1 ? `${amount} आयो!` : `${amount} आए!`),
   go: (n, amount) => (n === 1 ? `${amount} भाग्यो!` : `${amount} भागे!`),
+  first: (thing) => `चौरमा कतिवटा ${thing.many} छन्?`,
   question: (thing) => `अब कतिवटा ${thing.many} छन्?`,
   right: (n, amount) => (n === 1 ? `अब ${amount} छ।` : `अब ${amount} छन्।`),
   thinkAgain: "फेरि सोच!",
