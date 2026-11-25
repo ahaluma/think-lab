@@ -1,13 +1,17 @@
-// "Plus" – adding with pictures, for about 5 to 8 years. Follows "Zahlenhaus" and "Zehnerfreunde".
+// "Plus" – adding, for about 5 to 10 years. Follows "Zahlenhaus" and "Zehnerfreunde".
 // The sum stands on top (3 + 2 = ?), the animals below it: 🐰🐰🐰 + 🐰🐰. The child taps the result.
 // Levels: pictures up to 5, up to 10; then the first group hides behind a bush that shows its number
 // (count on: "six … seven, eight"); then numbers only (the pictures help after two wrong answers);
-// then above 10 with two ten-frames: first fill the ten, then the rest (8 + 5 = 8 + 2 + 3). See levels.js.
+// then above 10 with two ten-frames: first fill the ten, then the rest (8 + 5 = 8 + 2 + 3);
+// then up to 100 and 1000: whole tens, without and with carrying. After two wrong answers a place-value
+// chart helps (hundreds plates, tens sticks, ones cubes: 38 + 27 = 50 + 15). Gap levels ask for the
+// missing number (3 + ? = 7). See levels.js. The numbers come from the shared block shared/rechnen.js.
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
+import * as rechnen from "../../shared/rechnen.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
@@ -19,25 +23,25 @@ const THINGS = things(T);
 
 const STARS_PER_GAME = 5;
 
-// Levels: see levels.js (easy to hard).
-
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
 const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
-let level = play.level;
-let current = null; // LEVELS[level] of this task
+let current = null; // LEVELS[play.level] of this task
 let stars = 0;
 let a = 0; // first number
 let b = 0; // second number
-let answer = 0; // a + b
+let sum = 0; // a + b
+let answer = 0; // what the child taps: the sum, or b in a gap task (3 + ? = 7)
+let gap = null; // null or "b"
 let thing = null;
 let lastThing = null;
 let misses = 0;
 let locked = false;
 
-const word = (n) => T.numbers[n];
+// Number words up to 20, digits above and in the levels up to 100 and 1000 (the voice reads them).
+const word = (n) => (current?.big ? num(n) : T.numbers[n] ?? num(n));
 
 // ---------- Screens
 
@@ -57,9 +61,11 @@ function drawStars() {
 
 // ---------- The sum and the pictures
 
+/** "3 + 2 = ?", or "3 + ? = 7" in a gap task. found: the answer shows in green. */
 function drawSum(found = false) {
-  const result = found ? `<b class="found pop">${num(answer)}</b>` : `<b class="gap">?</b>`;
-  $("sum").innerHTML = `${num(a)} + ${num(b)} = ${result}`;
+  $("sum").classList.toggle("long", sum >= 100);
+  const box = found ? `<b class="found pop">${num(answer)}</b>` : `<b class="gap">?</b>`;
+  $("sum").innerHTML = gap ? `${num(a)} + ${box} = ${num(sum)}` : `${num(a)} + ${num(b)} = ${box}`;
 }
 
 const el = (tag, className, text) => {
@@ -92,7 +98,7 @@ function frames() {
     for (let i = f * 10; i < f * 10 + 10; i++) {
       const place = el("span", "place");
       if (i < a) place.textContent = thing.icon;
-      else if (i < answer) place.classList.add("second"), (place.textContent = thing.icon);
+      else if (i < sum) place.classList.add("second"), (place.textContent = thing.icon);
       else place.classList.add("empty");
       frame.append(place);
     }
@@ -104,13 +110,33 @@ function frames() {
   return box;
 }
 
-/** kind: "pictures", "bush", "frames", or "" (numbers only). */
+/** Up to 100 and 1000: a place-value chart. Each number as hundreds plates, tens sticks and ones cubes,
+ *  then the sum of every column: 38 + 27 = 50 + 15. */
+function blocks() {
+  const cols = current.big.digits === 3 ? [0, 1, 2] : [1, 2];
+  const box = el("span", "blocks");
+  const chart = el("span", "chart cols-" + cols.length);
+  for (const c of cols) chart.append(el("b", "head", T.places[c]));
+  for (const [n, extra] of [[a, ""], [b, " second"]]) {
+    const d = rechnen.digits(n);
+    for (const c of cols) {
+      const cell = el("span", "cell" + extra);
+      for (let i = 0; i < d[c]; i++) cell.append(el("i", ["plate", "stick", "cube"][c]));
+      chart.append(cell);
+    }
+  }
+  box.append(chart, el("span", "split", rechnen.columnSums(a, b).map(num).join(" + ")));
+  return box;
+}
+
+/** kind: "pictures", "bush", "frames", "blocks", or "" (numbers only). */
 function drawPictures(kind) {
   const box = $("pictures");
   box.innerHTML = "";
   box.className = "pictures " + kind;
   if (!kind) return;
   if (kind === "frames") return void box.append(frames());
+  if (kind === "blocks") return void box.append(blocks());
   box.append(kind === "bush" ? bush() : group(a), el("span", "sign", "+"), group(b, "second"));
 }
 
@@ -123,29 +149,15 @@ function openBush() {
 // ---------- One round
 
 function question() {
-  return T.question(word(a), word(b));
-}
-
-function pickNumbers() {
-  answer = randInt(...current.sum);
-  if (answer > 10) {
-    // Above 10: both numbers below 10, so the ten has to be filled first (sums up to 18).
-    a = randInt(Math.max(2, answer - 9), 9);
-  } else if (current.show === "bush") {
-    // Counting on works best from the bigger number: at least 3 behind the bush.
-    a = randInt(Math.max(3, Math.ceil(answer / 2)), answer - 1);
-  } else {
-    a = randInt(1, answer - 1);
-  }
-  b = answer - a;
+  return gap ? T.gapQuestion(word(a), word(sum)) : T.question(word(a), word(b));
 }
 
 async function newRound() {
-  level = play.level;
-  current = LEVELS[level];
+  current = LEVELS[play.level];
   locked = true;
   misses = 0;
-  pickNumbers();
+  const before = `${a}+${b}`;
+  for (let i = 0; i < 5 && `${a}+${b}` === before; i++) ({ a, b, sum, gap, answer } = rechnen.task(current)); // never the same task twice in a row
   thing = shuffle(THINGS.filter((t) => t !== lastThing))[0];
   lastThing = thing;
   drawSum();
@@ -156,23 +168,17 @@ async function newRound() {
   locked = false;
 }
 
-// Three choices: the result and two near ones, smallest first. Dots only up to 10.
+// Three choices: the answer and typical mistakes, smallest first. Dots only up to 10.
 function drawAnswers() {
-  const choices = new Set([answer]);
-  const near = [answer - 1, answer + 1, answer - 2, answer + 2];
-  if (answer > 10) near.push(answer - 10); // forgot the ten
-  for (const n of shuffle(near)) {
-    if (choices.size >= 3) break;
-    if (n >= 1 && n <= 20) choices.add(n);
-  }
   const answers = $("answers");
   answers.innerHTML = "";
-  for (const n of [...choices].sort((x, y) => x - y)) {
+  answers.classList.toggle("big", answer >= 100);
+  for (const n of rechnen.choices({ a, b, sum, gap, answer }, current)) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "btn answer";
     btn.setAttribute("aria-label", word(n));
-    btn.innerHTML = `<span class="num">${num(n)}</span>` + (answer <= 10 ? `<span class="dots">${"<i></i>".repeat(n)}</span>` : "");
+    btn.innerHTML = `<span class="num">${num(n)}</span>` + (sum <= 10 ? `<span class="dots">${"<i></i>".repeat(n)}</span>` : "");
     btn.addEventListener("click", () => choose(btn, n));
     answers.append(btn);
   }
@@ -189,8 +195,12 @@ function helpAfterMiss() {
   if (kind === "frames") return T.fillTen;
   // Numbers only
   if (misses < 2) return question();
-  drawPictures(current.help === "frames" && answer > 10 ? "frames" : "pictures");
-  return answer > 10 ? T.fillTen : T.picturesHelp;
+  if (current.help === "blocks") {
+    drawPictures("blocks");
+    return rechnen.carries(a, b).some(Boolean) ? T.carryHelp : T.blocksHelp;
+  }
+  drawPictures(current.help === "frames" && sum > 10 ? "frames" : "pictures");
+  return sum > 10 ? T.fillTen : T.picturesHelp;
 }
 
 async function choose(btn, n) {
@@ -220,16 +230,19 @@ async function choose(btn, n) {
   drawStars();
 
   let text;
-  if (answer > 10) {
+  const parts = rechnen.columnSums(a, b);
+  if (current.big && parts.length > 1 && !gap) {
+    text = T.columns(parts.map(word), word(sum));
+  } else if (sum > 10 && sum <= 20 && !gap) {
     const toTen = 10 - a;
-    text = T.bridge(word(a), word(toTen), word(b - toTen), word(answer));
+    text = T.bridge(word(a), word(toTen), word(b - toTen), word(sum));
   } else if (current.show === "bush") {
     openBush();
     const on = [];
-    for (let i = a + 1; i <= answer; i++) on.push(word(i));
-    text = `${T.countOn(word(a), on)} ${T.together(word(a), word(b), word(answer))}`;
+    for (let i = a + 1; i <= sum; i++) on.push(word(i));
+    text = `${T.countOn(word(a), on)} ${T.together(word(a), word(b), word(sum))}`;
   } else {
-    text = T.together(word(a), word(b), word(answer));
+    text = T.together(word(a), word(b), word(sum));
   }
   const next = stars >= STARS_PER_GAME ? finish : newRound;
   Promise.all([say(cheer(text)), wait(1500)]).then(() => setTimeout(next, 300));

@@ -6,6 +6,7 @@ export default {
   title: "Plus",
   intro: "Plus! Wie viele sind es zusammen? Drück auf Start!",
   question: (a, b) => `Wie viel ist ${a} plus ${b}?`,
+  gapQuestion: (a, c) => `${big(a)} plus wie viel ist ${c}?`,
   together: (a, b, c) => `${big(a)} und ${b} sind zusammen ${c}.`,
   // Counting on from the bush: "Sechs … sieben, acht!"
   countOn: (a, next) => `${big(a)} … ${next.join(", ")}!`,
@@ -15,4 +16,9 @@ export default {
   startAt: (a) => `Hinter dem Busch sind ${a}. Fang bei ${a} an und zähl weiter!`,
   picturesHelp: "Schau, die Bilder helfen dir!",
   fillTen: "Mach erst die Zehn voll!",
+  blocksHelp: "Schau: Hunderter, Zehner und Einer. Rechne jede Spalte für sich!",
+  carryHelp: "Zehn Einer sind ein Zehner, zehn Zehner ein Hunderter!",
+  // Up to 100 and 1000: "Fünfzig und fünfzehn sind zusammen 65." (parts = sums of the columns)
+  columns: (parts, c) => `${big(parts.join(" und "))} sind zusammen ${c}.`,
+  places: ["H", "Z", "E"], // Hunderter, Zehner, Einer
 };

@@ -67,7 +67,7 @@ export const GAMES = [
   { id: "wer-kommt-dazu", ages: [4, 6], skill: "rechnen/dazu-weg", name: { de: "Wer kommt dazu?", en: "Who's coming?", ne: "को आयो?" }, icon: "🐇", color: "#9fdc8a" },
   { id: "zahlenhaus", ages: [5, 8], skill: "rechnen/zerlegen", name: { de: "Zahlenhaus", en: "Number house", ne: "अङ्क घर" }, icon: "🏠", color: "#ffd9a8" },
   { id: "zehnerfreunde", ages: [4, 8], skill: "rechnen/zerlegen", name: { de: "Zehnerfreunde", en: "Ten friends", ne: "दसका साथी" }, icon: "🔟", color: "#b8e6d0" },
-  { id: "plus", ages: [5, 8], skill: "rechnen/plus", name: { de: "Plus", en: "Plus", ne: "जोड" }, icon: "➕", color: "#ffc4a3" },
+  { id: "plus", ages: [5, 10], skill: "rechnen/plus", name: { de: "Plus", en: "Plus", ne: "जोड" }, icon: "➕", color: "#ffc4a3" },
   { id: "zahlen-memory", ages: [3, 7], skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
   { id: "muster-kette", ages: [3, 12], skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
   { id: "sortieren", ages: [3, 12], skill: "logik/sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याऊ" }, icon: "🧺", color: "#d8c8ff" },
