@@ -7,8 +7,8 @@ export default {
   same: "the same",
   questionMore: (thing) => `Where are more ${thing.many}?`,
   questionFewer: (thing) => `Where are fewer ${thing.many}?`,
-  rightMore: (n, here, there) => `Super! ${here} are more than ${there}.`,
-  rightFewer: (n, here, there) => `Super! ${here} ${n === 1 ? "is" : "are"} fewer than ${there}.`,
-  rightSame: (n, here) => `Super! The same: ${here} on each side.`,
-  lookAgain: "Hmm, look again!",
+  rightMore: (n, here, there) => `${here} are more than ${there}.`,
+  rightFewer: (n, here, there) => `${here} ${n === 1 ? "is" : "are"} fewer than ${there}.`,
+  rightSame: (n, here) => `The same: ${here} on each side.`,
+  lookAgain: "Look again!",
 };

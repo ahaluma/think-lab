@@ -4,8 +4,7 @@ export default {
   intro: "Blitzblick! Schau ganz schnell. Drück auf Start!",
   look: "Schau genau hin!",
   question: (thing) => `Wie viele ${thing.many} hast du gesehen?`,
-  right: (amount) => `Super! ${amount}.`,
+  right: (amount) => `${amount}.`,
   lookAgain: "Schau nochmal!",
   showAgain: "Nochmal zeigen",
-  dot: { one: "ein Punkt", many: "Punkte" },
 };

@@ -4,8 +4,7 @@ export default {
   intro: "Quick look! Look very fast. Press start!",
   look: "Look closely!",
   question: (thing) => `How many ${thing.many} did you see?`,
-  right: (amount) => `Super! ${amount}.`,
+  right: (amount) => `${amount}.`,
   lookAgain: "Look again!",
   showAgain: "Show again",
-  dot: { one: "one dot", many: "dots" },
 };

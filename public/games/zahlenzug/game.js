@@ -5,12 +5,14 @@
 // Levels go from 1–4 up to numbers near 20 (see LEVELS).
 // All texts are in lang/<language>.js; number words are shared (shared/lang).
 
-import { say, sound, celebrate, shuffle, pick, randInt, icons } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, shuffle, pick, randInt, icons } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 
 const ID = "zahlenzug";
 const T = await texts(import.meta.url);
+const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Drei Äpfel." – a different praise each time
+const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal!"
 
 const STARS_PER_GAME = 5;
 const COLORS = ["#ff8a8a", "#ffc83a", "#7ed68b", "#8fd3ff", "#c9b6ff"];
@@ -173,7 +175,7 @@ async function choose(b, n) {
     sound.wrong();
     shake(b);
     b.disabled = true;
-    say(question());
+    say(oops(question()));
     return;
   }
 
@@ -197,7 +199,7 @@ async function hangOn(b, i) {
     missed = true;
     sound.wrong();
     shake(b);
-    say(T.whichNext);
+    say(oops(T.whichNext));
     return;
   }
 
@@ -221,7 +223,7 @@ function win(text) {
   stars++;
   drawStars();
   const then = stars >= STARS_PER_GAME ? finish : newRound;
-  Promise.all([say(text), wait(1200)])
+  Promise.all([say(cheer(text)), wait(1200)])
     .then(() => {
       $("train").classList.add("away");
       return wait(700);

@@ -9,8 +9,9 @@ export default {
   play: "Spielen",
   playAgain: "Nochmal spielen",
   stars: "Sterne",
-  praise: ["Super!", "Toll!", "Prima!", "Klasse!"],
-  tryAgain: "Hmm, nochmal!",
+  // A random one is said before every right answer / wrong answer (see oneOf in kit.js).
+  praise: ["Super!", "Toll!", "Prima!", "Klasse!", "Richtig!", "Genau!", "Juhu!", "Bravo!", "Spitze!", "Ja!"],
+  oops: ["Hmm.", "Fast!", "Noch nicht.", "Oh!", "Ups!"],
   wellDone: "Toll gemacht! Fünf Sterne!",
   playAgainQuestion: "Nochmal spielen?",
   games: "Spiele",

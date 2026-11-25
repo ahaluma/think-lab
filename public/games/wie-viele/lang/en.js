@@ -6,6 +6,6 @@ export default {
   trayLabel: "Count the things",
   intro: "How many? Press start!",
   question: (thing) => `How many ${thing.many} can you see?`,
-  right: (amount) => `Super! ${amount}.`,
-  countAgain: "Hmm, count again!",
+  right: (amount) => `${amount}.`,
+  countAgain: "Count again!",
 };

@@ -140,6 +140,18 @@ export function pick(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
+// The last pick per list, so oneOf() never says the same thing twice in a row.
+const lastPick = new WeakMap();
+
+/** A random item of the list, but not the same as last time (for praise and hints). */
+export function oneOf(list) {
+  let item;
+  do item = pick(list);
+  while (list.length > 1 && item === lastPick.get(list));
+  lastPick.set(list, item);
+  return item;
+}
+
 /** Returns a new array in random order. */
 export function shuffle(list) {
   const a = [...list];

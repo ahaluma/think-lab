@@ -7,8 +7,8 @@ export default {
   before: (word) => `${word} भन्दा अगाडि कुन आउँछ?`,
   order: "डिब्बाहरू क्रमैसँग जोड!",
   whichNext: "अब कुन अङ्क आउँछ?",
-  missingRight: (word) => `स्याबास! ${word} छुटेको थियो।`,
-  afterRight: (a, b) => `स्याबास! ${a} पछि ${b} आउँछ।`,
-  beforeRight: (a, b) => `स्याबास! ${a} भन्दा अगाडि ${b} आउँछ।`,
-  orderRight: (list) => `स्याबास! ${list.join(", ")}।`,
+  missingRight: (word) => `${word} छुटेको थियो।`,
+  afterRight: (a, b) => `${a} पछि ${b} आउँछ।`,
+  beforeRight: (a, b) => `${a} भन्दा अगाडि ${b} आउँछ।`,
+  orderRight: (list) => `${list.join(", ")}।`,
 };

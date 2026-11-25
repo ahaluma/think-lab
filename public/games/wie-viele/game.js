@@ -3,13 +3,15 @@
 // It starts with 1 to 3 things and allows one more after every 5 stars (up to 10), see LEVELS.
 // All texts are in lang/<language>.js.
 
-import { say, sound, celebrate, shuffle, randInt, store, icons } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, shuffle, randInt, store, icons } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 import { things } from "../../shared/things.js";
 
 const ID = "wie-viele";
 const T = await texts(import.meta.url);
+const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Drei Äpfel." – a different praise each time
+const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal!"
 
 const STARS_PER_GAME = 5;
 const SLOTS = 12; // 4 x 3 places in the tray
@@ -146,7 +148,7 @@ function choose(b, n) {
   if (n !== answer) {
     progress.answer(ID, false);
     sound.wrong();
-    say(T.countAgain);
+    say(oops(T.countAgain));
     b.classList.remove("shake");
     void b.offsetWidth; // restart the animation
     b.classList.add("shake");
@@ -162,7 +164,7 @@ function choose(b, n) {
   drawStars();
   // Next task as soon as the praise is spoken (at least 0.8 s, so the green answer is seen).
   const next = stars >= STARS_PER_GAME ? finish : newRound;
-  Promise.all([say(T.right(amount(answer))), wait(800)]).then(() => setTimeout(next, 250));
+  Promise.all([say(cheer(T.right(amount(answer)))), wait(800)]).then(() => setTimeout(next, 250));
 }
 
 function finish() {
