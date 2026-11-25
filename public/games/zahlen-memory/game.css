@@ -1,0 +1,116 @@
+/* "Zahlen-Memory" only. Screens, stars and play button are in /shared/base.css. */
+
+#round {
+  justify-content: flex-start;
+  padding-top: 8px;
+}
+
+/* Three cards in a row. */
+.board {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.card-face {
+  position: relative;
+  aspect-ratio: 1;
+  min-height: 0;
+  padding: 6px;
+  overflow: hidden;
+}
+
+.board.many .card-face {
+  aspect-ratio: 5 / 4;
+}
+
+.front,
+.back {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transition: opacity 0.2s;
+}
+
+.big {
+  font-size: clamp(40px, 13vw, 64px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* The pictures: big when there are few, smaller when there are many (up to 10, 5 in a row). */
+.pics {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  gap: 2px;
+  width: 94%;
+  line-height: 1.1;
+}
+
+.pics i {
+  font-style: normal;
+  text-align: center;
+}
+
+.pics.few {
+  font-size: clamp(26px, 9vw, 44px);
+}
+
+.pics.some {
+  font-size: clamp(22px, 7vw, 34px);
+}
+
+.pics.some i {
+  width: 32%;
+}
+
+.pics.lots {
+  font-size: clamp(16px, 5.2vw, 26px);
+}
+
+.pics.lots i {
+  width: 19%;
+}
+
+/* Face down: only the back is seen. */
+.back {
+  opacity: 0;
+  background: repeating-linear-gradient(45deg, #c9b6ff 0 10px, #b9a2ff 10px 20px);
+  color: #fff;
+  font-size: 44px;
+  font-weight: 900;
+}
+
+.card-face.down .back {
+  opacity: 1;
+}
+
+.card-face.down .front {
+  opacity: 0;
+}
+
+.card-face.picked {
+  background: #fff3c4;
+  border-color: var(--sun);
+  box-shadow: 0 5px 0 #d9a400;
+}
+
+.card-face.found {
+  background: #dff5e8;
+  border-color: var(--ok);
+  box-shadow: 0 5px 0 var(--ok);
+  cursor: default;
+}
+
+/* Smaller cards when there are many pairs. */
+.board.many .pics.some {
+  font-size: clamp(18px, 6vw, 28px);
+}
+
+.board.many .pics.lots {
+  font-size: clamp(14px, 4.6vw, 22px);
+}
