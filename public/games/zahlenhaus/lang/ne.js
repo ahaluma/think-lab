@@ -8,7 +8,10 @@ export default {
   countAgain: "फेरि गन त!",
   goIn: "सुटुक्क, केही घरभित्र गए!",
   question: (thing) => `घरभित्र कतिवटा ${thing.many} छन्?`,
-  right: (a, b, c) => `घरभित्र ${a}, बाहिर ${b}। जम्मा ${c}।`,
+  insideRight: (a) => `घरभित्र ${a}।`,
+  outsideQuestion: (thing) => `बाहिर अझै कतिवटा ${thing.many} छन्?`,
+  hiddenQuestion: (thing) => `घरभित्र कतिवटा ${thing.many} लुकेका छन्?`,
+  together: (a, b, c) => `${a} र ${b} गर्दा जम्मा ${c}।`,
   thinkAgain: (amount) => `फेरि सोच: जम्मा ${amount} छन्।`,
   countNow: "घरभित्र हेर!",
 };

@@ -10,7 +10,10 @@ export default {
   countAgain: "Count again!",
   goIn: "Whoosh, some go into the house!",
   question: (thing) => `How many ${thing.many} are in the house?`,
-  right: (a, b, c) => `${big(a)} in the house, ${b} outside. ${big(c)} together.`,
+  insideRight: (a) => `${big(a)} in the house.`,
+  outsideQuestion: (thing) => `How many ${thing.many} are still outside?`,
+  hiddenQuestion: (thing) => `How many ${thing.many} are hiding in the house?`,
+  together: (a, b, c) => `${big(a)} and ${b} make ${c}.`,
   thinkAgain: (amount) => `Think again: there are ${amount}.`,
   countNow: "Look inside!",
 };
