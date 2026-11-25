@@ -7,7 +7,7 @@
 
 import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
-import * as progress from "../../shared/progress.js";
+import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
@@ -30,7 +30,8 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = progress.level(ID, LEVELS);
+const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
+let level = play.level;
 let stars = 0;
 let animal = ANIMALS[0];
 let lastAnimal = null;
@@ -119,6 +120,7 @@ let step = 0; // how many come or go
 let change = "come";
 
 async function newRound() {
+  level = play.level;
   const l = LEVELS[level];
   locked = true;
   phase = "first";
@@ -188,7 +190,7 @@ function choose(b, n) {
 
   if (n !== answer) {
     // Only step 2 counts for the parents' report: that is the "one more, one less" part.
-    if (phase === "now") progress.answer(ID, false);
+    if (phase === "now") play.answer(false);
     sound.wrong();
     b.classList.remove("shake");
     void b.offsetWidth; // restart the animation
@@ -211,8 +213,9 @@ function choose(b, n) {
     return;
   }
 
-  progress.answer(ID, true);
+  play.answer(true);
   $("bush").classList.remove("up"); // show the animals, so the child can check
+  play.solved();
   stars++;
   drawStars();
 
@@ -221,8 +224,7 @@ function choose(b, n) {
 }
 
 function finish() {
-  level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS);
+  play.round();
   show("done");
   sound.win();
   celebrate();

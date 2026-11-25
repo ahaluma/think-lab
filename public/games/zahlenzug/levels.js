@@ -6,7 +6,7 @@
 //           a bit below their age and move up quickly).
 //   label – short text for the parents' page.
 //
-// Levels = the parameters of this game, easy to hard. After every 5 stars the child moves up one level.
+// Levels = the parameters of this game, easy to hard. The level follows the child: up, down or stay after each round (shared/adapt.js).
 //   kind – "missing": one wagon is missing, "after" / "before": the number after / before one wagon,
 //          "mixed": after or before, "order": hang the wagons on from small to big
 //   from – the first number of the train (or the shown number for after / before): [lowest, highest]

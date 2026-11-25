@@ -6,7 +6,7 @@
 //           a bit below their age and move up quickly).
 //   label – short text for the parents' page.
 //
-// Levels = the parameters of this game, easy to hard. After a game (3 boards) the child moves up one level.
+// Levels = the parameters of this game, easy to hard. The level follows the child: up, down or stay after each round (shared/adapt.js).
 //   pairs – how many pairs on the board
 //   max   – the biggest number (numbers are 1 to max, each number once)
 //   open  – true: all cards lie open; false: face down, tap to turn

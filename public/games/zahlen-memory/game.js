@@ -6,7 +6,7 @@
 
 import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
-import * as progress from "../../shared/progress.js";
+import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
@@ -24,7 +24,8 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = progress.level(ID, LEVELS);
+const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
+let level = play.level;
 let stars = 0;
 let picked = null; // the first card of a try
 let found = 0; // pairs found on this board
@@ -66,6 +67,7 @@ const spoken = (card) => (card.kind === "number" ? T.numbers[card.n] : T.amount(
 const turn = (card, up) => card.el.classList.toggle("down", !up);
 
 function newBoard() {
+  level = play.level;
   const l = LEVELS[level];
   locked = true;
   picked = null;
@@ -107,12 +109,13 @@ async function tap(card) {
   first.el.classList.remove("picked");
 
   if (first.n === card.n && first.kind !== card.kind) {
-    progress.answer(ID, true);
+    play.answer(true);
     for (const c of [first, card]) c.el.classList.add("found", "bounce");
     sound.right();
     found++;
     if (found < LEVELS[level].pairs) return void say(cheer(T.match(T.numbers[card.n])));
     locked = true;
+    play.solved();
     stars++;
     drawStars();
     await Promise.all([say(cheer(T.match(T.numbers[card.n]))), wait(900)]);
@@ -122,7 +125,7 @@ async function tap(card) {
   }
 
   // Not a pair. With open cards that is a mistake; face down it is part of the game.
-  if (open) progress.answer(ID, false);
+  if (open) play.answer(false);
   sound.wrong();
   locked = true;
   for (const c of [first, card]) {
@@ -137,8 +140,7 @@ async function tap(card) {
 }
 
 function finish() {
-  level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS);
+  play.round();
   show("done");
   sound.win();
   celebrate();

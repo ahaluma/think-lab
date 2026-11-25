@@ -6,7 +6,7 @@
 //           a bit below their age and move up quickly).
 //   label – short text for the parents' page.
 //
-// Levels = the parameters of this game, easy to hard. After every 5 stars the child moves up one level.
+// Levels = the parameters of this game, easy to hard. The level follows the child: up, down or stay after each round (shared/adapt.js).
 //   total  – how many animals there are in all: [fewest, most]. 1 to total - 1 of them go into the house.
 //   hidden – false: the house is open, the child counts inside and outside (three questions).
 //            true: the house stays closed, the child knows the total and sees who is outside:

@@ -6,7 +6,7 @@
 //           a bit below their age and move up quickly).
 //   label – short text for the parents' page.
 //
-// Levels = the parameters of this game, easy to hard. After every 5 stars the child moves up one level.
+// Levels = the parameters of this game, easy to hard. The level follows the child: up, down or stay after each round (shared/adapt.js).
 //   pats – the patterns, one is picked each round. Letters stand for things: "ABB" = 🍎🍌🍌🍎🍌🍌…
 //   gap  – "end": what comes next?  "middle": what is missing in the chain?
 //   reps – how many times the pattern is shown before the gap (end only)
