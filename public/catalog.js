@@ -28,6 +28,7 @@ export const CATEGORIES = [
       { id: "zerlegen", name: { de: "Zahlen zerlegen", en: "Splitting numbers", ne: "सङ्ख्या छुट्याउने" } },
       { id: "plus", name: { de: "Plus", en: "Plus", ne: "जोड" } },
       { id: "minus", name: { de: "Minus", en: "Minus", ne: "घटाउ" } },
+      { id: "teilen", name: { de: "Teilen", en: "Sharing", ne: "भाग" } },
     ],
   },
   {
@@ -69,6 +70,7 @@ export const GAMES = [
   { id: "zahlenhaus", ages: [5, 8], skill: "rechnen/zerlegen", name: { de: "Zahlenhaus", en: "Number house", ne: "अङ्क घर" }, icon: "🏠", color: "#ffd9a8" },
   { id: "zehnerfreunde", ages: [4, 8], skill: "rechnen/zerlegen", name: { de: "Zehnerfreunde", en: "Ten friends", ne: "दसका साथी" }, icon: "🔟", color: "#b8e6d0" },
   { id: "gleich-machen", ages: [4, 8], skill: "rechnen/minus", name: { de: "Gleich machen", en: "Make it equal", ne: "बराबर बनाऊ" }, icon: "🤝", color: "#c9efb4" },
+  { id: "gerecht-teilen", ages: [4, 8], skill: "rechnen/teilen", name: { de: "Gerecht teilen", en: "Fair share", ne: "बराबर बाँड" }, icon: "🍪", color: "#f6d7b0" },
   { id: "plus", ages: [5, 10], skill: "rechnen/plus", name: { de: "Plus", en: "Plus", ne: "जोड" }, icon: "➕", color: "#ffc4a3" },
   { id: "zahlen-memory", ages: [3, 7], skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
   { id: "muster-kette", ages: [3, 12], skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
