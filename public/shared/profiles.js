@@ -8,6 +8,7 @@
 //   profiles.choose(id)       → switch child
 //   profiles.add({ name, age, animal }) / profiles.update(id, changes) / profiles.remove(id)
 //   profiles.setGame(id, gameId, true / false / null) → parents switch a game on or off (null = by age)
+//   profiles.setHarder(id, gameId, true / false) → parents open levels above the child's age (shared/fit.js)
 //
 // Stored shape (localStorage "thinklab:profiles", version 1):
 //   { v: 1, current: "k1", kids: [{ id: "k1", name: "Mila", age: 5, ageSince: "2026-11-25", animal: "🐰",
@@ -17,6 +18,7 @@
 //           the child is one year older (profiles.age()). No birthday needed. shared/fit.js uses the age
 //           for start levels and which games a child sees.
 //   games – only games the parents switched on (true) or off (false). Missing = decided by age.
+//   harder – games where the parents opened the levels above the child's age: { "plus": true }.
 
 import { store } from "./store.js";
 
@@ -164,6 +166,17 @@ export function setGame(id, gameId, on) {
   kid.games = { ...kid.games };
   if (on === null) delete kid.games[gameId];
   else kid.games[gameId] = Boolean(on);
+  write(p);
+}
+
+/** Parents open (true) or close (false) the levels above the child's age in one game. */
+export function setHarder(id, gameId, on) {
+  const p = read();
+  const kid = p.kids.find((k) => k.id === id);
+  if (!kid) return;
+  kid.harder = { ...kid.harder };
+  if (on) kid.harder[gameId] = true;
+  else delete kid.harder[gameId];
   write(p);
 }
 

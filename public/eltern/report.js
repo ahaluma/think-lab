@@ -206,6 +206,23 @@ function gameSwitch(game, kid, row) {
   return label;
 }
 
+/** Levels above the child's age (shared/fit.js): only when the parents open them. Nothing when all fit. */
+function harderToggle(game, kid) {
+  const levels = LEVELS[game.id];
+  const byAge = fit.ceiling(levels, { ...kid, harder: {} }, game.id);
+  if (profiles.age(kid) === null || byAge >= levels.length - 1) return null;
+  const label = el("label", "harder");
+  const box = el("input");
+  box.type = "checkbox";
+  box.checked = Boolean(kid.harder?.[game.id]);
+  box.addEventListener("change", () => {
+    profiles.setHarder(kid.id, game.id, box.checked);
+    kid.harder = profiles.get(kid.id).harder;
+  });
+  label.append(box, el("span", "", T.harder(num(levels[byAge + 1].age))));
+  return label;
+}
+
 if (shown) {
   $("gamesNote").textContent = T.gamesNote(kidName(shown));
   $("gamesNote").hidden = false;
@@ -253,6 +270,8 @@ for (const category of CATEGORIES) {
           el("span", "muted", T.stats(g.rounds, percent, g.last ? showDate(g.last) : "–")),
         );
       }
+      const harder = shown && harderToggle(game, shown);
+      if (harder) info.append(harder);
       row.append(info);
       if (shown) row.append(gameSwitch(game, shown, row));
       box.append(row);

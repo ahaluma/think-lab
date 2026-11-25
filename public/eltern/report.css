@@ -319,6 +319,20 @@
   opacity: 0.45;
 }
 
+.harder {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.harder input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--ink, #2b2d42);
+}
+
 .switch {
   position: relative;
   flex: none;
