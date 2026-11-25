@@ -81,7 +81,7 @@ Every game reports to `shared/progress.js`, which saves on this device only, one
 - `progress.round(id, newLevel, LEVELS.length)` after a finished round (5 stars).
 - `progress.level(id)` gives the level to start with.
 
-Parents open it with the chart button on the start page (`/eltern/`): the last 14 days, and for every category → skill → game the level, rounds, share of right answers and the last day played. "Fortschritt löschen" clears it.
+Parents open it with the "Eltern" button (an adult and a child) on the start page (`/eltern/`): the last 14 days, and for every category → skill → game the level, rounds, share of right answers and the last day played. "Fortschritt löschen" clears it.
 
 ## Privacy
 

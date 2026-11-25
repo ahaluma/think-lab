@@ -17,6 +17,7 @@ export default {
   games: "खेलहरू",
   language: "भाषा",
   forParents: "अभिभावकका लागि: प्रगति",
+  parents: "अभिभावक",
   privacy: "गोपनीयता",
   whoPlays: "को खेल्दै छ?",
   switchKid: "बच्चा बदल्नुहोस्",

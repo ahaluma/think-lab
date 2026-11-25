@@ -8,7 +8,7 @@ import * as profiles from "./shared/profiles.js";
 const T = await texts();
 fill(T);
 const $ = (id) => document.getElementById(id);
-$("parents").innerHTML = icons.chart;
+$("parentsIcon").outerHTML = icons.parents; // an adult and a child, plus the word "Eltern"
 
 // ---------- Language switch (only when there is more than one language)
 

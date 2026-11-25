@@ -17,6 +17,7 @@ export default {
   games: "Spiele",
   language: "Sprache",
   forParents: "Für Eltern: Fortschritt",
+  parents: "Eltern",
   privacy: "Datenschutz",
   whoPlays: "Wer spielt?",
   switchKid: "Kind wechseln",

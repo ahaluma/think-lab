@@ -163,7 +163,9 @@
 }
 
 .add-kids span:first-child {
+  flex: none;
   font-size: 32px;
+  white-space: nowrap;
 }
 
 [hidden] {
@@ -183,4 +185,41 @@
 
 .kid-chip .who-name {
   font-size: 22px;
+}
+
+/* ---------- Parents' button: an adult and a child, and the word "Eltern" */
+.icon-btn.parents-btn {
+  width: auto;
+  gap: 6px;
+  display: flex;
+  padding: 0 14px 0 10px;
+  border-radius: 28px;
+}
+
+.parents-btn svg {
+  width: 30px;
+  height: 30px;
+}
+
+.parents-word {
+  font-size: 17px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Small phones: smaller language buttons, so "Eltern" still fits. */
+@media (max-width: 370px) {
+  .lang-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 24px;
+  }
+
+  .langs {
+    gap: 6px;
+  }
+
+  .icon-btn.parents-btn {
+    padding: 0 10px 0 8px;
+  }
 }
