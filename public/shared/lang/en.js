@@ -23,6 +23,12 @@ export default {
   switchKid: "Switch child",
   addKidsHint: "For parents: add children",
 
+  // The number pad (shared/numpad.js): older children type the answer.
+  yourAnswer: "Your answer",
+  erase: "Delete",
+  check: "Check",
+  answerIs: (n) => `The answer is ${n}.`,
+
   // "3 elephants" for speaking. n = how many, word = the number word,, word = the number word ("three")
   amount: (n, thing, word) => (n === 1 ? thing.one : `${word} ${thing.many}`),
 

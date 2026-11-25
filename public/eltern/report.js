@@ -223,38 +223,46 @@ function harderToggle(game, kid) {
   return label;
 }
 
-// ---------- Reading aloud (per child)
+// ---------- Per child: reading aloud and typing answers (by age unless the parents decide)
 
-function readAloudHint(kid) {
-  const on = profiles.readAloud(kid);
-  const parts = [on ? T.readAloudOn(kidName(kid)) : T.readAloudOff(kidName(kid))];
-  if (kid.readAloud === true || kid.readAloud === false) parts.push(kid.readAloud ? T.switchedOn : T.switchedOff);
-  else parts.push(T.readAloudAge(num(profiles.READ_ALOUD_UNTIL)));
+const SETTINGS = [
+  { key: "readAloud", icon: "🔊", get: profiles.readAloud, set: profiles.setReadAloud, title: T.readAloudTitle,
+    on: T.readAloudOn, off: T.readAloudOff, byAge: () => T.readAloudAge(num(profiles.READ_ALOUD_UNTIL)), label: T.readAloudLabel },
+  { key: "typeAnswers", icon: "⌨️", get: profiles.typeAnswers, set: profiles.setTypeAnswers, title: T.typeTitle,
+    on: T.typeOn, off: T.typeOff, byAge: () => T.typeAge(num(profiles.TYPE_FROM)), label: T.typeLabel },
+];
+
+function settingHint(s, kid) {
+  const parts = [s.get(kid) ? s.on(kidName(kid)) : s.off(kidName(kid))];
+  if (kid[s.key] === true || kid[s.key] === false) parts.push(kid[s.key] ? T.switchedOn : T.switchedOff);
+  else parts.push(s.byAge());
   return parts.join(" · ");
 }
 
 if (shown) {
   const box = $("readAloud");
-  const row = el("div", "game");
-  row.append(el("span", "game-icon", "🔊"));
-  const info = el("div", "game-info");
-  const hint = el("span", "muted", readAloudHint(shown));
-  info.append(el("strong", "", T.readAloudTitle), hint);
-  const label = el("label", "switch");
-  const input = el("input");
-  input.type = "checkbox";
-  input.setAttribute("role", "switch");
-  input.checked = profiles.readAloud(shown);
-  input.setAttribute("aria-label", T.readAloudLabel(kidName(shown)));
-  input.addEventListener("change", () => {
-    const byAge = profiles.readAloud({ ...shown, readAloud: undefined });
-    profiles.setReadAloud(shown.id, input.checked === byAge ? null : input.checked);
-    shown.readAloud = profiles.get(shown.id).readAloud;
-    hint.textContent = readAloudHint(shown);
-  });
-  label.append(input, el("span", "slider"));
-  row.append(info, label);
-  box.append(row);
+  for (const s of SETTINGS) {
+    const row = el("div", "game");
+    row.append(el("span", "game-icon", s.icon));
+    const info = el("div", "game-info");
+    const hint = el("span", "muted", settingHint(s, shown));
+    info.append(el("strong", "", s.title), hint);
+    const label = el("label", "switch");
+    const input = el("input");
+    input.type = "checkbox";
+    input.setAttribute("role", "switch");
+    input.checked = s.get(shown);
+    input.setAttribute("aria-label", s.label(kidName(shown)));
+    input.addEventListener("change", () => {
+      const byAge = s.get({ ...shown, [s.key]: undefined });
+      s.set(shown.id, input.checked === byAge ? null : input.checked);
+      shown[s.key] = profiles.get(shown.id)[s.key];
+      hint.textContent = settingHint(s, shown);
+    });
+    label.append(input, el("span", "slider"));
+    row.append(info, label);
+    box.append(row);
+  }
   box.hidden = false;
 }
 

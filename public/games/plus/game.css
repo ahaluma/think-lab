@@ -39,6 +39,14 @@
   color: rgba(27, 33, 64, 0.5);
 }
 
+/* Typing on the number pad: the digits appear in the box. */
+.sum .gap.typed {
+  border-style: solid;
+  border-color: var(--ink);
+  color: var(--ink);
+  padding: 0 6px;
+}
+
 .sum .found {
   background: var(--ok);
   color: #fff;
@@ -189,13 +197,13 @@
 }
 
 .chart .cell {
-  min-height: 52px;
+  min-height: 44px;
   display: flex;
   flex-wrap: wrap;
   align-content: center;
   justify-content: center;
-  gap: 3px;
-  padding: 6px 4px;
+  gap: 2px;
+  padding: 4px 3px;
   background: #fff8e6;
 }
 
@@ -224,16 +232,16 @@
 }
 
 .chart .plate {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   background-image: linear-gradient(rgba(27, 33, 64, 0.3) 1px, transparent 1px),
     linear-gradient(90deg, rgba(27, 33, 64, 0.3) 1px, transparent 1px);
   background-size: 2.2px 2.2px;
 }
 
 .chart .stick {
-  width: 8px;
-  height: 36px;
+  width: 7px;
+  height: 30px;
   background-image: linear-gradient(rgba(27, 33, 64, 0.35) 1px, transparent 1px);
   background-size: 100% 3.2px;
 }

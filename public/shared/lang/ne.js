@@ -23,6 +23,12 @@ export default {
   switchKid: "बच्चा बदल्नुहोस्",
   addKidsHint: "अभिभावकका लागि: बच्चा थप्नुहोस्",
 
+  // The number pad (shared/numpad.js): older children type the answer.
+  yourAnswer: "तिम्रो उत्तर",
+  erase: "मेटाऊ",
+  check: "जाँच",
+  answerIs: (n) => `उत्तर ${n} हो।`,
+
   // "3 elephants" for speaking. n = how many, word = the number word,, word = the number word ("तीन")
   amount: (n, thing, word) => (n === 1 ? thing.one : `${word}वटा ${thing.many}`),
 
