@@ -109,3 +109,19 @@
 .chain-row .bead:first-child::before {
   display: none;
 }
+
+/* Numbers up to 1000: smaller digits, so four of them fit in a bead on a small phone. */
+.chain.kind-numbers.long .bead {
+  font-size: clamp(14px, 4.6vw, 26px);
+  letter-spacing: -0.02em;
+}
+
+/* Older children type the number (shared/numpad.js): it shows in the empty bead. */
+.chain.kind-numbers .bead.gap.typed {
+  color: var(--ink);
+  font-size: clamp(14px, 4.6vw, 26px);
+}
+
+.chain.kind-numbers:not(.long) .bead.gap.typed {
+  font-size: clamp(16px, 5.4vw, 28px);
+}
