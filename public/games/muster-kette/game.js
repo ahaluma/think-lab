@@ -7,7 +7,7 @@
 
 import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill } from "../../shared/i18n.js";
-import * as progress from "../../shared/progress.js";
+import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
@@ -27,7 +27,8 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = progress.level(ID, LEVELS);
+const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
+let level = play.level;
 let stars = 0;
 let chain = []; // the things in the chain, the gap included
 let unit = 0; // length of the pattern
@@ -108,6 +109,7 @@ function question() {
 }
 
 async function newRound() {
+  level = play.level;
   const l = LEVELS[level];
   locked = true;
   misses = 0;
@@ -141,7 +143,7 @@ async function choose(b, thing) {
   const answer = chain[gap];
 
   if (thing !== answer) {
-    progress.answer(ID, false);
+    play.answer(false);
     sound.wrong();
     b.classList.remove("shake");
     void b.offsetWidth; // restart the animation
@@ -156,13 +158,14 @@ async function choose(b, thing) {
   }
 
   locked = true;
-  progress.answer(ID, true);
+  play.answer(true);
   b.classList.add("right", "bounce");
   const bead = $("chain").children[gap];
   bead.classList.remove("gap");
   bead.classList.add("filled", "bounce");
   bead.textContent = answer.icon;
   sound.right();
+  play.solved();
   stars++;
   drawStars();
 
@@ -172,8 +175,7 @@ async function choose(b, thing) {
 }
 
 function finish() {
-  level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS);
+  play.round();
   show("done");
   sound.win();
   celebrate();

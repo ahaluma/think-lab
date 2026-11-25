@@ -1,11 +1,12 @@
 // "Wie viele?" – a counting game for about 4 to 6 years.
 // The child sees some things, can tap each one to count out loud, then taps the right number.
-// It starts with 1 to 3 things and allows one more after every 5 stars (up to 10), see LEVELS.
+// It starts with 1 to 3 things and goes up to 10; the level follows the child (shared/adapt.js), see levels.js.
 // All texts are in lang/<language>.js.
 
 import { say, oneOf, sound, celebrate, shuffle, randInt, store, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
@@ -33,7 +34,8 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = progress.level(ID, LEVELS);
+const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
+let level = play.level;
 let max = LEVELS[level].max;
 let stars = 0;
 let answer = 0;
@@ -69,6 +71,8 @@ function amount(n) {
 }
 
 function newRound() {
+  level = play.level;
+  max = LEVELS[level].max;
   locked = false;
   tapped = 0;
   answer = randInt(1, max);
@@ -136,7 +140,7 @@ function choose(b, n) {
   if (locked) return;
 
   if (n !== answer) {
-    progress.answer(ID, false);
+    play.answer(false);
     sound.wrong();
     say(oops(T.countAgain));
     b.classList.remove("shake");
@@ -147,9 +151,10 @@ function choose(b, n) {
   }
 
   locked = true;
-  progress.answer(ID, true);
+  play.answer(true);
   b.classList.add("right", "bounce");
   sound.right();
+  play.solved();
   stars++;
   drawStars();
   // Next task as soon as the praise is spoken (at least 0.8 s, so the green answer is seen).
@@ -158,9 +163,7 @@ function choose(b, n) {
 }
 
 function finish() {
-  level = Math.min(level + 1, LEVELS.length - 1);
-  max = LEVELS[level].max;
-  progress.round(ID, level, LEVELS);
+  play.round();
   show("done");
   sound.win();
   celebrate();

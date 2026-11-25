@@ -5,7 +5,7 @@
 
 import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
-import * as progress from "../../shared/progress.js";
+import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
@@ -25,7 +25,8 @@ const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 const groups = [$("groupA"), $("groupB")];
 
-let level = progress.level(ID, LEVELS);
+const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
+let level = play.level;
 let stars = 0;
 let thing = null;
 let lastThing = null;
@@ -91,6 +92,7 @@ function fillGroup(el, n) {
 }
 
 function newRound() {
+  level = play.level;
   const l = LEVELS[level];
   locked = false;
   thing = shuffle(THINGS.filter((t) => t !== lastThing))[0];
@@ -137,7 +139,7 @@ function choose(answer, el) {
   if (locked) return;
 
   if (answer !== rightAnswer()) {
-    progress.answer(ID, false);
+    play.answer(false);
     sound.wrong();
     say(oops(T.lookAgain));
     el.classList.remove("shake");
@@ -149,12 +151,13 @@ function choose(answer, el) {
   }
 
   locked = true;
-  progress.answer(ID, true);
+  play.answer(true);
   el.classList.add("right", "bounce");
   for (const g of groups) g.disabled = true;
   $("same").disabled = true;
   showCounts();
   sound.right();
+  play.solved();
   stars++;
   drawStars();
 
@@ -164,8 +167,7 @@ function choose(answer, el) {
 }
 
 function finish() {
-  level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS);
+  play.round();
   show("done");
   sound.win();
   celebrate();

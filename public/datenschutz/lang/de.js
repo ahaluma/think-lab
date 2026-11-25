@@ -32,7 +32,7 @@ export default {
     {
       h: "Speicherung auf Ihrem Gerät",
       p: [
-        "Damit Ihr Kind beim nächsten Mal auf der richtigen Stufe weiterspielt, speichert AnkaPlay im Speicher des Browsers (localStorage) auf Ihrem Gerät: die gewählte Sprache, die von Ihnen angelegten Kinder (Vorname oder Spitzname, Geburtsmonat und -jahr, gewähltes Tier, welche Spiele Sie ein- oder ausgeschaltet haben), und für jedes Kind getrennt die erreichte Stufe pro Spiel, die Anzahl richtiger und falscher Antworten, gespielte Runden pro Tag und das Datum des letzten Spiels.",
+        "Damit Ihr Kind beim nächsten Mal auf der richtigen Stufe weiterspielt, speichert AnkaPlay im Speicher des Browsers (localStorage) auf Ihrem Gerät: die gewählte Sprache, die von Ihnen angelegten Kinder (Vorname oder Spitzname, Alter, gewähltes Tier, welche Spiele Sie ein- oder ausgeschaltet haben), und für jedes Kind getrennt die erreichte Stufe pro Spiel, die Anzahl richtiger und falscher Antworten, gespielte Runden pro Tag und das Datum des letzten Spiels.",
         "Diese Daten verlassen Ihr Gerät nicht. Wir können sie nicht sehen. Es sind keine Cookies und sie enthalten keine Namen oder andere Angaben zur Person.",
         "Rechtsgrundlage ist § 25 Abs. 2 Nr. 2 TDDDG, weil die Speicherung für die von Ihnen gewünschte Funktion (Weiterspielen, Fortschrittsbericht) unbedingt erforderlich ist.",
         "Löschen: Auf der Elternseite (Knopf „Eltern“ auf der Startseite) mit „Fortschritt löschen“ oder ein Kind mit „Löschen“, oder indem Sie in den Browser-Einstellungen die Website-Daten löschen.",

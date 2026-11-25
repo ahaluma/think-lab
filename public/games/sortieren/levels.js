@@ -6,7 +6,7 @@
 //           a bit below their age and move up quickly).
 //   label – short text for the parents' page.
 //
-// Levels = the parameters of this game, easy to hard. After every 5 stars the child moves up one level.
+// Levels = the parameters of this game, easy to hard. The level follows the child: up, down or stay after each round (shared/adapt.js).
 //   mode   – "sort": things into baskets, "odd": which one does not belong?,
 //            "switch": sort by colour, then the same things by kind, "mix": a round of one of `levels`
 //   rules  – one is picked each round (see RULES)

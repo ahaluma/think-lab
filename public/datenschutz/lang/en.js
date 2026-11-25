@@ -33,7 +33,7 @@ export default {
     {
       h: "Storage on your device",
       p: [
-        "So that your child continues at the right level next time, AnkaPlay stores in the browser's storage (localStorage) on your device: the chosen language, the children you added (first name or nickname, birth month and year, chosen animal, which games you switched on or off), and for each child separately the level reached in each game, the number of right and wrong answers, rounds played per day and the date last played.",
+        "So that your child continues at the right level next time, AnkaPlay stores in the browser's storage (localStorage) on your device: the chosen language, the children you added (first name or nickname, age, chosen animal, which games you switched on or off), and for each child separately the level reached in each game, the number of right and wrong answers, rounds played per day and the date last played.",
         "This data never leaves your device. We cannot see it. These are not cookies and they contain no names or other personal details.",
         "The legal basis is Section 25(2) no. 2 TDDDG (German Telecommunications Digital Services Data Protection Act), because the storage is strictly necessary for the function you asked for (continuing the game, progress report).",
         "To delete it: on the parents' page (“Parents” button on the start page) tap “Delete progress” or delete a child, or delete the website data in your browser settings.",

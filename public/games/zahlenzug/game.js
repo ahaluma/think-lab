@@ -7,7 +7,7 @@
 
 import { say, oneOf, sound, celebrate, shuffle, pick, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
-import * as progress from "../../shared/progress.js";
+import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 
 const ID = "zahlenzug";
@@ -25,7 +25,8 @@ const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 const word = (n) => T.numbers[n];
 
-let level = progress.level(ID, LEVELS);
+const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
+let level = play.level;
 let stars = 0;
 let kind = "missing";
 let row = []; // the numbers of the train, small to big
@@ -86,6 +87,7 @@ function question() {
 }
 
 function newRound() {
+  level = play.level;
   const l = LEVELS[level];
   kind = l.kind === "mixed" ? pick(["after", "before"]) : l.kind;
   const from = randInt(...l.from);
@@ -157,7 +159,7 @@ async function choose(b, n) {
   if (locked) return;
 
   if (n !== answer) {
-    progress.answer(ID, false);
+    play.answer(false);
     sound.wrong();
     shake(b);
     b.disabled = true;
@@ -166,7 +168,7 @@ async function choose(b, n) {
   }
 
   locked = true;
-  progress.answer(ID, true);
+  play.answer(true);
   b.classList.add("right", "bounce");
   $("train").querySelector(".gap").replaceWith(wagon(n, kind === "missing" ? row.indexOf(n) : kind === "after" ? 1 : 0));
   sound.right();
@@ -181,7 +183,7 @@ async function hangOn(b, i) {
   if (locked) return;
 
   if (i !== next) {
-    if (!missed) progress.answer(ID, false);
+    if (!missed) play.answer(false);
     missed = true;
     sound.wrong();
     shake(b);
@@ -199,13 +201,14 @@ async function hangOn(b, i) {
   }
 
   locked = true;
-  progress.answer(ID, true);
+  play.answer(true);
   sound.right();
   win(T.orderRight(row.map(word)));
 }
 
 // A star, the sentence read out, and the train drives away.
 function win(text) {
+  play.solved();
   stars++;
   drawStars();
   const then = stars >= STARS_PER_GAME ? finish : newRound;
@@ -218,8 +221,7 @@ function win(text) {
 }
 
 function finish() {
-  level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS);
+  play.round();
   show("done");
   sound.win();
   celebrate();

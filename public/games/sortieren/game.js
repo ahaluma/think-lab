@@ -9,7 +9,7 @@
 
 import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill } from "../../shared/i18n.js";
-import * as progress from "../../shared/progress.js";
+import * as adapt from "../../shared/adapt.js";
 import { LEVELS, COLOR_PAIRS } from "./levels.js";
 
 const ID = "sortieren";
@@ -76,7 +76,8 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = progress.level(ID, LEVELS);
+const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
+let level = play.level;
 let stars = 0;
 let rule = null; // the rule of this round, from RULES
 let queue = []; // sorting: the things still to sort
@@ -109,6 +110,7 @@ function question() {
 }
 
 async function newRound() {
+  level = play.level;
   current = LEVELS[level];
   if (current.mode === "mix") {
     const id = oneOf(current.levels);
@@ -231,7 +233,7 @@ async function drop(basket) {
   const item = queue[0];
 
   if (basket.dataset.group !== group(item)) {
-    progress.answer(ID, false);
+    play.answer(false);
     sound.wrong();
     basket.classList.remove("shake");
     void basket.offsetWidth;
@@ -245,7 +247,7 @@ async function drop(basket) {
   }
 
   locked = true;
-  progress.answer(ID, true);
+  play.answer(true);
   sound.right();
   const put = document.createElement("i");
   put.textContent = item.i;
@@ -313,7 +315,7 @@ async function pickOdd(b, item) {
   if (locked) return;
 
   if (item !== odd) {
-    progress.answer(ID, false);
+    play.answer(false);
     sound.wrong();
     b.classList.remove("shake");
     void b.offsetWidth;
@@ -326,7 +328,7 @@ async function pickOdd(b, item) {
   }
 
   locked = true;
-  progress.answer(ID, true);
+  play.answer(true);
   sound.right();
   b.classList.add("right", "bounce");
   for (const other of $("four").children) if (other !== b) other.classList.add("same");
@@ -337,6 +339,7 @@ async function pickOdd(b, item) {
 // ---------- Star, next round, end
 
 function win(text) {
+  play.solved();
   stars++;
   drawStars();
   const next = stars >= STARS_PER_GAME ? finish : newRound;
@@ -344,8 +347,7 @@ function win(text) {
 }
 
 function finish() {
-  level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS);
+  play.round();
   show("done");
   sound.win();
   celebrate();

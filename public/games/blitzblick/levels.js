@@ -6,7 +6,7 @@
 //           a bit below their age and move up quickly).
 //   label – short text for the parents' page.
 //
-// Levels = the parameters of this game, easy to hard. After every 5 stars the child moves up one level.
+// Levels = the parameters of this game, easy to hard. The level follows the child: up, down or stay after each round (shared/adapt.js).
 //   kind – "dice": placed like the dots on a dice, "scatter": random places, "frame": 5 + x in a 2 x 5 frame
 //   Every round shows a different animal or thing (apples, flowers, pandas…).
 //   min, max – the amounts

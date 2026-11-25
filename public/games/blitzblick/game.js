@@ -7,7 +7,7 @@
 
 import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
-import * as progress from "../../shared/progress.js";
+import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
@@ -35,7 +35,8 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = progress.level(ID, LEVELS);
+const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
+let level = play.level;
 let stars = 0;
 let answer = 0;
 let thing = null;
@@ -116,6 +117,7 @@ function amount(n) {
 }
 
 async function newRound() {
+  level = play.level;
   const l = LEVELS[level];
   locked = true;
   answer = randInt(l.min, l.max);
@@ -162,7 +164,7 @@ async function choose(b, n) {
   if (locked || showing) return;
 
   if (n !== answer) {
-    progress.answer(ID, false);
+    play.answer(false);
     sound.wrong();
     b.classList.remove("shake");
     void b.offsetWidth; // restart the animation
@@ -176,10 +178,11 @@ async function choose(b, n) {
   }
 
   locked = true;
-  progress.answer(ID, true);
+  play.answer(true);
   b.classList.add("right", "bounce");
   $("cover").hidden = true; // show the picture again, so the child can check
   sound.right();
+  play.solved();
   stars++;
   drawStars();
 
@@ -188,8 +191,7 @@ async function choose(b, n) {
 }
 
 function finish() {
-  level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS);
+  play.round();
   show("done");
   sound.win();
   celebrate();

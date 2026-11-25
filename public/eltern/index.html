@@ -28,7 +28,7 @@
         <h1 data-t="title">Fortschritt</h1>
       </div>
 
-      <!-- Children: name, birth month and animal. Each child has their own progress. -->
+      <!-- Children: name, age and animal. Each child has their own progress. -->
       <section class="card kids-card" id="kinder">
         <h2 data-t="kidsTitle">Kinder</h2>
         <p class="muted" id="kidsNote"></p>
@@ -39,11 +39,10 @@
             <span data-t="name">Name</span>
             <input id="kidName" type="text" maxlength="20" autocomplete="off" />
           </label>
-          <fieldset class="field born">
-            <legend data-t="born">Geboren</legend>
-            <select id="kidMonth" data-t-label="month" aria-label="Monat"></select>
-            <select id="kidYear" data-t-label="year" aria-label="Jahr"></select>
-          </fieldset>
+          <label class="field">
+            <span data-t="age">Alter</span>
+            <select id="kidAge"></select>
+          </label>
           <div class="field">
             <span data-t="animal">Tier</span>
             <div class="animals" id="kidAnimals" role="radiogroup"></div>

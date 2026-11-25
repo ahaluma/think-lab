@@ -309,21 +309,6 @@
   display: none !important;
 }
 
-/* ---------- Birth month */
-.field.born {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: 8px;
-}
-
-.field.born legend {
-  padding: 0;
-  margin-bottom: 6px;
-}
-
 /* ---------- Show a game to this child: on/off */
 .games-note {
   text-align: left;

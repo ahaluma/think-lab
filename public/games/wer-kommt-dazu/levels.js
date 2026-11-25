@@ -6,7 +6,7 @@
 //           a bit below their age and move up quickly).
 //   label – short text for the parents' page.
 //
-// Levels = the parameters of this game, easy to hard. After every 5 stars the child moves up one level.
+// Levels = the parameters of this game, easy to hard. The level follows the child: up, down or stay after each round (shared/adapt.js).
 //   change – "come": animals hop in, "go": animals run away, "mixed": either
 //   step   – how many come or go: [fewest, most]
 //   from   – how many are there at the start: [fewest, most]

@@ -5,19 +5,23 @@
 //   import * as progress from "../../shared/progress.js";
 //   progress.level("wie-viele", LEVELS)      → index of the current level in LEVELS (see levels.js)
 //   progress.answer("wie-viele", true)       → after every answer (right or wrong)
+//   progress.task("wie-viele", true)         → after every task: right the first time? (shared/adapt.js)
 //   progress.round("wie-viele", 2, LEVELS)   → after a finished round: new level LEVELS[2]
 //   progress.all(kidId)                      → the whole report of one child (default: the child playing)
 //
 // Stored shape (version 1):
 //   {
 //     v: 1,
-//     games: { "wie-viele": { levelId: "bis-5", level: 2, levels: 8, rounds: 3, right: 15, wrong: 4, last: "2026-11-24" } },
+//     games: { "wie-viele": { levelId: "bis-5", level: 2, levels: 8, rounds: 3, right: 15, wrong: 4, last: "2026-11-24",
+//                           recent: [1, 1, 0, 1, 1], today: { day: "2026-11-24", tasks: 5, first: 4, rounds: 1 } } },
 //     days:  { "2026-11-24": { right: 15, wrong: 4, rounds: 3 } }
 //   }
 //
 //   levelId – the level's fixed id from levels.js. It decides; inserting levels later keeps the child's place.
 //   level, levels – index and count when it was saved, only for the report. (Older data had only these.)
 //   A child's first time in a game starts at fit.startLevel(): generous, 2 years below their age.
+//   recent – the last 10 tasks: 1 = right the first time, 0 = not. today – counts of this day only.
+//   Games don't call these directly: shared/adapt.js does, and moves the level up or down.
 
 import { store } from "./store.js";
 import * as profiles from "./profiles.js";
@@ -49,6 +53,14 @@ function update(change) {
 function entry(p, id) {
   p.games[id] ??= { level: 0, levels: 1, rounds: 0, right: 0, wrong: 0, last: null };
   return p.games[id];
+}
+
+const RECENT = 10;
+
+/** Today's counts of one game, started fresh on a new day. */
+function gameToday(g) {
+  if (g.today?.day !== today()) g.today = { day: today(), tasks: 0, first: 0, rounds: 0 };
+  return g.today;
 }
 
 function day(p) {
@@ -86,10 +98,27 @@ export function answer(id, right) {
   });
 }
 
+/** Rounds this child finished in this game. */
+export function rounds(id) {
+  return all().games[id]?.rounds ?? 0;
+}
+
+/** One task done: right the first time or not. Keeps the last 10 and today's counts. */
+export function task(id, firstTry) {
+  update((p) => {
+    const g = entry(p, id);
+    g.recent = [...(g.recent || []), firstTry ? 1 : 0].slice(-RECENT);
+    const t = gameToday(g);
+    t.tasks++;
+    if (firstTry) t.first++;
+  });
+}
+
 export function round(id, newLevel, levels) {
   update((p) => {
     const g = entry(p, id);
     g.rounds++;
+    gameToday(g).rounds++;
     place(g, newLevel, levels);
     g.last = today();
     day(p).rounds++;

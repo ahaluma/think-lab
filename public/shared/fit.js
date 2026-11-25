@@ -26,7 +26,7 @@ export function why(game, kid) {
   return null;
 }
 
-/** Parents' choice first, then the age. Without a child (or without a birth month): every game. */
+/** Parents' choice first, then the age. Without a child (or without an age): every game. */
 export function visible(game, kid) {
   const choice = kid?.games?.[game.id];
   if (choice === true || choice === false) return choice;
