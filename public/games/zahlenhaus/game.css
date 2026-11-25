@@ -1,0 +1,127 @@
+/* "Zahlenhaus" only. Screens, stars, play button and number answer buttons are in /shared/base.css. */
+
+#round {
+  justify-content: flex-start;
+  padding-top: 8px;
+}
+
+/* The yard: sky on top, grass below, the house in the middle. Things are placed by percent (see game.js). */
+.yard {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: 52vh;
+  padding: 0;
+  overflow: hidden;
+  background: linear-gradient(#dff1ff 0 52%, #9fdc8a 52% 100%);
+}
+
+/* The roof, with the number of the house on a sign. */
+.roof {
+  position: absolute;
+  left: 24%;
+  width: 52%;
+  top: 3%;
+  height: 20%;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  background: #e0574a;
+  display: grid;
+  place-items: end center;
+}
+
+.sign {
+  margin-bottom: 6%;
+  min-width: 1.4em;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #fff;
+  font-size: clamp(22px, 7vw, 34px);
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.sign:empty {
+  visibility: hidden;
+}
+
+.house {
+  position: absolute;
+  left: 29%;
+  width: 42%;
+  top: 23%;
+  height: 29%;
+  background: #fff3df;
+  border: 3px solid var(--ink);
+  border-bottom: 0;
+  overflow: hidden;
+}
+
+.inside {
+  position: absolute;
+  inset: 0;
+}
+
+.small {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: clamp(16px, 5vw, 26px);
+  line-height: 1;
+}
+
+/* The front wall with two windows and a door. It slides up to show who is inside. */
+.wall {
+  position: absolute;
+  inset: 0;
+  background: #ffcf8a;
+  transition: transform 0.5s ease-out;
+  z-index: 1;
+}
+
+.wall.open {
+  transform: translateY(-115%);
+}
+
+.window {
+  position: absolute;
+  top: 18%;
+  width: 22%;
+  height: 34%;
+  background: #bfe6ff;
+  border: 3px solid var(--ink);
+  border-radius: 4px;
+}
+
+.window:first-child { left: 10%; }
+.window:last-child { right: 10%; }
+
+.door {
+  position: absolute;
+  left: 39%;
+  width: 22%;
+  bottom: 0;
+  height: 58%;
+  background: #8a5a3c;
+  border: 3px solid var(--ink);
+  border-bottom: 0;
+  border-radius: 40% 40% 0 0 / 25% 25% 0 0;
+}
+
+.field {
+  position: absolute;
+  inset: 0;
+}
+
+.animal {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: clamp(32px, 10vw, 52px);
+  line-height: 1;
+  z-index: 2;
+}
+
+/* Walking to the door: move there and get small. */
+.animal.walk {
+  transition: left 1s ease-in, top 1s ease-in, transform 1s ease-in;
+  transform: translate(-50%, -50%) scale(0.4);
+}

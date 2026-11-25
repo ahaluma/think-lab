@@ -25,6 +25,7 @@ export const CATEGORIES = [
     name: { de: "Rechnen", en: "Maths", ne: "हिसाब" },
     skills: [
       { id: "dazu-weg", name: { de: "Eins mehr, eins weniger", en: "One more, one less", ne: "एक बढी, एक कम" } },
+      { id: "zerlegen", name: { de: "Zahlen zerlegen", en: "Splitting numbers", ne: "सङ्ख्या छुट्याउने" } },
       { id: "plus", name: { de: "Plus", en: "Plus", ne: "जोड" } },
       { id: "minus", name: { de: "Minus", en: "Minus", ne: "घटाउ" } },
     ],
@@ -61,6 +62,7 @@ export const GAMES = [
   { id: "blitzblick", skill: "zahlen/simultan", name: { de: "Blitzblick", en: "Quick look", ne: "झट्ट हेर" }, icon: "⚡", color: "#c9b6ff" },
   { id: "zahlenzug", skill: "zahlen/reihe", name: { de: "Zahlenzug", en: "Number train", ne: "अङ्क रेल" }, icon: "🚂", color: "#ffb3c7" },
   { id: "wer-kommt-dazu", skill: "rechnen/dazu-weg", name: { de: "Wer kommt dazu?", en: "Who's coming?", ne: "को आयो?" }, icon: "🐇", color: "#9fdc8a" },
+  { id: "zahlenhaus", skill: "rechnen/zerlegen", name: { de: "Zahlenhaus", en: "Number house", ne: "अङ्क घर" }, icon: "🏠", color: "#ffd9a8" },
 ];
 
 /** Games of one category, in catalog order. */
