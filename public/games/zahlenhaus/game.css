@@ -45,6 +45,29 @@
   visibility: hidden;
 }
 
+/* The meadow sign (on the grass, left): how many are outside. */
+.sign.outside,
+.sign.total {
+  position: absolute;
+  top: 54%;
+  margin: 0;
+  min-width: 1.6em;
+  border: 3px solid var(--ink);
+  font-size: clamp(26px, 8vw, 40px);
+}
+
+.sign.outside {
+  left: 6%;
+  background: #6cc35a;
+}
+
+/* The block next to the house (on the grass, right): all together. Pops in at the end. */
+.sign.total {
+  right: 6%;
+  background: var(--sun);
+  animation: pop 0.3s ease-out;
+}
+
 .house {
   position: absolute;
   left: 29%;
