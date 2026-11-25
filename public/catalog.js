@@ -43,6 +43,7 @@ export const CATEGORIES = [
     name: { de: "Logik", en: "Logic", ne: "तर्क" },
     skills: [
       { id: "muster", name: { de: "Muster", en: "Patterns", ne: "ढाँचा" } },
+      { id: "sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याउने" } },
       { id: "formen", name: { de: "Formen", en: "Shapes", ne: "आकार" } },
     ],
   },
@@ -65,6 +66,7 @@ export const GAMES = [
   { id: "zahlenhaus", skill: "rechnen/zerlegen", name: { de: "Zahlenhaus", en: "Number house", ne: "अङ्क घर" }, icon: "🏠", color: "#ffd9a8" },
   { id: "zahlen-memory", skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
   { id: "muster-kette", skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
+  { id: "sortieren", skill: "logik/sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याऊ" }, icon: "🧺", color: "#d8c8ff" },
 ];
 
 /** Games of one category, in catalog order. */
