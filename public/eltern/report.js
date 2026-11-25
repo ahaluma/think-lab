@@ -91,30 +91,18 @@ function drawAnimals() {
   }
 }
 
-// Birth month: month names in the page language, years for children from 2 to 12.
-const monthSelect = $("kidMonth");
-const yearSelect = $("kidYear");
-const thisYear = new Date().getFullYear();
-monthSelect.append(Object.assign(el("option", "", T.month), { value: "" }));
-for (let m = 1; m <= 12; m++) {
-  const o = el("option", "", new Date(2000, m - 1, 1).toLocaleDateString(LANGS[lang].voice, { month: "long" }));
-  o.value = String(m).padStart(2, "0");
-  monthSelect.append(o);
-}
-yearSelect.append(Object.assign(el("option", "", T.year), { value: "" }));
-for (let y = thisYear - 2; y >= thisYear - 12; y--) {
-  const o = el("option", "", num(y));
-  o.value = y;
-  yearSelect.append(o);
+// Age in years. It grows by itself: one year after it was entered, the child is one year older.
+const ageSelect = $("kidAge");
+for (let a = profiles.MIN_AGE; a <= profiles.MAX_AGE; a++) {
+  const o = el("option", "", T.years(num(a)));
+  o.value = a;
+  ageSelect.append(o);
 }
 
 function openForm(kid) {
   editing = kid?.id ?? null;
   $("kidName").value = kid?.name ?? "";
-  const [y, m] = (kid?.born || "-").split("-");
-  if (y && !yearSelect.querySelector(`option[value="${y}"]`)) yearSelect.append(Object.assign(el("option", "", num(y)), { value: y }));
-  yearSelect.value = y;
-  monthSelect.value = m ?? "";
+  ageSelect.value = Math.min(profiles.MAX_AGE, profiles.age(kid) ?? 5);
   // A new child gets an animal nobody else has yet.
   animal = kid?.animal ?? (profiles.ANIMALS.find((a) => !kids.some((k) => k.animal === a)) || profiles.ANIMALS[0]);
   drawAnimals();
@@ -136,13 +124,7 @@ $("kidSave").addEventListener("click", () => {
     $("kidName").focus();
     return;
   }
-  for (const select of [monthSelect, yearSelect]) {
-    if (!select.value) {
-      select.focus();
-      return;
-    }
-  }
-  const kid = { name, born: `${yearSelect.value}-${monthSelect.value}`, animal };
+  const kid = { name, age: Number(ageSelect.value), animal };
   if (editing) profiles.update(editing, kid);
   else profiles.add(kid);
   location.reload();

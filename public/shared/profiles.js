@@ -1,20 +1,21 @@
-// Children on this device. Parents add them on /eltern/ (name, birth month, animal). Nothing leaves the phone.
+// Children on this device. Parents add them on /eltern/ (name, age, animal). Nothing leaves the phone.
 // Each child has their own progress (see progress.js: key "progress:<id>").
 //
 //   import * as profiles from "/shared/profiles.js";
-//   profiles.all()            → [{ id, name, born, animal, created, games }, …]
+//   profiles.all()            → [{ id, name, age, ageSince, animal, created, games }, …]
 //   profiles.age(kid)         → age in whole years today, or null
 //   profiles.current()        → the child playing now, or null (no children yet: "guest")
 //   profiles.choose(id)       → switch child
-//   profiles.add({ name, born, animal }) / profiles.update(id, changes) / profiles.remove(id)
+//   profiles.add({ name, age, animal }) / profiles.update(id, changes) / profiles.remove(id)
 //   profiles.setGame(id, gameId, true / false / null) → parents switch a game on or off (null = by age)
 //
 // Stored shape (localStorage "thinklab:profiles", version 1):
-//   { v: 1, current: "k1", kids: [{ id: "k1", name: "Mila", born: "2021-05", animal: "🐰", created: "2026-11-25",
-//                                   games: { "wie-viele": false } }] }
+//   { v: 1, current: "k1", kids: [{ id: "k1", name: "Mila", age: 5, ageSince: "2026-11-25", animal: "🐰",
+//                                   created: "2026-11-25", games: { "wie-viele": false } }] }
 //
-//   born  – birth month "YYYY-MM". The age grows by itself; shared/fit.js uses it for start levels and
-//           which games a child sees. (The first version stored "age" in years: converted once below.)
+//   age, ageSince – the age in years the parents entered, and the day they entered it. One year later
+//           the child is one year older (profiles.age()). No birthday needed. shared/fit.js uses the age
+//           for start levels and which games a child sees.
 //   games – only games the parents switched on (true) or off (false). Missing = decided by age.
 
 import { store } from "./store.js";
@@ -42,12 +43,17 @@ function today() {
   return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}`;
 }
 
-/** Age in whole years today from "YYYY-MM", or null. */
+export const MIN_AGE = 2;
+export const MAX_AGE = 12;
+
+/** Age in whole years today: the age entered, plus every full year since it was entered. Or null. */
 export function age(kid, now = new Date()) {
-  const m = /^(\d{4})-(\d{2})$/.exec(kid?.born || "");
-  if (!m) return null;
-  const months = (now.getFullYear() - Number(m[1])) * 12 + (now.getMonth() + 1 - Number(m[2]));
-  return Math.max(0, Math.floor(months / 12));
+  if (!kid?.age) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(kid.ageSince || "");
+  if (!m) return kid.age;
+  const [y, mo, d] = m.slice(1).map(Number);
+  const before = now.getMonth() + 1 < mo || (now.getMonth() + 1 === mo && now.getDate() < d);
+  return kid.age + Math.max(0, now.getFullYear() - y - (before ? 1 : 0));
 }
 
 function newId(kids) {
@@ -60,32 +66,39 @@ function newId(kids) {
 // ---------- Older devices: progress saved before there were profiles
 
 // Before profiles there was one progress for everybody ("thinklab:progress").
-// It becomes the first child, without a name: the parents add name and birth month on /eltern/.
+// It becomes the first child, without a name: the parents add name and age on /eltern/.
 function migrate() {
   if (store.get(KEY, null)) return;
   const old = store.get("progress", null);
   if (!old || !old.games || Object.keys(old.games).length === 0) return;
   const id = newId([]);
   store.set(`progress:${id}`, old);
-  write({ v: 1, current: id, kids: [{ id, name: "", born: null, animal: ANIMALS[0], created: today() }] });
+  write({ v: 1, current: id, kids: [{ id, name: "", age: null, ageSince: null, animal: ANIMALS[0], created: today() }] });
   store.remove("progress");
 }
 migrate();
 
-// The first version stored "age" in years. It becomes a birth month: this month, that many years ago.
-// The parents can correct the month on /eltern/.
-function ageToBorn() {
+// Older entries: an age without the day it was entered (counts from the day the child was added),
+// or a birth month "born" (stored for a short time): it becomes the age today.
+function ageSince() {
   const p = store.get(KEY, null);
-  if (!p?.kids?.some((k) => "age" in k)) return;
-  const now = new Date();
+  if (!p?.kids?.some((k) => "born" in k || (k.age && !k.ageSince))) return;
   for (const k of p.kids) {
-    if (!("age" in k)) continue;
-    if (k.age && !k.born) k.born = `${now.getFullYear() - k.age}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-    delete k.age;
+    if ("born" in k) {
+      const m = /^(\d{4})-(\d{2})$/.exec(k.born || "");
+      if (m && !k.age) {
+        const now = new Date();
+        const months = (now.getFullYear() - Number(m[1])) * 12 + (now.getMonth() + 1 - Number(m[2]));
+        k.age = Math.min(MAX_AGE, Math.max(MIN_AGE, Math.floor(months / 12)));
+        k.ageSince = today();
+      }
+      delete k.born;
+    }
+    if (k.age && !k.ageSince) k.ageSince = /^\d{4}-\d{2}-\d{2}$/.test(k.created || "") ? k.created : today();
   }
   write(p);
 }
-ageToBorn();
+ageSince();
 
 // ---------- Reading
 
@@ -103,9 +116,9 @@ export function current() {
   return p.kids.find((k) => k.id === p.current) || p.kids[0] || null;
 }
 
-/** A child is complete when the parents gave a name and a birth month. */
+/** A child is complete when the parents gave a name and an age. */
 export function complete(kid) {
-  return Boolean(kid && kid.name && kid.born);
+  return Boolean(kid && kid.name && kid.age);
 }
 
 // ---------- Changing
@@ -117,16 +130,16 @@ export function choose(id) {
   write(p);
 }
 
-const clean = ({ name, born, animal }) => ({
+const clean = ({ name, age, animal }) => ({
   name: String(name || "").trim().slice(0, 20),
-  born: /^\d{4}-(0[1-9]|1[0-2])$/.test(born || "") ? born : null,
+  age: Math.min(MAX_AGE, Math.max(MIN_AGE, Math.round(Number(age) || MIN_AGE))),
   animal: ANIMALS.includes(animal) ? animal : ANIMALS[0],
 });
 
 export function add(kid) {
   const p = read();
   const id = newId(p.kids);
-  p.kids.push({ id, ...clean(kid), created: today() });
+  p.kids.push({ id, ...clean(kid), ageSince: today(), created: today() });
   if (!p.current) p.current = id;
   write(p);
   return id;
@@ -136,7 +149,10 @@ export function update(id, changes) {
   const p = read();
   const kid = p.kids.find((k) => k.id === id);
   if (!kid) return;
-  Object.assign(kid, clean({ ...kid, ...changes }));
+  // A new age counts from today. The same age as shown keeps its day, so the next birthday stays.
+  const newAge = changes.age !== undefined && Number(changes.age) !== age(kid);
+  Object.assign(kid, clean({ ...kid, ...changes, age: newAge ? changes.age : kid.age }));
+  if (newAge) kid.ageSince = today();
   write(p);
 }
 

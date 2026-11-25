@@ -31,7 +31,7 @@ think-lab/
 │   │   ├── kit.js           ← helpers: say(), sound, celebrate(), shuffle(), pick(), icons
 │   │   ├── i18n.js          ← languages: texts(), fill(), local()
 │   │   ├── progress.js      ← progress report saved on this device, one per child
-│   │   ├── profiles.js      ← children on this device (name, birth month, animal)
+│   │   ├── profiles.js      ← children on this device (name, age, animal)
 │   │   ├── fit.js           ← which games and start levels fit a child's age
 │   │   ├── things.js        ← the 34 animals and things that number games count and compare
 │   │   ├── store.js         ← safe localStorage
@@ -75,9 +75,9 @@ Every page speaks German, English and Nepali (नेपाली). The start pag
 
 ## Progress report
 
-Parents add children on `/eltern/` (name, birth month and year, animal; `shared/profiles.js`, key `thinklab:profiles`). The start page asks "Wer spielt?" when there are several children, and every game shows the child's animal and name top left (`homeButton()` from `kit.js`, tap = back to "Wer spielt?"). Without children the games still work and progress goes to a guest entry. Progress saved before profiles existed becomes the first child, without a name, until the parents add one.
+Parents add children on `/eltern/` (name, age, animal; `shared/profiles.js`, key `thinklab:profiles`). The start page asks "Wer spielt?" when there are several children, and every game shows the child's animal and name top left (`homeButton()` from `kit.js`, tap = back to "Wer spielt?"). Without children the games still work and progress goes to a guest entry. Progress saved before profiles existed becomes the first child, without a name, until the parents add one.
 
-**Games that fit the age** (`shared/fit.js`). Every game in `catalog.js` has `ages: [from, to]`. A child sees the games for their age; games for younger children stay visible 2 more years (`EASY_GRACE`). Parents can switch any game on or off per child on `/eltern/`. The first time a child plays a game, it starts at the highest level whose `age` is at least 2 years below the child's age (`START_BELOW`): generous on purpose, the child moves up quickly from there.
+**Games that fit the age** (`shared/fit.js`). Every game in `catalog.js` has `ages: [from, to]`. A child sees the games for their age; games for younger children stay visible 2 more years (`EASY_GRACE`). Parents can switch any game on or off per child on `/eltern/`. The age is saved with the day it was entered and grows by one every year after that, so no birthday is stored. The first time a child plays a game, it starts at the highest level whose `age` is at least 2 years below the child's age (`START_BELOW`): generous on purpose, the child moves up quickly from there.
 
 Every game reports to `shared/progress.js`, which saves on this device only, one report per child (localStorage key `thinklab:progress:<child id>`). Nothing is sent anywhere.
 
