@@ -173,6 +173,20 @@ a:focus-visible {
 
 .topbar .spacer { flex: 1; }
 
+/* Older children read by themselves: every sentence a game would say shows here (shared/kit.js say()). */
+.caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8em;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  text-wrap: balance;
+}
+
 .card {
   background: var(--card);
   border: 3px solid var(--ink);

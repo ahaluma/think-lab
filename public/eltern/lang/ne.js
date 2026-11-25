@@ -35,6 +35,11 @@ export default {
   switchedOn: "तपाईंले खोल्नुभएको",
   switchedOff: "तपाईंले बन्द गर्नुभएको",
   harder: (age) => `कठिन तहहरू पनि खोल्नुहोस् (${age} वर्षदेखि)`,
+  readAloudTitle: "आफैँ पढेर सुनाउने",
+  readAloudOn: (name) => `खेलहरूले ${name}लाई प्रश्न र स्याबासी पढेर सुनाउँछन्`,
+  readAloudOff: (name) => `${name} आफैँ प्रश्न पढ्छ, 🔊 थिच्दा पढेर सुनाउँछ`,
+  readAloudAge: (n) => `तपाईंले नछान्दा: ${n} वर्षभन्दा कममा खुला, ${n} वर्षदेखि बन्द`,
+  readAloudLabel: (name) => `${name}का लागि आफैँ पढेर सुनाउने`,
   showGame: (game, name) => `${name} लाई ${game} देखाउने`,
   weekdays: ["आ", "सो", "मं", "बु", "बि", "शु", "श"],
 };
