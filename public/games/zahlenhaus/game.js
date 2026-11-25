@@ -1,8 +1,10 @@
 // "Zahlenhaus" – splitting numbers (part and whole), for about 4 to 6 years.
 // Animals stand in front of a house. The house shows 0. First the child counts the animals;
-// the number appears on the meadow sign. Then some go into the house: the meadow sign shows how many
-// are still outside and the house shows "?". How many are in the house? After the right answer
-// the house shows its number and the total appears in a block next to the house (3 and 2 make 5). The child learns that 5 is 3 and 2, 4 and 1 …
+// the number appears on the meadow sign. Then some go into the house.
+//   Early levels: the house is open. How many are in the house? How many are still outside?
+//   Later levels: the house stays closed. The child knows the total and sees who is outside:
+//   how many are hiding in the house?
+// At the end the total appears in a block next to the house: "Drei und zwei sind zusammen fünf." The child learns that 5 is 3 and 2, 4 and 1 …
 // Levels go from 3 animals up to 10 (see LEVELS).
 // All texts are in lang/<language>.js; names of the animals are shared (shared/lang).
 
@@ -24,17 +26,20 @@ const ANIMALS = things(T).filter((t) => WALKERS.includes(t.id));
 const STARS_PER_GAME = 5;
 
 // Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   total – how many animals there are in all: [fewest, most]. 1 to total - 1 of them go into the house.
+//   total  – how many animals there are in all: [fewest, most]. 1 to total - 1 of them go into the house.
+//   hidden – false: the house is open, the child counts inside and outside (three questions).
+//            true: the house stays closed, the child knows the total and sees who is outside:
+//            how many are hiding in the house?
 const LEVELS = [
-  { total: [3, 3] },
-  { total: [4, 4] },
-  { total: [3, 4] },
-  { total: [5, 5] },
-  { total: [3, 5] },
-  { total: [6, 6] },
-  { total: [6, 7] },
-  { total: [7, 8] },
-  { total: [8, 10] },
+  { total: [3, 3], hidden: false },
+  { total: [4, 4], hidden: false },
+  { total: [3, 5], hidden: false },
+  { total: [3, 4], hidden: true },
+  { total: [5, 5], hidden: true },
+  { total: [3, 6], hidden: true },
+  { total: [6, 7], hidden: true },
+  { total: [7, 8], hidden: true },
+  { total: [8, 10], hidden: true },
 ];
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -46,9 +51,10 @@ let stars = 0;
 let animal = ANIMALS[0];
 let lastAnimal = null;
 
-// A round has two steps:
-//   1. "first" – count all animals ("Wie viele Hasen sind da?")
-//   2. "house" – some went into the house: "Wie viele Hasen sind im Haus?"
+// The steps of a round:
+//   "first"   – count all animals ("Wie viele Hasen sind da?")
+//   open house (early levels):  "inside"  – how many are in the house?  then "outside" – how many are still outside?
+//   closed house (later levels): "hidden" – how many are hiding in the house?
 let phase = "first";
 let total = 0;
 let inside = 0; // animals in the house
@@ -109,7 +115,8 @@ async function walkIn() {
 // ---------- One round
 
 const amount = (n) => T.amount(n, animal, T.numbers[n]);
-const question = () => (phase === "first" ? T.first(animal) : T.question(animal));
+const QUESTIONS = { first: T.first, inside: T.question, outside: T.outsideQuestion, hidden: T.hiddenQuestion };
+const question = () => QUESTIONS[phase](animal);
 
 function newRound() {
   locked = true;
@@ -133,17 +140,35 @@ function newRound() {
   say(question());
 }
 
-// Step 2: some go into the house, then ask how many are inside.
+// Step 2: some go into the house. Early levels: the house opens and the child counts inside.
+// Later levels: the house stays closed; the meadow sign shows who is outside, the house shows "?".
 async function intoHouse() {
-  phase = "house";
+  const hidden = LEVELS[level].hidden;
   misses = 0;
   answer = inside;
   $("answers").innerHTML = "";
   await Promise.all([say(T.goIn), walkIn()]);
-  $("outside").textContent = num(total - inside); // still on the meadow
   $("sign").textContent = "?";
+  if (hidden) {
+    phase = "hidden";
+    $("outside").textContent = num(total - inside); // still on the meadow
+  } else {
+    phase = "inside";
+    $("outside").textContent = ""; // counted later
+    openHouse(true);
+  }
   // Common mix-ups: the number outside and the number of all.
   drawAnswers(answer, shuffle([total - inside, total]).filter((n) => n !== answer));
+  locked = false;
+  say(question());
+}
+
+// Step 3 (early levels): how many are still outside?
+function stillOutside() {
+  phase = "outside";
+  misses = 0;
+  answer = total - inside;
+  drawAnswers(answer, shuffle([inside, total]).filter((n) => n !== answer));
   locked = false;
   say(question());
 }
@@ -169,20 +194,22 @@ function drawAnswers(right, extra) {
   }
 }
 
+// The last question of a round counts for the parents' report: that is the splitting part.
+const isLast = () => phase === "outside" || phase === "hidden";
+
 function choose(b, n) {
   if (locked) return;
 
   if (n !== answer) {
-    // Only step 2 counts for the parents' report: that is the splitting part.
-    if (phase === "house") progress.answer(ID, false);
+    if (isLast()) progress.answer(ID, false);
     sound.wrong();
     b.classList.remove("shake");
     void b.offsetWidth; // restart the animation
     b.classList.add("shake");
     b.disabled = true;
     misses++;
-    if (phase === "first") return void say(oops(T.countAgain));
-    // In the house: first think again, then the house opens so the child can count.
+    if (phase !== "hidden") return void say(oops(T.countAgain));
+    // Behind the closed wall: first think again, then the house opens so the child can count.
     if (misses >= 2) openHouse(true);
     say(oops(misses < 2 ? T.thinkAgain(amount(total)) : T.countNow));
     return;
@@ -191,23 +218,28 @@ function choose(b, n) {
   locked = true;
   b.classList.add("right", "bounce");
   sound.right();
+  const then = (text, ms, next) => Promise.all([say(cheer(text)), wait(ms)]).then(() => setTimeout(next, 300));
 
   if (phase === "first") {
     $("outside").textContent = num(total); // all of them are on the meadow
-    Promise.all([say(cheer(T.firstRight(amount(total)))), wait(900)]).then(() => setTimeout(intoHouse, 300));
-    return;
+    return void then(T.firstRight(amount(total)), 900, intoHouse);
+  }
+  if (phase === "inside") {
+    $("sign").textContent = num(inside);
+    return void then(T.insideRight(T.numbers[inside]), 900, stillOutside);
   }
 
+  // Last question ("outside" or "hidden"): everything is shown, and the total goes in the block.
   progress.answer(ID, true);
   openHouse(true); // show who is inside, so the child can check
   $("sign").textContent = num(inside);
-  setTimeout(() => ($("total").textContent = num(total)), 900); // in the house and outside together
+  $("outside").textContent = num(total - inside);
+  setTimeout(() => ($("total").textContent = num(total)), 700); // in the house and outside together
   stars++;
   drawStars();
 
   const words = [inside, total - inside, total].map((x) => T.numbers[x]);
-  const next = stars >= STARS_PER_GAME ? finish : newRound;
-  Promise.all([say(cheer(T.right(...words))), wait(1600)]).then(() => setTimeout(next, 300));
+  then(T.together(...words), 1800, stars >= STARS_PER_GAME ? finish : newRound);
 }
 
 function finish() {
