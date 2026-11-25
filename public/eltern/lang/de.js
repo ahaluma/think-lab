@@ -38,6 +38,11 @@ export default {
   switchedOn: "von Ihnen eingeschaltet",
   switchedOff: "von Ihnen ausgeschaltet",
   harder: (age) => `Auch schwerere Stufen erlauben (ab ${age} Jahren)`,
+  readAloudTitle: "Automatisch vorlesen",
+  readAloudOn: (name) => `Die Spiele lesen ${name} Aufgaben und Lob vor`,
+  readAloudOff: (name) => `${name} liest die Aufgaben selbst, die 🔊-Taste liest auf Wunsch vor`,
+  readAloudAge: (n) => `ohne Ihre Wahl: unter ${n} Jahren an, ab ${n} aus`,
+  readAloudLabel: (name) => `Für ${name} automatisch vorlesen`,
   showGame: (game, name) => `${game} für ${name} zeigen`,
   weekdays: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };

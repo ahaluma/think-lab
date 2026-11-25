@@ -9,6 +9,8 @@
 //   profiles.add({ name, age, animal }) / profiles.update(id, changes) / profiles.remove(id)
 //   profiles.setGame(id, gameId, true / false / null) → parents switch a game on or off (null = by age)
 //   profiles.setHarder(id, gameId, true / false) → parents open levels above the child's age (shared/fit.js)
+//   profiles.readAloud(kid)   → do games read tasks and feedback aloud by themselves? (shared/kit.js say())
+//   profiles.setReadAloud(id, true / false / null) → parents decide; null = by age (READ_ALOUD_UNTIL)
 //
 // Stored shape (localStorage "thinklab:profiles", version 1):
 //   { v: 1, current: "k1", kids: [{ id: "k1", name: "Mila", age: 5, ageSince: "2026-11-25", animal: "🐰",
@@ -18,6 +20,8 @@
 //           the child is one year older (profiles.age()). No birthday needed. shared/fit.js uses the age
 //           for start levels and which games a child sees.
 //   games – only games the parents switched on (true) or off (false). Missing = decided by age.
+//   readAloud – the parents' choice: true / false. Missing = by age: on below READ_ALOUD_UNTIL, off from then
+//           on, so older children read the tasks themselves (the 🔊 button still reads aloud on request).
 //   harder – games where the parents opened the levels above the child's age: { "plus": true }.
 
 import { store } from "./store.js";
@@ -166,6 +170,26 @@ export function setGame(id, gameId, on) {
   kid.games = { ...kid.games };
   if (on === null) delete kid.games[gameId];
   else kid.games[gameId] = Boolean(on);
+  write(p);
+}
+
+/** From this age games no longer read aloud by themselves: the child reads the task (🔊 reads on request). */
+export const READ_ALOUD_UNTIL = 8;
+
+/** Do games read aloud by themselves for this child? The parents' choice, else by age. Without a child: yes. */
+export function readAloud(kid) {
+  if (kid?.readAloud === true || kid?.readAloud === false) return kid.readAloud;
+  const a = age(kid);
+  return a === null || a < READ_ALOUD_UNTIL;
+}
+
+/** Parents switch reading aloud on (true) or off (false) for one child; null = by age again. */
+export function setReadAloud(id, on) {
+  const p = read();
+  const kid = p.kids.find((k) => k.id === id);
+  if (!kid) return;
+  if (on === null) delete kid.readAloud;
+  else kid.readAloud = Boolean(on);
   write(p);
 }
 

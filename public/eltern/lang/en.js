@@ -38,6 +38,11 @@ export default {
   switchedOn: "switched on by you",
   switchedOff: "switched off by you",
   harder: (age) => `Also allow harder levels (from age ${age})`,
+  readAloudTitle: "Read aloud automatically",
+  readAloudOn: (name) => `The games read tasks and praise aloud to ${name}`,
+  readAloudOff: (name) => `${name} reads the tasks; the 🔊 button reads aloud on request`,
+  readAloudAge: (n) => `without your choice: on under ${n}, off from ${n}`,
+  readAloudLabel: (name) => `Read aloud automatically for ${name}`,
   showGame: (game, name) => `Show ${game} to ${name}`,
   weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
 };

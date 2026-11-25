@@ -33,13 +33,35 @@ if ("speechSynthesis" in window) {
   speechSynthesis.addEventListener("voiceschanged", pickVoice);
 }
 
+// Reading aloud by itself depends on the child (profiles.readAloud: off from 8 years, parents decide).
+// When it is off, a game shows every sentence as text under the top bar instead, and the 🔊 button
+// (id "speak", in every game) still reads aloud: a tap on it lets the next say() speak.
+const inGame = Boolean(document.getElementById("speak"));
+const quiet = inGame && !profiles.readAloud(profiles.current());
+let asked = false; // the 🔊 button was tapped: speak the next sentence
+let caption = null;
+if (quiet) {
+  caption = document.createElement("p");
+  caption.className = "caption";
+  caption.setAttribute("aria-live", "polite");
+  document.querySelector(".topbar")?.after(caption);
+  document.addEventListener("click", (e) => { if (e.target.closest?.("#speak")) {
+      asked = true;
+      setTimeout(() => (asked = false), 300);
+    } }, true);
+}
+
 /**
  * Read a sentence out loud. Stops whatever was being said before.
  * Returns a promise that resolves when the voice is done, so a game can move on
  * right after the sentence instead of waiting a fixed time.
+ * When the child reads by themselves (see above): shows the sentence and waits a moment.
  */
 export function say(text) {
   const done = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  if (caption) caption.textContent = text;
+  if (quiet && !asked) return done(Math.min(2500, 600 + text.length * 25));
+  asked = false;
   if (!("speechSynthesis" in window)) return done(1200);
 
   // Only cancel when something is playing: on Android, cancel() on an idle voice

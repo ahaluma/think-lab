@@ -223,6 +223,41 @@ function harderToggle(game, kid) {
   return label;
 }
 
+// ---------- Reading aloud (per child)
+
+function readAloudHint(kid) {
+  const on = profiles.readAloud(kid);
+  const parts = [on ? T.readAloudOn(kidName(kid)) : T.readAloudOff(kidName(kid))];
+  if (kid.readAloud === true || kid.readAloud === false) parts.push(kid.readAloud ? T.switchedOn : T.switchedOff);
+  else parts.push(T.readAloudAge(num(profiles.READ_ALOUD_UNTIL)));
+  return parts.join(" · ");
+}
+
+if (shown) {
+  const box = $("readAloud");
+  const row = el("div", "game");
+  row.append(el("span", "game-icon", "🔊"));
+  const info = el("div", "game-info");
+  const hint = el("span", "muted", readAloudHint(shown));
+  info.append(el("strong", "", T.readAloudTitle), hint);
+  const label = el("label", "switch");
+  const input = el("input");
+  input.type = "checkbox";
+  input.setAttribute("role", "switch");
+  input.checked = profiles.readAloud(shown);
+  input.setAttribute("aria-label", T.readAloudLabel(kidName(shown)));
+  input.addEventListener("change", () => {
+    const byAge = profiles.readAloud({ ...shown, readAloud: undefined });
+    profiles.setReadAloud(shown.id, input.checked === byAge ? null : input.checked);
+    shown.readAloud = profiles.get(shown.id).readAloud;
+    hint.textContent = readAloudHint(shown);
+  });
+  label.append(input, el("span", "slider"));
+  row.append(info, label);
+  box.append(row);
+  box.hidden = false;
+}
+
 if (shown) {
   $("gamesNote").textContent = T.gamesNote(kidName(shown));
   $("gamesNote").hidden = false;

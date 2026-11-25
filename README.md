@@ -161,7 +161,7 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
 
 | Helper                     | What it does                                                      |
 | -------------------------- | ----------------------------------------------------------------- |
-| `say(T.question)`          | Reads text out loud in the device's language (built-in voice)     |
+| `say(T.question)`          | Reads text out loud in the device's language (built-in voice). From 8 years (or when the parents switch it off on `/eltern/`) it shows the text under the top bar instead; the 🔊 button (`id="speak"`) still reads aloud |
 | `sound.tap()` / `right()` / `wrong()` / `win()` | Short sounds made in the browser, no files      |
 | `celebrate()`              | Confetti                                                          |
 | `shuffle(list)`, `pick(list)`, `randInt(1, 5)` | Random order, random item, random number        |
@@ -174,7 +174,7 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
 
 ## Guidelines for every game
 
-- **No reading required.** Use pictures and `say()`. Text on screen is for parents.
+- **No reading required.** Use pictures and `say()`. Text on screen is for parents. Children from 8 read the `say()` sentences themselves (`profiles.readAloud`), so every game needs the 🔊 button with `id="speak"`.
 - **Big targets.** Buttons at least 56 px, play area fits a 320 px wide phone without scrolling sideways.
 - **Kind feedback.** Wrong answers get a soft sound and "nochmal", never a buzzer or a lost life.
 - **Short rounds.** About five tasks, then a reward.
