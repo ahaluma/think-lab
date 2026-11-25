@@ -7,14 +7,20 @@ export default {
     vehicle: "Animal or vehicle? Tap the right basket!",
     color: "What colour is it? Tap the right basket!",
     size: "Is the animal big or small?",
+    kind3: "Animal, fruit or vehicle? Tap the right basket!",
+    kind4: "Animal, fruit, vehicle or flower? Tap the right basket!",
   },
   hint: {
     kind: "Is it an animal or fruit?",
     vehicle: "Is it an animal or a vehicle?",
     color: "Look at the colour!",
     size: "Is it big or small?",
+    kind3: "Is it an animal, fruit or a vehicle?",
+    kind4: "Is it an animal, fruit, a vehicle or a flower?",
   },
   allSorted: "All sorted!",
+  trick: { k: "The colour does not matter!", c: "Only the colour counts!" },
+  newRule: "New rule!",
   odd: "Which one does not belong?",
   oddHint: "Look closely. Three are the same.",
   why: {
@@ -26,9 +32,12 @@ export default {
     green: "The others are all green.",
     big: "The others are all big.",
     small: "The others are all small.",
+    flower: "The others are all flowers.",
+    blue: "The others are all blue.",
   },
   groups: {
     animal: "animals", fruit: "fruit", vehicle: "vehicles",
     red: "red", yellow: "yellow", green: "green", big: "big", small: "small",
+    flower: "flowers", blue: "blue",
   },
 };

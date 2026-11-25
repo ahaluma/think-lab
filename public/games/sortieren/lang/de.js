@@ -8,14 +8,21 @@ export default {
     vehicle: "Tier oder Fahrzeug? Tipp auf den richtigen Korb!",
     color: "Welche Farbe hat es? Tipp auf den richtigen Korb!",
     size: "Ist das Tier groß oder klein?",
+    kind3: "Tier, Obst oder Fahrzeug? Tipp auf den richtigen Korb!",
+    kind4: "Tier, Obst, Fahrzeug oder Blume? Tipp auf den richtigen Korb!",
   },
   hint: {
     kind: "Ist es ein Tier oder Obst?",
     vehicle: "Ist es ein Tier oder ein Fahrzeug?",
     color: "Schau auf die Farbe!",
     size: "Ist es groß oder klein?",
+    kind3: "Ist es ein Tier, Obst oder ein Fahrzeug?",
+    kind4: "Ist es ein Tier, Obst, ein Fahrzeug oder eine Blume?",
   },
   allSorted: "Alles sortiert!",
+  // Tricky things and the rule switch: said before the hint after a wrong basket. k = sorting by kind, c = by colour.
+  trick: { k: "Die Farbe ist egal!", c: "Nur die Farbe zählt!" },
+  newRule: "Neue Regel!",
   odd: "Was passt nicht dazu?",
   oddHint: "Schau genau. Drei sind gleich.",
   // Said after the right odd one: what the other three have in common.
@@ -28,10 +35,13 @@ export default {
     green: "Die anderen sind alle grün.",
     big: "Die anderen sind alle groß.",
     small: "Die anderen sind alle klein.",
+    flower: "Die anderen sind alle Blumen.",
+    blue: "Die anderen sind alle blau.",
   },
   // Names of the baskets (for screen readers).
   groups: {
     animal: "Tiere", fruit: "Obst", vehicle: "Fahrzeuge",
     red: "rot", yellow: "gelb", green: "grün", big: "groß", small: "klein",
+    flower: "Blumen", blue: "blau",
   },
 };

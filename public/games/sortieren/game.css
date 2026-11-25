@@ -65,6 +65,7 @@
 .basket.red { background: #ffb3b3; }
 .basket.yellow { background: #ffe680; }
 .basket.green { background: #b9e8a4; }
+.basket.blue { background: #b3d4ff; }
 
 .inside {
   display: flex;
@@ -93,6 +94,33 @@
 .basket.small .seed {
   font-size: clamp(22px, 7vw, 30px);
   min-height: clamp(40px, 14vw, 56px);
+}
+
+/* 3 baskets in a row, 4 baskets as 2 x 2: smaller. */
+.baskets.n3 {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.baskets.n4 {
+  gap: 10px;
+}
+
+.baskets.n3 .basket,
+.baskets.n4 .basket {
+  min-height: 112px;
+  padding: 8px 4px;
+  border-radius: 12px 12px 30px 30px;
+}
+
+.baskets.n3 .inside,
+.baskets.n4 .inside {
+  font-size: clamp(20px, 6.5vw, 28px);
+}
+
+.baskets.n3 .seed,
+.baskets.n4 .seed {
+  font-size: clamp(32px, 10vw, 44px);
 }
 
 /* Odd one out: four big buttons. */

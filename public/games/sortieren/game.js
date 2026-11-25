@@ -3,6 +3,8 @@
 // (animal or fruit, red or yellow, big or small…). Each basket already holds one example.
 // Odd one out: four things, three belong together. The child taps the one that does not fit.
 // Levels go from animal/fruit to colours to big/small, then "Was passt nicht dazu?" (see LEVELS).
+// Harder levels after that: 3 and 4 baskets, tricky things (a yellow animal when the fruit basket
+// shows a banana), and a rule switch: the same things sorted by colour first, then by kind.
 // All texts are in lang/<language>.js. The things here need no names: the game only speaks the rule.
 
 import { say, oneOf, sound, celebrate, shuffle, icons } from "../../shared/kit.js";
@@ -20,31 +22,37 @@ const STARS_PER_GAME = 5;
 // Only clear cases: a tomato or a carrot is not "Obst", so they only appear in colour rounds.
 const ITEMS = [
   // Big animals
-  { i: "🐘", k: "animal", s: "big" }, { i: "🦒", k: "animal", s: "big" }, { i: "🐳", k: "animal", s: "big" },
+  { i: "🐘", k: "animal", s: "big" }, { i: "🦒", k: "animal", s: "big" }, { i: "🐳", k: "animal", s: "big", c: "blue" },
   { i: "🦏", k: "animal", s: "big" }, { i: "🦕", k: "animal", s: "big" }, { i: "🐊", k: "animal", s: "big", c: "green" },
   { i: "🦈", k: "animal", s: "big" }, { i: "🦁", k: "animal", s: "big" }, { i: "🐻", k: "animal", s: "big" },
   { i: "🐄", k: "animal", s: "big" }, { i: "🐎", k: "animal", s: "big" }, { i: "🦛", k: "animal", s: "big" },
   // Small animals
   { i: "🐜", k: "animal", s: "small" }, { i: "🐞", k: "animal", s: "small", c: "red" }, { i: "🐌", k: "animal", s: "small" },
   { i: "🦋", k: "animal", s: "small" }, { i: "🐸", k: "animal", s: "small", c: "green" }, { i: "🐭", k: "animal", s: "small" },
-  { i: "🐝", k: "animal", s: "small" }, { i: "🐥", k: "animal", s: "small", c: "yellow" }, { i: "🐛", k: "animal", s: "small", c: "green" },
+  { i: "🐝", k: "animal", s: "small", c: "yellow" }, { i: "🐥", k: "animal", s: "small", c: "yellow" },
+  { i: "🐤", k: "animal", s: "small", c: "yellow" }, { i: "🐛", k: "animal", s: "small", c: "green" },
   { i: "🦀", k: "animal", s: "small", c: "red" },
   // Other animals
   { i: "🐼", k: "animal" }, { i: "🦊", k: "animal" }, { i: "🐰", k: "animal" }, { i: "🐧", k: "animal" },
   { i: "🦉", k: "animal" }, { i: "🐙", k: "animal" }, { i: "🦘", k: "animal" }, { i: "🐢", k: "animal", c: "green" },
+  { i: "🐬", k: "animal", c: "blue" },
   // Fruit
   { i: "🍎", k: "fruit", c: "red" }, { i: "🍓", k: "fruit", c: "red" }, { i: "🍒", k: "fruit", c: "red" },
   { i: "🍌", k: "fruit", c: "yellow" }, { i: "🍋", k: "fruit", c: "yellow" }, { i: "🍏", k: "fruit", c: "green" },
   { i: "🍐", k: "fruit", c: "green" }, { i: "🍇", k: "fruit" }, { i: "🍊", k: "fruit" }, { i: "🍉", k: "fruit" },
-  { i: "🍍", k: "fruit" }, { i: "🥝", k: "fruit" },
+  { i: "🍍", k: "fruit" }, { i: "🥝", k: "fruit" }, { i: "🫐", k: "fruit", c: "blue" },
   // Vehicles
   { i: "🚗", k: "vehicle", c: "red" }, { i: "🚒", k: "vehicle", c: "red" }, { i: "🚕", k: "vehicle", c: "yellow" },
   { i: "🚜", k: "vehicle" }, { i: "🚢", k: "vehicle" }, { i: "🚂", k: "vehicle" }, { i: "✈️", k: "vehicle" },
   { i: "🚲", k: "vehicle" }, { i: "🚌", k: "vehicle" }, { i: "🚀", k: "vehicle" }, { i: "🚁", k: "vehicle" },
+  { i: "🚙", k: "vehicle", c: "blue" },
+  // Flowers
+  { i: "🌹", k: "flower", c: "red" }, { i: "🌻", k: "flower", c: "yellow" }, { i: "🌷", k: "flower" },
+  { i: "🌸", k: "flower" }, { i: "🌺", k: "flower" }, { i: "🌼", k: "flower", c: "yellow" },
   // Other things, for colours only
-  { i: "🎈", c: "red" }, { i: "🌹", c: "red" }, { i: "🍅", c: "red" }, { i: "⭐", c: "yellow" },
-  { i: "🌻", c: "yellow" }, { i: "🌽", c: "yellow" }, { i: "🧀", c: "yellow" }, { i: "🥒", c: "green" },
-  { i: "🥦", c: "green" }, { i: "🌵", c: "green" }, { i: "🍀", c: "green" },
+  { i: "🎈", c: "red" }, { i: "🍅", c: "red" }, { i: "⭐", c: "yellow" }, { i: "🌽", c: "yellow" },
+  { i: "🧀", c: "yellow" }, { i: "🥒", c: "green" }, { i: "🥦", c: "green" }, { i: "🌵", c: "green" },
+  { i: "🍀", c: "green" }, { i: "🧢", c: "blue" }, { i: "💧", c: "blue" },
 ];
 
 // The rules. attr = which property counts, groups = the two baskets (or the two kinds in "odd one out").
@@ -55,12 +63,19 @@ const RULES = {
   redGreen: { attr: "c", groups: ["red", "green"], ask: "color" },
   yellowGreen: { attr: "c", groups: ["yellow", "green"], ask: "color" },
   size: { attr: "s", groups: ["big", "small"] },
+  kind3: { attr: "k", groups: ["animal", "fruit", "vehicle"] },
+  kind4: { attr: "k", groups: ["animal", "fruit", "vehicle", "flower"] },
+  color3: { attr: "c", groups: ["red", "yellow", "green"], ask: "color" },
+  color4: { attr: "c", groups: ["red", "yellow", "green", "blue"], ask: "color" },
 };
+const COLOR_PAIRS = ["redYellow", "redGreen", "yellowGreen"];
 
 // Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   mode  – "sort": things into two baskets, "odd": which one does not belong?
-//   rules – one is picked each round (see RULES)
-//   n     – how many things to sort for one star
+//   mode   – "sort": things into baskets, "odd": which one does not belong?,
+//            "switch": sort by colour, then the same things by kind, "mix": a round of one of `levels`
+//   rules  – one is picked each round (see RULES)
+//   n      – how many things to sort for one star
+//   tricky – the things look like the other basket (a yellow animal when the fruit basket shows a banana)
 const LEVELS = [
   { mode: "sort", rules: ["kind"], n: 3 },
   { mode: "sort", rules: ["vehicle"], n: 3 },
@@ -71,6 +86,13 @@ const LEVELS = [
   { mode: "odd", rules: ["kind", "vehicle"] },
   { mode: "odd", rules: ["redYellow", "redGreen", "yellowGreen"] },
   { mode: "odd", rules: ["kind", "vehicle", "redYellow", "redGreen", "yellowGreen", "size"] },
+  { mode: "sort", rules: ["kind3"], n: 4 },
+  { mode: "sort", rules: ["color3"], n: 4 },
+  { mode: "sort", rules: ["kind", "vehicle"], n: 4, tricky: true },
+  { mode: "sort", rules: COLOR_PAIRS, n: 4, tricky: true },
+  { mode: "sort", rules: ["kind4", "color4"], n: 5 },
+  { mode: "switch" },
+  { mode: "mix", levels: [9, 10, 11, 12, 13, 14] },
 ];
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -82,6 +104,8 @@ let stars = 0;
 let rule = null; // the rule of this round, from RULES
 let queue = []; // sorting: the things still to sort
 let odd = null; // odd one out: the thing that does not fit
+let current = null; // the level of this round (in "mix" levels one of the others)
+let switchTo = null; // rule switch: the things to sort again by kind
 let locked = false;
 
 const group = (item) => item[rule.attr]; // e.g. "red" for 🍎 in a colour round
@@ -104,38 +128,104 @@ function drawStars() {
 }
 
 function question() {
-  return LEVELS[level].mode === "sort" ? T.ask[ask()] : T.odd;
+  return current.mode === "odd" ? T.odd : T.ask[ask()];
 }
 
 async function newRound() {
-  const l = LEVELS[level];
+  current = LEVELS[level];
+  if (current.mode === "mix") current = LEVELS[oneOf(current.levels)];
   locked = true;
-  rule = RULES[oneOf(l.rules)];
-  const sorting = l.mode === "sort";
+  const sorting = current.mode !== "odd";
   $("item").hidden = $("queue").hidden = $("baskets").hidden = !sorting;
   $("four").hidden = sorting;
-  if (sorting) makeSort(l.n);
-  else makeOdd();
+  if (current.mode === "switch") makeSwitch();
+  else if (sorting) {
+    rule = RULES[oneOf(current.rules)];
+    makeSort(current.n, current.tricky);
+  } else {
+    rule = RULES[oneOf(current.rules)];
+    makeOdd();
+  }
   show("round");
   await say(question());
   locked = false;
 }
 
-// ---------- Sorting into two baskets
+// ---------- Sorting into baskets
 
-function makeSort(n) {
-  const [a, b] = shuffle(rule.groups); // the baskets swap sides, so the child looks, not remembers
-  const of = (g) => shuffle(ITEMS.filter((item) => group(item) === g));
-  const as = of(a);
-  const bs = of(b);
-  const seeds = [as.shift(), bs.shift()]; // one example in each basket
-  // At least one thing for each basket, the rest random.
-  const rest = shuffle([...as.slice(1), ...bs.slice(1)]).slice(0, n - 2);
-  queue = shuffle([as[0], bs[0], ...rest]);
+// The other property: colour when sorting by kind, kind when sorting by colour.
+const otherAttr = () => (rule.attr === "k" ? "c" : "k");
 
+function makeSort(n, tricky) {
+  const groups = shuffle(rule.groups); // the baskets swap places, so the child looks, not remembers
+  const pools = groups.map((g) => shuffle(ITEMS.filter((item) => group(item) === g)));
+  const other = otherAttr();
+
+  // One example in each basket. Tricky: examples that differ in the other property too.
+  const seeds = [];
+  for (const pool of pools) {
+    const seed = tricky
+      ? pool.find((item) => item[other] && !seeds.some((x) => x[other] === item[other])) || pool[0]
+      : pool[0];
+    pool.splice(pool.indexOf(seed), 1);
+    seeds.push(seed);
+  }
+
+  // Tricky things look like the example of another basket (same colour, or same kind).
+  const looksWrong = (item, i) => tricky && seeds.some((seed, j) => j !== i && item[other] && seed[other] === item[other]);
+  if (tricky) pools.forEach((pool, i) => pool.sort((x, y) => looksWrong(y, i) - looksWrong(x, i)));
+
+  // At least one thing for each basket, the rest random (tricky ones first).
+  const first = pools.map((pool) => pool.shift());
+  let rest = pools.flatMap((pool, i) => pool.map((item) => [item, looksWrong(item, i)]));
+  rest = shuffle(rest).sort((x, y) => y[1] - x[1]).map(([item]) => item);
+  queue = shuffle([...first, ...rest.slice(0, n - groups.length)]);
+
+  drawBaskets(groups, seeds);
+  drawItem();
+}
+
+// Rule switch: four things, one for each colour and kind (red animal, red fruit, yellow animal, yellow fruit).
+// First sorted by colour, then "Neue Regel!" and the same four by kind.
+// The examples are neutral: a red balloon, a yellow star; then a panda and grapes without a colour.
+function makeSwitch() {
+  rule = RULES[oneOf(COLOR_PAIRS)];
+  const kinds = ["animal", "fruit"];
+  const things = [];
+  for (const c of rule.groups) for (const k of kinds) things.push(oneOf(ITEMS.filter((x) => x.c === c && x.k === k)));
+  const groups = shuffle(rule.groups);
+  const seeds = groups.map((c) => oneOf(ITEMS.filter((x) => x.c === c && !kinds.includes(x.k))));
+  switchTo = things;
+  queue = shuffle(things);
+  drawBaskets(groups, seeds);
+  drawItem();
+}
+
+async function switchRule() {
+  rule = RULES.kind;
+  const groups = shuffle(rule.groups);
+  const seeds = groups.map((k) => oneOf(ITEMS.filter((x) => x.k === k && !x.c)));
+  queue = shuffle(switchTo);
+  switchTo = null;
+  const item = $("item");
+  item.textContent = "🔄";
+  item.classList.remove("pop");
+  void item.offsetWidth;
+  item.classList.add("pop");
+  await say(cheer(T.allSorted));
+  await say(T.newRule);
+  drawBaskets(groups, seeds);
+  drawItem();
+  await say(T.ask[ask()]);
+  locked = false;
+}
+
+function drawBaskets(groups, seeds) {
   const box = $("baskets");
   box.innerHTML = "";
-  for (const [g, seed] of [[a, seeds[0]], [b, seeds[1]]]) {
+  box.className = `baskets n${groups.length}`;
+  groups.forEach((g, i) => {
+    const seed = seeds[i];
     const basket = document.createElement("button");
     basket.type = "button";
     basket.className = `basket ${g}`;
@@ -144,8 +234,7 @@ function makeSort(n) {
     basket.innerHTML = `<span class="inside"><i class="seed">${seed.i}</i></span>`;
     basket.addEventListener("click", () => drop(basket));
     box.append(basket);
-  }
-  drawItem();
+  });
 }
 
 function drawItem() {
@@ -168,7 +257,9 @@ async function drop(basket) {
     void basket.offsetWidth;
     basket.classList.add("shake");
     locked = true;
-    await say(oops(T.hint[ask()]));
+    // Tricky things and the rule switch: say what does not count.
+    const trick = current.tricky || current.mode === "switch" ? `${T.trick[rule.attr]} ` : "";
+    await say(oops(trick + T.hint[ask()]));
     locked = false;
     return;
   }
@@ -190,8 +281,12 @@ async function drop(basket) {
     return;
   }
 
-  $("item").textContent = "🧺";
   $("queue").innerHTML = "";
+  if (switchTo) {
+    switchRule(); // same things again, now by kind
+    return;
+  }
+  $("item").textContent = "🧺";
   win(T.allSorted);
 }
 
