@@ -5,7 +5,7 @@
 // Levels go from 1–4 up to numbers near 20 (see LEVELS).
 // All texts are in lang/<language>.js; number words are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, pick, randInt, icons } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, shuffle, pick, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 
@@ -250,7 +250,7 @@ function startGame() {
 
 fill(T);
 document.title = `${T.title} · AnkaPlay`;
-$("home").innerHTML = icons.home;
+homeButton($("home"));
 $("speak").innerHTML = icons.speaker;
 $("play").innerHTML = icons.play;
 $("again").innerHTML = icons.again;

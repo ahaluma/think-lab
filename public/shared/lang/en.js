@@ -18,6 +18,9 @@ export default {
   language: "Language",
   forParents: "For parents: progress",
   privacy: "Privacy",
+  whoPlays: "Who is playing?",
+  switchKid: "Switch child",
+  addKidsHint: "For parents: add children",
 
   // "3 elephants" for speaking. n = how many, word = the number word,, word = the number word ("three")
   amount: (n, thing, word) => (n === 1 ? thing.one : `${word} ${thing.many}`),

@@ -4,7 +4,7 @@
 // Every card is read out when tapped ("vier" / "vier Äpfel"). Levels go up to 6 pairs and 10 (see LEVELS).
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, icons } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 import { things } from "../../shared/things.js";
@@ -168,7 +168,7 @@ function startGame() {
 
 fill(T);
 document.title = `${T.title} · AnkaPlay`;
-$("home").innerHTML = icons.home;
+homeButton($("home"));
 $("speak").innerHTML = icons.speaker;
 $("play").innerHTML = icons.play;
 $("again").innerHTML = icons.again;
