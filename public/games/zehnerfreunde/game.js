@@ -1,6 +1,6 @@
 // "Zehnerfreunde" – how many are missing to 10? For about 4 to 8 years. Follows "Zahlenhaus".
 // A ten-frame (2 x 5 places) with animals. The child taps how many places are still empty:
-// 7 and 3 are "friends", together they make 10. At the end friends fill the empty places.
+// 7 and 3 are "friends", together they make 10. At the end the missing animals walk into the empty places.
 // Levels: first a single row of 5, then 10 with the top row full, then any amount, then the animals
 // mixed up on the frame, then the frame only shown briefly, then only numbers: 7 + ? = 10 (see levels.js).
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
@@ -34,7 +34,6 @@ let answer = 0; // empty places: total - have
 let places = []; // which places hold an animal
 let thing = null;
 let lastThing = null;
-let friend = null; // the thing that fills the empty places at the end
 let first = true; // numbers: the gap comes second (7 + ? = 10) or first (? + 3 = 10)
 let misses = 0;
 let showing = false;
@@ -107,7 +106,7 @@ async function newRound() {
   misses = 0;
   have = randInt(...current.have);
   answer = current.total - have;
-  [thing, friend] = shuffle(THINGS.filter((t) => t !== lastThing));
+  thing = shuffle(THINGS.filter((t) => t !== lastThing))[0];
   lastThing = thing;
   first = !(current.swap && Math.random() < 0.5);
   // In order (first row first), or on random places.
@@ -183,14 +182,14 @@ async function choose(b, n) {
   $("cover").hidden = true;
   if (current.show === "numbers") setView(false), $("sum").hidden = false;
   drawSum(true);
-  // Friends move into the empty places, one after another.
+  // The missing animals (the same ones the question asked about) move in, one after another, on green.
   sound.right();
   const empty = [...$("frame").children].filter((p) => p.classList.contains("empty"));
   empty.forEach((p, i) =>
     setTimeout(() => {
       p.classList.remove("empty");
       p.classList.add("friend", "pop");
-      p.textContent = friend.icon;
+      p.textContent = thing.icon;
     }, i * 120),
   );
   play.solved();
