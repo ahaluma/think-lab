@@ -45,6 +45,7 @@ export const CATEGORIES = [
       { id: "muster", name: { de: "Muster", en: "Patterns", ne: "ढाँचा" } },
       { id: "sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याउने" } },
       { id: "formen", name: { de: "Formen", en: "Shapes", ne: "आकार" } },
+      { id: "raumlage", name: { de: "Oben, unten, links, rechts", en: "Up, down, left, right", ne: "माथि, तल, बायाँ, दायाँ" } },
     ],
   },
 ];
@@ -71,6 +72,7 @@ export const GAMES = [
   { id: "plus", ages: [5, 10], skill: "rechnen/plus", name: { de: "Plus", en: "Plus", ne: "जोड" }, icon: "➕", color: "#ffc4a3" },
   { id: "zahlen-memory", ages: [3, 7], skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
   { id: "muster-kette", ages: [3, 12], skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
+  { id: "raumlage", ages: [3, 7], skill: "logik/raumlage", name: { de: "Wo ist es?", en: "Where is it?", ne: "कहाँ छ?" }, icon: "🧸", color: "#ffd0e8" },
   { id: "sortieren", ages: [3, 12], skill: "logik/sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याऊ" }, icon: "🧺", color: "#d8c8ff" },
 ];
 
