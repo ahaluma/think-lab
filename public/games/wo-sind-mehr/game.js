@@ -6,6 +6,7 @@
 import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
 const ID = "wo-sind-mehr";
@@ -17,28 +18,14 @@ const THINGS = things(T);
 const STARS_PER_GAME = 5;
 const SLOTS = 10; // 5 x 2 places per group
 
-// Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   max     – the most things in one group
-//   minDiff – the smallest difference between the groups (big = easy to see)
-//   same    – the "same" button is shown, and sometimes both groups are equal
-//   fewer   – sometimes the question is "where are fewer?"
-const LEVELS = [
-  { max: 5, minDiff: 3, same: false, fewer: false },
-  { max: 6, minDiff: 2, same: false, fewer: false },
-  { max: 8, minDiff: 2, same: false, fewer: false },
-  { max: 8, minDiff: 1, same: false, fewer: false },
-  { max: 6, minDiff: 1, same: true, fewer: false },
-  { max: 10, minDiff: 1, same: true, fewer: false },
-  { max: 8, minDiff: 1, same: true, fewer: true },
-  { max: 10, minDiff: 1, same: true, fewer: true },
-];
+// Levels: see levels.js (easy to hard).
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 const groups = [$("groupA"), $("groupB")];
 
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let level = progress.level(ID, LEVELS);
 let stars = 0;
 let thing = null;
 let lastThing = null;
@@ -178,7 +165,7 @@ function choose(answer, el) {
 
 function finish() {
   level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   show("done");
   sound.win();
   celebrate();

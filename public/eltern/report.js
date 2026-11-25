@@ -1,10 +1,12 @@
 // Parents' page: the children on this device (shared/profiles.js) and the progress report
 // of one child (shared/progress.js). Ordered like the catalog: category → skill → game.
+// Each game has a switch: does this child see it on the start page? (shared/fit.js)
 import { CATEGORIES, GAMES } from "../catalog.js";
 import { texts, fill, local, lang, LANGS, num } from "../shared/i18n.js";
 import { icons } from "../shared/kit.js";
 import * as progress from "../shared/progress.js";
 import * as profiles from "../shared/profiles.js";
+import * as fit from "../shared/fit.js";
 
 const T = await texts(import.meta.url);
 fill(T);
@@ -17,6 +19,14 @@ const kids = profiles.all();
 const shown = profiles.get(new URLSearchParams(location.search).get("kind")) || profiles.current();
 const data = progress.all(shown?.id);
 const kidName = (kid) => kid.name || T.noName;
+
+// The levels of every game, for their labels ("Zählen bis 5").
+const LEVELS = {};
+await Promise.all(
+  GAMES.map(async (g) => {
+    LEVELS[g.id] = (await import(`../games/${g.id}/levels.js`)).LEVELS;
+  }),
+);
 
 function el(tag, className, text) {
   const e = document.createElement(tag);
@@ -42,7 +52,7 @@ function drawKids() {
     li.append(el("span", "kid-animal", kid.animal));
     const info = el("div", "kid-info");
     info.append(el("strong", "", kidName(kid)));
-    info.append(el("span", "muted", profiles.complete(kid) ? T.years(num(kid.age)) : T.addNameAge));
+    info.append(el("span", "muted", profiles.complete(kid) ? T.years(num(profiles.age(kid))) : T.addNameAge));
     li.append(info);
     const edit = el("button", "btn small", T.edit);
     edit.type = "button";
@@ -81,17 +91,30 @@ function drawAnimals() {
   }
 }
 
-const ageSelect = $("kidAge");
-for (let a = profiles.MIN_AGE; a <= profiles.MAX_AGE; a++) {
-  const o = el("option", "", T.years(num(a)));
-  o.value = a;
-  ageSelect.append(o);
+// Birth month: month names in the page language, years for children from 2 to 12.
+const monthSelect = $("kidMonth");
+const yearSelect = $("kidYear");
+const thisYear = new Date().getFullYear();
+monthSelect.append(Object.assign(el("option", "", T.month), { value: "" }));
+for (let m = 1; m <= 12; m++) {
+  const o = el("option", "", new Date(2000, m - 1, 1).toLocaleDateString(LANGS[lang].voice, { month: "long" }));
+  o.value = String(m).padStart(2, "0");
+  monthSelect.append(o);
+}
+yearSelect.append(Object.assign(el("option", "", T.year), { value: "" }));
+for (let y = thisYear - 2; y >= thisYear - 12; y--) {
+  const o = el("option", "", num(y));
+  o.value = y;
+  yearSelect.append(o);
 }
 
 function openForm(kid) {
   editing = kid?.id ?? null;
   $("kidName").value = kid?.name ?? "";
-  ageSelect.value = kid?.age ?? 5;
+  const [y, m] = (kid?.born || "-").split("-");
+  if (y && !yearSelect.querySelector(`option[value="${y}"]`)) yearSelect.append(Object.assign(el("option", "", num(y)), { value: y }));
+  yearSelect.value = y;
+  monthSelect.value = m ?? "";
   // A new child gets an animal nobody else has yet.
   animal = kid?.animal ?? (profiles.ANIMALS.find((a) => !kids.some((k) => k.animal === a)) || profiles.ANIMALS[0]);
   drawAnimals();
@@ -113,7 +136,13 @@ $("kidSave").addEventListener("click", () => {
     $("kidName").focus();
     return;
   }
-  const kid = { name, age: Number(ageSelect.value), animal };
+  for (const select of [monthSelect, yearSelect]) {
+    if (!select.value) {
+      select.focus();
+      return;
+    }
+  }
+  const kid = { name, born: `${yearSelect.value}-${monthSelect.value}`, animal };
   if (editing) profiles.update(editing, kid);
   else profiles.add(kid);
   location.reload();
@@ -163,6 +192,43 @@ document.getElementById("today").textContent = T.today(t.right, t.wrong, t.round
 
 // ---------- Category → skill → game
 
+/** "3–6 Jahre", plus why the game is hidden or that the parents decided. */
+function ageHint(game, kid) {
+  const [from, to] = game.ages;
+  const parts = [T.ages(num(from), num(to))];
+  const choice = kid.games?.[game.id];
+  const why = fit.why(game, kid);
+  if (choice === true && why) parts.push(T.switchedOn);
+  else if (choice === false && !why) parts.push(T.switchedOff);
+  else if (why === "young") parts.push(T.tooYoung(num(from)));
+  else if (why === "old") parts.push(T.tooEasy);
+  return parts.join(" · ");
+}
+
+/** On/off: does this child see the game on the start page? Back to "by age" when it matches the age. */
+function gameSwitch(game, kid, row) {
+  const label = el("label", "switch");
+  const box = el("input");
+  box.type = "checkbox";
+  box.setAttribute("role", "switch");
+  box.checked = fit.visible(game, kid);
+  box.setAttribute("aria-label", T.showGame(local(game.name), kidName(kid)));
+  box.addEventListener("change", () => {
+    const byAge = fit.why(game, kid) === null;
+    profiles.setGame(kid.id, game.id, box.checked === byAge ? null : box.checked);
+    kid.games = profiles.get(kid.id).games;
+    row.classList.toggle("off", !box.checked);
+    row.querySelector(".game-info > .muted").textContent = ageHint(game, kid);
+  });
+  label.append(box, el("span", "slider"));
+  return label;
+}
+
+if (shown) {
+  $("gamesNote").textContent = T.gamesNote(kidName(shown));
+  $("gamesNote").hidden = false;
+}
+
 const root = document.getElementById("categories");
 
 for (const category of CATEGORIES) {
@@ -180,9 +246,12 @@ for (const category of CATEGORIES) {
       const g = data.games[game.id];
       const row = el("div", "game");
       row.append(el("span", "game-icon", game.icon));
+      const seen = shown && fit.visible(game, shown);
+      if (!seen) row.classList.add("off");
 
       const info = el("div", "game-info");
       info.append(el("strong", "", local(game.name)));
+      if (shown) info.append(el("span", "muted", ageHint(game, shown)));
 
       if (!g) {
         info.append(el("span", "muted", T.notPlayed));
@@ -190,16 +259,20 @@ for (const category of CATEGORIES) {
         const answers = g.right + g.wrong;
         const percent = answers ? Math.round((g.right / answers) * 100) : 0;
         const meter = el("div", "meter");
+        const levels = LEVELS[game.id];
+        const found = levels.findIndex((l) => l.id === g.levelId);
+        const index = found !== -1 ? found : Math.min(g.level, levels.length - 1);
         const fillBar = el("div", "meter-fill");
-        fillBar.style.width = ((g.level + 1) / g.levels) * 100 + "%";
+        fillBar.style.width = ((index + 1) / levels.length) * 100 + "%";
         meter.append(fillBar);
         info.append(
-          el("span", "", T.level(g.level + 1, g.levels)),
+          el("span", "", `${T.level(num(index + 1), num(levels.length))} · ${local(levels[index].label)}`),
           meter,
           el("span", "muted", T.stats(g.rounds, percent, g.last ? showDate(g.last) : "–")),
         );
       }
       row.append(info);
+      if (shown) row.append(gameSwitch(game, shown, row));
       box.append(row);
     }
     section.append(box);

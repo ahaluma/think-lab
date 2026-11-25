@@ -8,6 +8,7 @@
 import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
 const ID = "muster-kette";
@@ -20,27 +21,13 @@ const STARS_PER_GAME = 5;
 const CHOICES = 3;
 const MAX_BEADS = 12;
 
-// Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   pats – the patterns, one is picked each round. Letters stand for things: "ABB" = 🍎🍌🍌🍎🍌🍌…
-//   gap  – "end": what comes next?  "middle": what is missing in the chain?
-//   reps – how many times the pattern is shown before the gap (end only)
-const LEVELS = [
-  { pats: ["AB"], gap: "end", reps: 2 },
-  { pats: ["AB"], gap: "end", reps: 3 },
-  { pats: ["ABB"], gap: "end", reps: 2 },
-  { pats: ["ABC"], gap: "end", reps: 2 },
-  { pats: ["AABB"], gap: "end", reps: 2 },
-  { pats: ["AB", "ABB", "ABC", "AABB"], gap: "end", reps: 2 },
-  { pats: ["AB"], gap: "middle" },
-  { pats: ["ABB", "ABC"], gap: "middle" },
-  { pats: ["AB", "ABB", "ABC", "AABB"], gap: "middle" },
-];
+// Levels: see levels.js (easy to hard).
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let level = progress.level(ID, LEVELS);
 let stars = 0;
 let chain = []; // the things in the chain, the gap included
 let unit = 0; // length of the pattern
@@ -186,7 +173,7 @@ async function choose(b, thing) {
 
 function finish() {
   level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   show("done");
   sound.win();
   celebrate();

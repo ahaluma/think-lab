@@ -6,6 +6,7 @@
 import { say, oneOf, sound, celebrate, shuffle, randInt, store, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
 const ID = "wie-viele";
@@ -16,18 +17,7 @@ const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal!"
 const STARS_PER_GAME = 5;
 const SLOTS = 12; // 4 x 3 places in the tray
 
-// Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   max – the most things to count
-const LEVELS = [
-  { max: 3 },
-  { max: 4 },
-  { max: 5 },
-  { max: 6 },
-  { max: 7 },
-  { max: 8 },
-  { max: 9 },
-  { max: 10 },
-];
+// Levels: see levels.js (easy to hard).
 
 const THINGS = things(T);
 
@@ -35,7 +25,7 @@ const THINGS = things(T);
 const oldMax = store.get("wie-viele:max", null);
 if (oldMax !== null) {
   const old = LEVELS.findIndex((l) => l.max >= oldMax);
-  progress.setLevel(ID, old === -1 ? LEVELS.length - 1 : old, LEVELS.length);
+  progress.setLevel(ID, old === -1 ? LEVELS.length - 1 : old, LEVELS);
   store.remove("wie-viele:max");
 }
 
@@ -43,7 +33,7 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let level = progress.level(ID, LEVELS);
 let max = LEVELS[level].max;
 let stars = 0;
 let answer = 0;
@@ -170,7 +160,7 @@ function choose(b, n) {
 function finish() {
   level = Math.min(level + 1, LEVELS.length - 1);
   max = LEVELS[level].max;
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   show("done");
   sound.win();
   celebrate();

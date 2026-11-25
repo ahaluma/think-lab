@@ -308,3 +308,82 @@
 [hidden] {
   display: none !important;
 }
+
+/* ---------- Birth month */
+.field.born {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 8px;
+}
+
+.field.born legend {
+  padding: 0;
+  margin-bottom: 6px;
+}
+
+/* ---------- Show a game to this child: on/off */
+.games-note {
+  text-align: left;
+}
+
+.game.off .game-icon,
+.game.off .game-info > strong {
+  opacity: 0.45;
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 56px;
+  height: 32px;
+  margin-top: 2px;
+}
+
+.switch input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.switch .slider {
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--paper);
+  pointer-events: none;
+  transition: background 0.15s;
+}
+
+.switch .slider::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform 0.15s;
+}
+
+.switch input:checked + .slider {
+  background: var(--ok);
+}
+
+.switch input:checked + .slider::after {
+  transform: translateX(24px);
+  background: #fff;
+}
+
+.switch input:focus-visible + .slider {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}

@@ -11,6 +11,7 @@
 import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
 const ID = "zahlenhaus";
@@ -25,28 +26,13 @@ const ANIMALS = things(T).filter((t) => WALKERS.includes(t.id));
 
 const STARS_PER_GAME = 5;
 
-// Levels = the parameters of this game. After every 5 stars the child moves up one level.
-//   total  – how many animals there are in all: [fewest, most]. 1 to total - 1 of them go into the house.
-//   hidden – false: the house is open, the child counts inside and outside (three questions).
-//            true: the house stays closed, the child knows the total and sees who is outside:
-//            how many are hiding in the house?
-const LEVELS = [
-  { total: [3, 3], hidden: false },
-  { total: [4, 4], hidden: false },
-  { total: [3, 5], hidden: false },
-  { total: [3, 4], hidden: true },
-  { total: [5, 5], hidden: true },
-  { total: [3, 6], hidden: true },
-  { total: [6, 7], hidden: true },
-  { total: [7, 8], hidden: true },
-  { total: [8, 10], hidden: true },
-];
+// Levels: see levels.js (easy to hard).
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let level = progress.level(ID, LEVELS);
 let stars = 0;
 let animal = ANIMALS[0];
 let lastAnimal = null;
@@ -244,7 +230,7 @@ function choose(b, n) {
 
 function finish() {
   level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   show("done");
   sound.win();
   celebrate();

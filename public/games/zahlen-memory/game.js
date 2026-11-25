@@ -7,6 +7,7 @@
 import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
+import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
 
 const ID = "zahlen-memory";
@@ -17,27 +18,13 @@ const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Ups! Das passt nicht."
 
 const BOARDS_PER_GAME = 3; // one star for every board with all pairs found
 
-// Levels = the parameters of this game. After a game (3 boards) the child moves up one level.
-//   pairs – how many pairs on the board
-//   max   – the biggest number (numbers are 1 to max, each number once)
-//   open  – true: all cards lie open; false: face down, tap to turn
-const LEVELS = [
-  { pairs: 3, max: 3, open: true },
-  { pairs: 3, max: 5, open: true },
-  { pairs: 3, max: 3, open: false },
-  { pairs: 4, max: 5, open: false },
-  { pairs: 4, max: 6, open: false },
-  { pairs: 5, max: 7, open: false },
-  { pairs: 5, max: 8, open: false },
-  { pairs: 6, max: 10, open: true },
-  { pairs: 6, max: 10, open: false },
-];
+// Levels: see levels.js (easy to hard).
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
 const screens = { start: $("start"), round: $("round"), done: $("done") };
 
-let level = Math.min(progress.level(ID), LEVELS.length - 1);
+let level = progress.level(ID, LEVELS);
 let stars = 0;
 let picked = null; // the first card of a try
 let found = 0; // pairs found on this board
@@ -151,7 +138,7 @@ async function tap(card) {
 
 function finish() {
   level = Math.min(level + 1, LEVELS.length - 1);
-  progress.round(ID, level, LEVELS.length);
+  progress.round(ID, level, LEVELS);
   show("done");
   sound.win();
   celebrate();

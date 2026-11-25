@@ -14,7 +14,7 @@ Small number and logic games for young children („अङ्क“ / *anka* = n
 | **Category** | A big learning area. One row of tiles on the start page.                                        | `zahlen`, `rechnen`, `sprache`  |
 | **Skill**    | One ability inside a category (the "subcategory"). Groups the progress report.                  | `zahlen/zaehlen`, `rechnen/plus` |
 | **Game**     | One folder with one game idea. Several small games may train the same skill.                    | `games/wie-viele/`              |
-| **Level**    | The parameters that make a game easier or harder, listed in the game's `LEVELS`. After 5 stars the child moves up one level by itself. | `{ max: 3 }`, `{ max: 4 }` … |
+| **Level**    | The parameters that make a game easier or harder, in the game's `levels.js`. Each level has a fixed `id`, the `age` it is made for and a `label` for parents. After 5 stars the child moves up one level by itself. | `{ id: "bis-3", age: 3, max: 3 }` … |
 
 Categories, skills and games are all listed in `public/catalog.js`. Levels stay inside each game, because only the game knows what "harder" means.
 
@@ -31,7 +31,8 @@ think-lab/
 │   │   ├── kit.js           ← helpers: say(), sound, celebrate(), shuffle(), pick(), icons
 │   │   ├── i18n.js          ← languages: texts(), fill(), local()
 │   │   ├── progress.js      ← progress report saved on this device, one per child
-│   │   ├── profiles.js      ← children on this device (name, age, animal)
+│   │   ├── profiles.js      ← children on this device (name, birth month, animal)
+│   │   ├── fit.js           ← which games and start levels fit a child's age
 │   │   ├── things.js        ← the 34 animals and things that number games count and compare
 │   │   ├── store.js         ← safe localStorage
 │   │   └── lang/de.js       ← words every page needs (numbers, praise, names of the things)
@@ -39,7 +40,8 @@ think-lab/
 │   │   └── wie-viele/       ← one folder = one game (flat: the category is in catalog.js)
 │   │       ├── index.html
 │   │       ├── game.css
-│   │       ├── game.js      ← the game and its LEVELS, no texts
+│   │       ├── game.js      ← the game, no texts
+│   │       ├── levels.js    ← its levels: id, age, label, parameters
 │   │       └── lang/de.js   ← every sentence of this game
 │   ├── eltern/              ← parents' page: the progress report
 │   ├── datenschutz/         ← privacy policy (DE/EN/NE); your contact details go in contact.js
@@ -73,15 +75,19 @@ Every page speaks German, English and Nepali (नेपाली). The start pag
 
 ## Progress report
 
-Parents add children on `/eltern/` (name, age 3–12, animal; `shared/profiles.js`, key `thinklab:profiles`). The start page asks "Wer spielt?" when there are several children, and every game shows the child's animal and name top left (`homeButton()` from `kit.js`, tap = back to "Wer spielt?"). Without children the games still work and progress goes to a guest entry. Progress saved before profiles existed becomes the first child, without a name, until the parents add one.
+Parents add children on `/eltern/` (name, birth month and year, animal; `shared/profiles.js`, key `thinklab:profiles`). The start page asks "Wer spielt?" when there are several children, and every game shows the child's animal and name top left (`homeButton()` from `kit.js`, tap = back to "Wer spielt?"). Without children the games still work and progress goes to a guest entry. Progress saved before profiles existed becomes the first child, without a name, until the parents add one.
+
+**Games that fit the age** (`shared/fit.js`). Every game in `catalog.js` has `ages: [from, to]`. A child sees the games for their age; games for younger children stay visible 2 more years (`EASY_GRACE`). Parents can switch any game on or off per child on `/eltern/`. The first time a child plays a game, it starts at the highest level whose `age` is at least 2 years below the child's age (`START_BELOW`): generous on purpose, the child moves up quickly from there.
 
 Every game reports to `shared/progress.js`, which saves on this device only, one report per child (localStorage key `thinklab:progress:<child id>`). Nothing is sent anywhere.
 
 - `progress.answer(id, true / false)` after every answer.
-- `progress.round(id, newLevel, LEVELS.length)` after a finished round (5 stars).
-- `progress.level(id)` gives the level to start with.
+- `progress.round(id, newLevel, LEVELS)` after a finished round (5 stars).
+- `progress.level(id, LEVELS)` gives the level to start with (an index into `LEVELS`).
 
-Parents open it with the "Eltern" button (an adult and a child) on the start page (`/eltern/`): the last 14 days, and for every category → skill → game the level, rounds, share of right answers and the last day played. "Fortschritt löschen" clears it.
+Progress saves the level's `id`, so levels can be added or reordered later without moving a child to a different level. Never rename a level id.
+
+Parents open it with the "Eltern" button (an adult and a child) on the start page (`/eltern/`): the last 14 days, and for every category → skill → game the level with its label, rounds, share of right answers and the last day played, and a switch per game: does this child see it? "Fortschritt löschen" clears it.
 
 ## Privacy
 
@@ -135,10 +141,10 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
    ```
 3. Add one line to `GAMES` in `public/catalog.js`, with the skill it trains:
    ```js
-   { id: "plus-aepfel", skill: "rechnen/plus", name: { de: "Plus", en: "Plus" }, icon: "➕", color: "#12a564" },
+   { id: "plus-aepfel", ages: [5, 8], skill: "rechnen/plus", name: { de: "Plus", en: "Plus" }, icon: "➕", color: "#12a564" },
    ```
    A new skill or category is one more entry in `CATEGORIES` in the same file.
-4. In `game.js`, set `ID` to the folder name and write the `LEVELS`. Put every sentence in `lang/de.js`, `lang/en.js` and `lang/ne.js`. Write numbers on screen with `num(n)`.
+4. In `game.js`, set `ID` to the folder name. Write the levels in `levels.js` (id, age, label, parameters) and the game's `ages` in `catalog.js`. Put every sentence in `lang/de.js`, `lang/en.js` and `lang/ne.js`. Write numbers on screen with `num(n)`.
 5. Check it locally (Step 1), then commit on a new branch and open a pull request. Cloudflare posts a preview link on the pull request (if branch builds are on). Merge it when you are happy.
 
 ### The helpers in `shared/`
