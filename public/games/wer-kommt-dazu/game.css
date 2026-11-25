@@ -1,0 +1,68 @@
+/* "Wer kommt dazu?" only. Screens, stars, play button and number answer buttons are in /shared/base.css. */
+
+#round {
+  justify-content: flex-start;
+  padding-top: 8px;
+}
+
+/* The meadow: sky on top, grass below. Animals are placed by percent (see game.js). */
+.meadow {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  overflow: hidden;
+  background: linear-gradient(#dff1ff 0 22%, #9fdc8a 22% 100%);
+}
+
+.field {
+  position: absolute;
+  inset: 0;
+}
+
+.animal {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: clamp(34px, 11vw, 58px);
+  line-height: 1;
+  transition: left 1s ease-in-out, opacity 1s ease-in;
+  animation: hop 0.35s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+/* While walking, the animal hops. */
+.animal.walk {
+  animation-play-state: running;
+}
+
+@keyframes hop {
+  to { margin-top: -10px; }
+}
+
+/* The bush covers the places of the animals, but not the right edge where animals come and go. */
+.bush {
+  position: absolute;
+  left: -6%;
+  right: 11%;
+  top: 6%;
+  bottom: -4%;
+  border-radius: 0 48px 0 0;
+  background:
+    radial-gradient(circle at 20% 30%, #4fb85a 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 18%, #4fb85a 0 20%, transparent 21%),
+    radial-gradient(circle at 80% 30%, #4fb85a 0 18%, transparent 19%),
+    #2f8f3f;
+  border: 3px solid #1f6b2c;
+  transform: translateY(110%);
+  transition: transform 0.6s ease-out;
+  z-index: 1;
+}
+
+.bush.up {
+  transform: none;
+}
+
+/* Answers wait (invisible, so nothing jumps) until the animals have moved. */
+.answers.waiting {
+  visibility: hidden;
+}
