@@ -46,6 +46,7 @@ export const CATEGORIES = [
       { id: "sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याउने" } },
       { id: "formen", name: { de: "Formen", en: "Shapes", ne: "आकार" } },
       { id: "raumlage", name: { de: "Oben, unten, links, rechts", en: "Up, down, left, right", ne: "माथि, तल, बायाँ, दायाँ" } },
+      { id: "hinschauen", name: { de: "Genau hinschauen", en: "Looking closely", ne: "ध्यान दिएर हेर्ने" } },
     ],
   },
 ];
@@ -74,6 +75,7 @@ export const GAMES = [
   { id: "muster-kette", ages: [3, 12], skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
   { id: "raumlage", ages: [3, 7], skill: "logik/raumlage", name: { de: "Wo ist es?", en: "Where is it?", ne: "कहाँ छ?" }, icon: "🧸", color: "#ffd0e8" },
   { id: "sortieren", ages: [3, 12], skill: "logik/sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याऊ" }, icon: "🧺", color: "#d8c8ff" },
+  { id: "genau-hinschauen", ages: [3, 8], skill: "logik/hinschauen", name: { de: "Genau hinschauen", en: "Look closely", ne: "ध्यान दिएर हेर" }, icon: "🔍", color: "#ffd1b8" },
 ];
 
 /** Games of one category, in catalog order. */
