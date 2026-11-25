@@ -178,9 +178,9 @@ a:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.8em;
+  min-height: 2.6em;
   margin: 0;
-  font-size: 18px;
+  font-size: clamp(20px, 5.6vw, 24px);
   font-weight: 700;
   line-height: 1.35;
   text-align: center;
@@ -361,16 +361,16 @@ a:focus-visible {
 
 .numpad {
   width: 100%;
-  max-width: 420px;
+  max-width: 300px;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 16px;
 }
 
 .numpad .key {
-  min-height: 52px;
+  min-height: 46px;
   padding: 0;
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 900;
 }
 

@@ -44,8 +44,10 @@ let locked = false;
 // Older children type the answer on a number pad instead of picking one of three (profiles.typeAnswers).
 const typing = profiles.typeAnswers(profiles.current());
 let pad = null;
-/** Typing: after this many wrong answers the answer is shown, so nobody gets stuck. */
-const SHOW_AFTER = 3;
+/** Picking one of three: the help comes after two wrong answers. Typing: the child tries longer by
+ *  themselves, the help (no answer in it) comes after five, the answer after seven, so nobody gets stuck. */
+const HELP_AFTER = typing ? 5 : 2;
+const SHOW_AFTER = 7;
 
 // Number words up to 20, digits above and in the levels up to 100 and 1000 (the voice reads them).
 const word = (n) => (current?.big ? num(n) : T.numbers[n] ?? num(n));
@@ -209,12 +211,12 @@ function helpAfterMiss() {
   const kind = current.show;
   if (kind === "pictures") return T.countAll;
   if (kind === "bush") {
-    if (misses >= 2) openBush();
+    if (misses >= HELP_AFTER) openBush();
     return T.startAt(word(a));
   }
   if (kind === "frames") return T.fillTen;
   // Numbers only
-  if (misses < 2) return question();
+  if (misses < HELP_AFTER) return question();
   if (current.help === "blocks") {
     drawPictures("blocks");
     return rechnen.carries(a, b).some(Boolean) ? T.carryHelp : T.blocksHelp;
