@@ -1,0 +1,30 @@
+// English texts for "Gleich machen" (Make it equal). Names of the animals are in /shared/lang/en.js.
+const big = (text) => text[0].toUpperCase() + text.slice(1);
+
+export default {
+  title: "Make it equal",
+  intro: "Make it equal! Both meadows should have the same. Press start!",
+  house: "House",
+  tapAway: (thing) => `Send ${thing.many} home until both meadows have the same!`,
+  tapMore: (thing) => `Bring ${thing.many} out of the house until both meadows have the same!`,
+  askAway: (thing) => `How many ${thing.many} must go home so both meadows have the same?`,
+  askMore: (thing) => `How many ${thing.many} must come out so both meadows have the same?`,
+  numbersAway: (a, c) => `${big(a)} and ${c}. How many must go so they are the same?`,
+  numbersMore: (a, c) => `${big(a)} and ${c}. How many must come so they are the same?`,
+  wrongSideAway: "This meadow has fewer. Send some home from the other meadow!",
+  wrongSideMore: "This meadow already has more. Bring some to the other meadow!",
+  staysHere: "These stay here. Bring some out of the house!",
+  stillMore: "Not the same yet. One meadow still has more.",
+  stillFewer: "Not the same yet. One meadow still has fewer.",
+  tooManyAway: "Too many! Tap the house and one comes back.",
+  tooManyMore: "Too many! Tap one and it goes back into the house.",
+  thinkAgain: "Look again carefully!",
+  pairsAway: "Look: always two make a pair. Who has no partner goes home.",
+  pairsMore: "Look: always two make a pair. Who has no partner needs one from the house.",
+  pairsCount: "Look: always two make a pair. How many have no partner?",
+  wentHome: (n, what) => `${big(what)} ${n === 1 ? "goes" : "go"} home.`,
+  cameOut: (n, what) => `${big(what)} ${n === 1 ? "comes" : "come"} out.`,
+  nowBoth: (a) => `Now both meadows have ${a}.`,
+  minusSays: (a, b, c) => `${big(a)} minus ${b} is ${c}.`,
+  plusSays: (a, b, c) => `${big(a)} plus ${b} is ${c}.`,
+};
