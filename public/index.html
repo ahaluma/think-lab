@@ -16,6 +16,7 @@
     <link rel="modulepreload" href="/shared/kit.js" />
     <link rel="modulepreload" href="/shared/i18n.js" />
     <link rel="modulepreload" href="/shared/store.js" />
+    <link rel="modulepreload" href="/shared/profiles.js" />
     <link rel="modulepreload" href="/shared/lang/de.js" />
     <script type="module" src="/hub.js"></script>
   </head>
@@ -26,10 +27,23 @@
         <div class="spacer"></div>
         <a class="icon-btn" id="parents" href="/eltern/" data-t-label="forParents" aria-label="Für Eltern: Fortschritt"></a>
       </div>
+      <!-- The child playing. Tap = "Wer spielt?". -->
+      <a class="icon-btn who kid-chip" id="kid" href="/?wer" hidden></a>
       <header class="hub-head">
         <img class="logo" src="/favicon.svg?v=3" alt="" width="56" height="56" />
         <h1><span>Anka</span><span class="play-word">Play</span></h1>
       </header>
+      <!-- "Wer spielt?": one big tile per child. Shown when there are several children. -->
+      <section class="picker" id="picker" hidden>
+        <h2 data-t="whoPlays">Wer spielt?</h2>
+        <ul class="kids" id="kids"></ul>
+      </section>
+
+      <!-- No children yet: the games work, progress is shared. A hint for the parents. -->
+      <a class="card add-kids" id="addKids" href="/eltern/#kinder" hidden>
+        <span aria-hidden="true">👧👦</span><span data-t="addKidsHint">Für Eltern: Kinder anlegen</span>
+      </a>
+
       <div class="categories" id="categories"></div>
       <footer class="hub-foot">
         <a href="/datenschutz/" data-t="privacy">Datenschutz</a>

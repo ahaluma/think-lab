@@ -7,7 +7,7 @@
 // shows a banana), and a rule switch: the same things sorted by colour first, then by kind.
 // All texts are in lang/<language>.js. The things here need no names: the game only speaks the rule.
 
-import { say, oneOf, sound, celebrate, shuffle, icons } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 
@@ -382,7 +382,7 @@ function startGame() {
 
 fill(T);
 document.title = `${T.title} · AnkaPlay`;
-$("home").innerHTML = icons.home;
+homeButton($("home"));
 $("speak").innerHTML = icons.speaker;
 $("play").innerHTML = icons.play;
 $("again").innerHTML = icons.again;

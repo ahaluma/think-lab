@@ -154,3 +154,157 @@
 .note a {
   color: var(--muted);
 }
+
+/* ---------- Children */
+.kids-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.kids-card h2 {
+  margin: 0;
+}
+
+.kid-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.kid-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.kid-row + .kid-row {
+  border-top: 2px solid var(--paper);
+}
+
+.kid-animal {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.kid-info {
+  flex: 1 1 140px;
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: break-word;
+}
+
+.kid-buttons {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.btn.small {
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 16px;
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+#kidAdd {
+  align-self: flex-start;
+}
+
+.kid-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 8px;
+  border-top: 2px solid var(--paper);
+}
+
+.kid-form[hidden] {
+  display: none;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.field input,
+.field select {
+  min-height: 48px;
+  padding: 0 12px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.animals {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.animal {
+  aspect-ratio: 1;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.animal.on {
+  border: 3px solid var(--ink);
+  background: var(--sun);
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Whose progress is shown */
+.progress-of {
+  margin: 8px 0 0;
+}
+
+.kid-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.kid-tabs:empty {
+  display: none;
+}
+
+.kid-tab {
+  padding: 8px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: var(--card);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.kid-tab.on {
+  background: var(--sun);
+}
+
+[hidden] {
+  display: none !important;
+}

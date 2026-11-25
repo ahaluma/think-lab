@@ -1,7 +1,7 @@
 // A new AnkaPlay game. Start here and replace the "Hallo!" button with your game.
 // Texts:     lang/de.js (one file per language)
 // Progress:  progress.answer() after every answer, progress.round() after a finished round
-import { say, sound, celebrate, icons, pick } from "../../shared/kit.js";
+import { say, sound, celebrate, icons, pick, homeButton } from "../../shared/kit.js";
 import { texts, fill } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 
@@ -16,7 +16,7 @@ const $ = (id) => document.getElementById(id);
 
 fill(T);
 document.title = `${T.title} · AnkaPlay`;
-$("home").innerHTML = icons.home;
+homeButton($("home"));
 $("speak").innerHTML = icons.speaker;
 
 $("speak").addEventListener("click", () => say(T.intro));

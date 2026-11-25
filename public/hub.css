@@ -110,3 +110,77 @@
   opacity: 1;
   box-shadow: 0 4px 0 var(--ink);
 }
+
+/* ---------- "Wer spielt?": one big tile per child */
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.picker h2 {
+  margin: 8px 0 0;
+  font-size: 30px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.kids {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.tile.kid {
+  width: 100%;
+  background: var(--card);
+}
+
+.tile.kid .tile-icon {
+  font-size: 80px;
+}
+
+.tile.kid .tile-name {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 24px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* No children yet: hint for the parents. */
+.add-kids {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  font-size: 18px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.add-kids span:first-child {
+  font-size: 32px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* The child playing, above the logo. */
+.kid-chip {
+  align-self: center;
+  max-width: 80%;
+  height: 60px;
+}
+
+.kid-chip .who-animal {
+  font-size: 40px;
+}
+
+.kid-chip .who-name {
+  font-size: 22px;
+}

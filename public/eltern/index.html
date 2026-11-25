@@ -15,6 +15,7 @@
     <link rel="modulepreload" href="/shared/i18n.js" />
     <link rel="modulepreload" href="/shared/store.js" />
     <link rel="modulepreload" href="/shared/progress.js" />
+    <link rel="modulepreload" href="/shared/profiles.js" />
     <link rel="modulepreload" href="/shared/lang/de.js" />
     <link rel="modulepreload" href="lang/de.js" />
     <script type="module" src="report.js"></script>
@@ -25,6 +26,38 @@
         <a class="icon-btn" id="home" href="/" data-t-label="home" aria-label="Zurück zur Startseite"></a>
         <h1 data-t="title">Fortschritt</h1>
       </div>
+
+      <!-- Children: name, age and animal. Each child has their own progress. -->
+      <section class="card kids-card" id="kinder">
+        <h2 data-t="kidsTitle">Kinder</h2>
+        <p class="muted" id="kidsNote"></p>
+        <ul class="kid-list" id="kidList"></ul>
+
+        <div class="kid-form" id="kidForm" hidden>
+          <label class="field">
+            <span data-t="name">Name</span>
+            <input id="kidName" type="text" maxlength="20" autocomplete="off" />
+          </label>
+          <label class="field">
+            <span data-t="age">Alter</span>
+            <select id="kidAge"></select>
+          </label>
+          <div class="field">
+            <span data-t="animal">Tier</span>
+            <div class="animals" id="kidAnimals" role="radiogroup"></div>
+          </div>
+          <div class="form-buttons">
+            <button class="btn ok" id="kidSave" type="button" data-t="save">Speichern</button>
+            <button class="btn" id="kidCancel" type="button" data-t="cancel">Abbrechen</button>
+          </div>
+        </div>
+
+        <button class="btn" id="kidAdd" type="button" data-t="addKid">Kind hinzufügen</button>
+      </section>
+
+      <!-- The progress below belongs to this child. -->
+      <h2 class="progress-of" id="progressOf" hidden></h2>
+      <div class="kid-tabs" id="kidTabs"></div>
 
       <section class="card days">
         <h2 data-t="last14">Letzte 14 Tage</h2>

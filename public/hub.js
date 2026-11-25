@@ -1,15 +1,18 @@
 // Builds the start page from catalog.js: one row of game tiles per category.
+// With children (shared/profiles.js): first "Wer spielt?", then the games of that child.
 import { CATEGORIES, gamesIn } from "./catalog.js";
 import { LANGS, lang, setLang, texts, fill, local } from "./shared/i18n.js";
-import { icons } from "./shared/kit.js";
+import { icons, say } from "./shared/kit.js";
+import * as profiles from "./shared/profiles.js";
 
 const T = await texts();
 fill(T);
-document.getElementById("parents").innerHTML = icons.chart;
+const $ = (id) => document.getElementById(id);
+$("parents").innerHTML = icons.chart;
 
 // ---------- Language switch (only when there is more than one language)
 
-const langs = document.getElementById("langs");
+const langs = $("langs");
 if (Object.keys(LANGS).length > 1) {
   for (const [code, info] of Object.entries(LANGS)) {
     const b = document.createElement("button");
@@ -23,9 +26,96 @@ if (Object.keys(LANGS).length > 1) {
   }
 }
 
+// ---------- Who is playing?
+
+// The picker shows when asked for (/?wer, from the child button in a game), or once per visit
+// when there are several children. One child: straight to the games.
+const SEEN = "thinklab:picked";
+function pickedThisVisit() {
+  try {
+    return sessionStorage.getItem(SEEN) === "1";
+  } catch {
+    return false;
+  }
+}
+function rememberPicked() {
+  try {
+    sessionStorage.setItem(SEEN, "1");
+  } catch {
+    /* private mode: the picker just shows again */
+  }
+}
+
+function showKid() {
+  const kid = profiles.current();
+  const chip = $("kid");
+  chip.hidden = !kid;
+  if (!kid) return;
+  chip.innerHTML = "";
+  const animal = document.createElement("span");
+  animal.className = "who-animal";
+  animal.setAttribute("aria-hidden", "true");
+  animal.textContent = kid.animal;
+  chip.append(animal);
+  if (kid.name) {
+    const name = document.createElement("span");
+    name.className = "who-name";
+    name.textContent = kid.name;
+    chip.append(name);
+  }
+  chip.setAttribute("aria-label", `${kid.name || kid.animal} · ${T.switchKid}`);
+}
+
+function showPicker(on) {
+  $("picker").hidden = !on;
+  $("categories").hidden = on;
+  $("kid").hidden = on || !profiles.current();
+  document.querySelector(".hub-head").hidden = on;
+  if (on) say(T.whoPlays);
+}
+
+function drawPicker() {
+  const list = $("kids");
+  list.innerHTML = "";
+  for (const kid of profiles.all()) {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tile kid pop";
+    const animal = document.createElement("span");
+    animal.className = "tile-icon";
+    animal.setAttribute("aria-hidden", "true");
+    animal.textContent = kid.animal;
+    const name = document.createElement("span");
+    name.className = "tile-name";
+    name.textContent = kid.name || "…";
+    b.append(animal, name);
+    b.setAttribute("aria-label", kid.name || kid.animal);
+    b.addEventListener("click", () => {
+      profiles.choose(kid.id);
+      rememberPicked();
+      history.replaceState(null, "", "/");
+      showKid();
+      showPicker(false);
+      if (kid.name) say(kid.name);
+    });
+    li.append(b);
+    list.append(li);
+  }
+}
+
+const kids = profiles.all();
+$("addKids").hidden = kids.length > 0;
+showKid();
+if (kids.length > 0) {
+  drawPicker();
+  const asked = new URLSearchParams(location.search).has("wer");
+  if (asked || (kids.length > 1 && !pickedThisVisit())) showPicker(true);
+}
+
 // ---------- Categories and game tiles
 
-const root = document.getElementById("categories");
+const root = $("categories");
 
 for (const category of CATEGORIES) {
   const games = gamesIn(category.id);

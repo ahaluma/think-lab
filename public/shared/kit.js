@@ -1,11 +1,12 @@
 // AnkaPlay kit: small helpers every game can import.
 // No libraries: only what the browser already has (speech, Web Audio, localStorage).
 //
-//   import { say, sound, celebrate, shuffle, randInt, pick, store, icons } from "../../shared/kit.js";
+//   import { say, sound, celebrate, shuffle, randInt, pick, store, icons, homeButton } from "../../shared/kit.js";
 //
 // Texts and languages: shared/i18n.js. Progress report: shared/progress.js.
 
 import { LANGS, lang } from "./i18n.js";
+import * as profiles from "./profiles.js";
 export { store } from "./store.js";
 
 // ---------- Speech (in the language of this device, see i18n.js) ----------
@@ -170,3 +171,30 @@ export const icons = {
   play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>',
   again: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>',
 };
+
+/**
+ * The button in the top left corner of every game: the child's animal and name.
+ * Tapping it goes back to "Wer spielt?" on the start page. Without children: a house.
+ */
+export function homeButton(el) {
+  const kid = profiles.current();
+  if (!kid) {
+    el.innerHTML = icons.home;
+    return;
+  }
+  el.classList.add("who");
+  el.href = "/?wer";
+  el.innerHTML = "";
+  const animal = document.createElement("span");
+  animal.className = "who-animal";
+  animal.setAttribute("aria-hidden", "true");
+  animal.textContent = kid.animal;
+  el.append(animal);
+  if (kid.name) {
+    const name = document.createElement("span");
+    name.className = "who-name";
+    name.textContent = kid.name;
+    el.append(name);
+  }
+  el.setAttribute("aria-label", `${kid.name || kid.animal} · ${el.getAttribute("aria-label") || ""}`);
+}

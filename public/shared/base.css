@@ -133,6 +133,38 @@ a:focus-visible {
 
 .icon-btn.sun { background: var(--sun); }
 
+/* The child playing, top left in every game: animal and name. Tap = "Wer spielt?". */
+.icon-btn.who {
+  width: auto;
+  max-width: 42vw;
+  display: flex;
+  gap: 6px;
+  padding: 0 14px 0 6px;
+  border-radius: 28px;
+}
+
+/* With the child button the top bar of a game gets tight: smaller gaps and stars. */
+.topbar:has(.who) {
+  gap: 6px;
+}
+
+.topbar:has(.who) .stars {
+  font-size: clamp(16px, 5.2vw, 26px);
+}
+
+.who-animal {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.who-name {
+  overflow: hidden;
+  font-size: 18px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .topbar {
   display: flex;
   align-items: center;

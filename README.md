@@ -30,7 +30,8 @@ think-lab/
 │   │   ├── base.css         ← colours, buttons, animations for every page
 │   │   ├── kit.js           ← helpers: say(), sound, celebrate(), shuffle(), pick(), icons
 │   │   ├── i18n.js          ← languages: texts(), fill(), local()
-│   │   ├── progress.js      ← progress report saved on this device
+│   │   ├── progress.js      ← progress report saved on this device, one per child
+│   │   ├── profiles.js      ← children on this device (name, age, animal)
 │   │   ├── things.js        ← the 34 animals and things that number games count and compare
 │   │   ├── store.js         ← safe localStorage
 │   │   └── lang/de.js       ← words every page needs (numbers, praise, names of the things)
@@ -72,7 +73,9 @@ Every page speaks German, English and Nepali (नेपाली). The start pag
 
 ## Progress report
 
-Every game reports to `shared/progress.js`, which saves on this device only (localStorage key `thinklab:progress`). Nothing is sent anywhere.
+Parents add children on `/eltern/` (name, age 3–12, animal; `shared/profiles.js`, key `thinklab:profiles`). The start page asks "Wer spielt?" when there are several children, and every game shows the child's animal and name top left (`homeButton()` from `kit.js`, tap = back to "Wer spielt?"). Without children the games still work and progress goes to a guest entry. Progress saved before profiles existed becomes the first child, without a name, until the parents add one.
+
+Every game reports to `shared/progress.js`, which saves on this device only, one report per child (localStorage key `thinklab:progress:<child id>`). Nothing is sent anywhere.
 
 - `progress.answer(id, true / false)` after every answer.
 - `progress.round(id, newLevel, LEVELS.length)` after a finished round (5 stars).

@@ -3,7 +3,7 @@
 // It starts with 1 to 3 things and allows one more after every 5 stars (up to 10), see LEVELS.
 // All texts are in lang/<language>.js.
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, store, icons } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, shuffle, randInt, store, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 import { things } from "../../shared/things.js";
@@ -187,7 +187,7 @@ function startGame() {
 
 fill(T);
 document.title = `${T.title} · AnkaPlay`;
-$("home").innerHTML = icons.home;
+homeButton($("home"));
 $("speak").innerHTML = icons.speaker;
 $("play").innerHTML = icons.play;
 $("again").innerHTML = icons.again;
