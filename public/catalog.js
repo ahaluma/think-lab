@@ -84,6 +84,7 @@ export const GAMES = [
   { id: "groessen", ages: [3, 7], skill: "messen/groessen", name: { de: "Größen vergleichen", en: "Compare sizes", ne: "नाप तुलना" }, icon: "📏", color: "#ffd2a6" },
   { id: "raumlage", ages: [3, 7], skill: "logik/raumlage", name: { de: "Wo ist es?", en: "Where is it?", ne: "कहाँ छ?" }, icon: "🧸", color: "#ffd0e8" },
   { id: "sortieren", ages: [3, 12], skill: "logik/sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याऊ" }, icon: "🧺", color: "#d8c8ff" },
+  { id: "formen", ages: [3, 7], skill: "logik/formen", name: { de: "Formen", en: "Shapes", ne: "आकार" }, icon: "🔺", color: "#ffd0e0" },
 ];
 
 /** Games of one category, in catalog order. */
