@@ -18,6 +18,7 @@ export const CATEGORIES = [
       { id: "reihe", name: { de: "Zahlenreihe", en: "Number order", ne: "अङ्कको क्रम" } },
       { id: "vergleichen", name: { de: "Vergleichen", en: "Comparing", ne: "तुलना" } },
       { id: "erkennen", name: { de: "Zahlen erkennen", en: "Reading numbers", ne: "अङ्क चिन्ने" } },
+      { id: "ordnung", name: { de: "Ordnungszahlen", en: "Ordinal numbers", ne: "क्रमसूचक सङ्ख्या" } },
     ],
   },
   {
@@ -69,6 +70,7 @@ export const GAMES = [
   { id: "zehnerfreunde", ages: [4, 8], skill: "rechnen/zerlegen", name: { de: "Zehnerfreunde", en: "Ten friends", ne: "दसका साथी" }, icon: "🔟", color: "#b8e6d0" },
   { id: "gleich-machen", ages: [4, 8], skill: "rechnen/minus", name: { de: "Gleich machen", en: "Make it equal", ne: "बराबर बनाऊ" }, icon: "🤝", color: "#c9efb4" },
   { id: "plus", ages: [5, 10], skill: "rechnen/plus", name: { de: "Plus", en: "Plus", ne: "जोड" }, icon: "➕", color: "#ffc4a3" },
+  { id: "wer-ist-erster", ages: [4, 7], skill: "zahlen/ordnung", name: { de: "Wer ist Erster?", en: "Who's first?", ne: "को पहिलो?" }, icon: "🥇", color: "#ffd6e8" },
   { id: "zahlen-memory", ages: [3, 7], skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
   { id: "muster-kette", ages: [3, 12], skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
   { id: "sortieren", ages: [3, 12], skill: "logik/sortieren", name: { de: "Sortieren", en: "Sorting", ne: "छुट्याऊ" }, icon: "🧺", color: "#d8c8ff" },
