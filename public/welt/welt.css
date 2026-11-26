@@ -2503,3 +2503,51 @@ body[data-world="berg"] .caption.quiet {
 .magic-cell.ask {
   background: var(--sun);
 }
+
+/* The summit: pick the tool from the backpack, then the logbook */
+.tool-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.summit-from {
+  color: #5b6478;
+  font-weight: 700;
+}
+
+.tool-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.tool-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 84px;
+  padding: 8px 6px;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.tool-btn .tool-icon {
+  font-size: 26px;
+}
+
+.tool-btn:disabled:not(.right) {
+  opacity: 0.45;
+}
+
+.summit-log .log-list {
+  margin: 0;
+  padding-left: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

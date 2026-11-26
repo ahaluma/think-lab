@@ -36,7 +36,7 @@ function magic(ctx, grid) {
   return box;
 }
 
-function picture(ctx, pic) {
+export function picture(ctx, pic) {
   if (!pic?.wall && !pic?.magic) return rows(ctx, pic);
   const scene = el("div", "scene card camp-scene wall-scene");
   scene.append(pic.wall ? wall(ctx, pic.wall).box : magic(ctx, pic.magic));
