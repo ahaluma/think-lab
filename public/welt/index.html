@@ -22,7 +22,8 @@
       </div>
       <p class="caption" id="caption" aria-live="polite"></p>
 
-      <!-- The world: one landscape with six places. Only places with something to play are awake. -->
+      <!-- The world: one landscape with six places. Only places with something to play are awake.
+           What grows at a place (class "grown") is drawn by map.js: one flower per finished round. -->
       <div class="map card" id="map" data-t-label="mapLabel" aria-label="Die Welt">
         <svg viewBox="0 0 360 430" xmlns="http://www.w3.org/2000/svg">
           <rect width="360" height="200" fill="#cfeaff" />
@@ -83,6 +84,7 @@
             <g stroke="#1b2140" stroke-width="2">
               <circle cx="268" cy="322" r="7" fill="#e8488a" /><circle cx="296" cy="340" r="7" fill="#ffc83a" /><circle cx="322" cy="318" r="7" fill="#fff" />
             </g>
+            <g class="grown" data-i="zahl"></g>
             <text class="zzz" x="286" y="308">💤</text>
           </g>
 
@@ -93,7 +95,7 @@
             <ellipse cx="184" cy="400" rx="14" ry="6" fill="#6cc070" stroke="#1b2140" stroke-width="2" />
             <path d="M22 408 Q78 300 134 408Z" fill="#b98a5a" stroke="#1b2140" stroke-width="3" />
             <ellipse cx="78" cy="392" rx="22" ry="16" fill="#3b2a1d" />
-            <g id="flowers"></g>
+            <g class="grown" data-i="teile"></g>
             <text class="zzz" x="60" y="336">💤</text>
           </g>
 

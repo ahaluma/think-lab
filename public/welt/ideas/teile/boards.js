@@ -18,59 +18,7 @@
 // A wrong answer first says what the child did ("Fünf und vier sind neun. Es sind aber sieben."),
 // the hint shows the structure, never just the answer.
 
-const el = (tag, className = "", text) => {
-  const e = document.createElement(tag);
-  if (className) e.className = className;
-  if (text !== undefined) e.textContent = text;
-  return e;
-};
-
-const button = (className, label, text) => {
-  const b = el("button", className, text);
-  b.type = "button";
-  if (label) b.setAttribute("aria-label", label);
-  return b;
-};
-
-/** n pictures, at most five in a row, so 5 and 10 are easy to see. */
-function group(n, icon, className = "") {
-  const g = el("span", "pics " + className);
-  for (let i = 0; i < n; i++) g.append(el("span", "pic pop", icon));
-  return g;
-}
-
-/** A sign that shows the whole: the number and that many dots in rows of five. */
-function sign(ctx, n) {
-  const s = el("div", "sign");
-  s.append(el("b", "", ctx.num(n)));
-  const dots = el("span", "sign-dots");
-  for (let i = 0; i < n; i++) dots.append(el("i"));
-  s.append(dots);
-  return s;
-}
-
-/** Number buttons from..to in rows of five. onPick(n, button). */
-function strip(ctx, from, to, onPick) {
-  const box = el("div", "strip");
-  for (let n = from; n <= to; n++) {
-    const b = button("btn num-btn", ctx.word(n));
-    // The digit and that many dots: a child who cannot read digits yet counts the dots.
-    const dots = el("span", "num-dots");
-    for (let i = 0; i < n; i++) dots.append(el("i"));
-    b.append(el("b", "", ctx.num(n)), dots);
-    b.addEventListener("click", () => onPick(n, b));
-    box.append(b);
-  }
-  return box;
-}
-
-function shake(node) {
-  node.classList.remove("shake");
-  void node.offsetWidth; // restart the animation
-  node.classList.add("shake");
-}
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import { el, button, group, sign, strip, shake, wait } from "../../frame/parts.js";
 
 /** The hint of the "missing part" boards: the whole as a row of places, the known part filled in. */
 function partsHint(total, known, icon) {
