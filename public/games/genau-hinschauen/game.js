@@ -11,13 +11,16 @@
 //   Later levels: the model is covered after a few seconds (tap the cloth to look again),
 //   and the board is a lake: lay the model as it looks mirrored in the water.
 //
-// See levels.js. All texts are in lang/<language>.js; names of the things are shared (shared/lang).
+// See levels.js. Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
+// All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, pick, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
+import * as gen from "../../shared/gen.js";
+import { task as makeTask } from "./tasks.js";
 
 const ID = "genau-hinschauen";
 const T = await texts(import.meta.url);
@@ -25,10 +28,11 @@ const cheer = (text) => `${oneOf(T.praise)} ${text}`;
 const oops = (text) => `${oneOf(T.oops)} ${text}`;
 
 const THINGS = things(T);
-// Things that look different when mirrored (a snail looks left or right; a lion's face does not).
-const FLIPPABLE = ["fish", "ship", "snail", "duck", "elephant", "rhino", "unicorn", "giraffe", "dinosaur", "turtle",
-  "car", "kangaroo", "whale", "crocodile", "shark", "banana", "carrot", "ant"];
-const canFlip = (thing) => FLIPPABLE.includes(thing.id);
+const THING_IDS = THINGS.map((t) => t.id); // only things with a name in this language
+const byId = Object.fromEntries(THINGS.map((t) => [t.id, t]));
+
+// Not the same picture or model again within the next three of its kind.
+const nextTask = gen.generator(makeTask, { avoid: { key: 3 } });
 
 const COLORS = { red: "#ff5a36", blue: "#2456b8", yellow: "#ffc83a", green: "#12a564" };
 const SHAPES = {
@@ -112,55 +116,12 @@ function nudge(node) {
   node.classList.add("shake");
 }
 
-// ---------- Find the differences: making the pictures
+// ---------- Find the differences: the pictures from tasks.js, with the things (names, icons) of this language
 
-function makeDiff(cfg) {
-  const places = cfg.size * cfg.size;
-  // A few kinds of things per picture; with "flip" at least two that can look the other way.
-  let types = shuffle(THINGS).slice(0, Math.min(5, Math.max(2, Math.ceil(cfg.items / 3))));
-  if (cfg.kinds.includes("flip") && types.filter(canFlip).length < 2) {
-    types = [...shuffle(THINGS.filter(canFlip)).slice(0, 2), ...types.filter((t) => !canFlip(t))].slice(0, Math.max(types.length, 2));
-  }
-  const upper = Array(places).fill(null);
-  for (const p of shuffle([...upper.keys()]).slice(0, cfg.items)) {
-    upper[p] = { thing: pick(types), flip: false, small: false, dx: randInt(-12, 12), dy: randInt(-12, 12) };
-  }
-  const lower = upper.map((c) => c && { ...c });
-  pics = [upper, lower];
-  diffs = new Map();
-
-  // The kinds of difference in turn, so a picture with three has three different ones when it can.
-  let order = [];
-  while (order.length < cfg.n) order.push(...shuffle(cfg.kinds));
-  order = order.slice(0, cfg.n);
-  const filled = () => shuffle([...upper.keys()].filter((p) => upper[p] && !diffs.has(p)));
-
-  for (const k of order) {
-    const p = filled()[0];
-    if (p === undefined) break;
-    const side = randInt(0, 1); // which picture changes
-    const cell = pics[side][p];
-    const was = cell.thing;
-    if (k === "gone") {
-      pics[side][p] = null;
-      diffs.set(p, { kind: k, a: was });
-    } else if (k === "swap") {
-      const others = (cfg.similar ? types : THINGS).filter((t) => t !== was);
-      cell.thing = pick(others.length ? others : THINGS.filter((t) => t !== was));
-      diffs.set(p, { kind: k, a: pics[0][p].thing, b: pics[1][p].thing });
-    } else if (k === "flip") {
-      if (!canFlip(was)) {
-        const turnable = types.filter(canFlip);
-        const t = pick(turnable.length ? turnable : THINGS.filter(canFlip));
-        pics[0][p].thing = pics[1][p].thing = t;
-      }
-      cell.flip = true;
-      diffs.set(p, { kind: k, a: cell.thing });
-    } else {
-      cell.small = true;
-      diffs.set(p, { kind: k, a: was });
-    }
-  }
+function makeDiff(t) {
+  const withThing = (c) => c && { ...c, thing: byId[c.thing] };
+  pics = t.pics.map((cells) => cells.map(withThing));
+  diffs = new Map(t.diffs.map(([p, d]) => [p, { ...d, a: byId[d.a], b: d.b && byId[d.b] }]));
 }
 
 // ---------- Find the differences: drawing and tapping
@@ -239,28 +200,16 @@ async function tapDiff(p, btn) {
   await solved(`${whatDiffers(d)} ${T.allFound}`);
 }
 
-// ---------- Copy the shapes: making the model
+// ---------- Copy the shapes: the model from tasks.js
 
-function makeCopy(cfg) {
-  const places = cfg.size * cfg.size;
-  const all = cfg.shapes.flatMap((shape) => cfg.colors.map((color) => ({ shape, color })));
-  const mixed = shuffle(all);
-  const used = mixed.slice(0, cfg.kinds);
-  const pieces = [...used];
-  while (pieces.length < cfg.pieces) pieces.push(pick(used));
-  model = Array(places).fill(null);
-  shuffle([...model.keys()]).slice(0, cfg.pieces).forEach((p, i) => (model[p] = pieces[i]));
-  target = cfg.mirror ? mirrored(model, cfg.size) : model;
-  board = Array(places).fill(null);
-  palette = shuffle(cfg.decoy && mixed[cfg.kinds] ? [...used, mixed[cfg.kinds]] : used);
+function makeCopy(t) {
+  model = t.model;
+  target = t.target;
+  board = Array(model.length).fill(null);
+  palette = t.palette;
   chosen = palette[0];
   covered = false;
   peeking = false;
-}
-
-/** Upside down, as in water: the top row becomes the bottom row. */
-function mirrored(cells, size) {
-  return cells.map((_, p) => cells[(size - 1 - Math.floor(p / size)) * size + (p % size)]);
 }
 
 const shapeSvg = (piece) =>
@@ -478,11 +427,12 @@ async function newTask() {
   misses = 0;
   help = false;
   kind = stars % 2 === 0 ? "diff" : "copy";
+  const t = nextTask(current, kind, THING_IDS);
   if (kind === "diff") {
-    makeDiff(current.diff);
+    makeDiff(t);
     drawDiff();
   } else {
-    makeCopy(current.copy);
+    makeCopy(t);
     drawCopy();
   }
   show("round");
