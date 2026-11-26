@@ -4,7 +4,7 @@
 // Network first: with a connection the newest file is used and its copy is refreshed, so an update
 // goes live as before. Without a connection the copy is used. Registered by welt/map.js.
 
-const CACHE = "ankaplay-v1";
+const CACHE = "ankaplay-v2";
 
 // The files of the new world, fetched once when the worker is installed, so a round works offline
 // even if the child has only seen the map. Everything else is copied when it is first used.
@@ -35,7 +35,9 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET" || new URL(request.url).origin !== location.origin) return;
   event.respondWith(
-    fetch(request)
+    // "no-cache": always ask the server whether the file changed, so an update shows at once and a
+    // phone never keeps playing an old version from the browser's own cache.
+    fetch(request.url, { cache: "no-cache" })
       .then((response) => {
         if (response.ok) {
           const copy = response.clone();
