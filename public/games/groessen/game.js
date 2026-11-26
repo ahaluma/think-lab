@@ -5,12 +5,15 @@
 // (a stone and a balloon), wide and narrow glasses, and two balances with three parcels.
 // The child taps the right thing. Help after wrong answers: lines at the ends, everything moves to one line
 // or one ground, the water is poured into the same glasses, an arrow shows the heavy side.
-// See levels.js. All texts are in lang/<language>.js.
+// See levels.js. Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
+// All texts are in lang/<language>.js.
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, pick, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
+import * as gen from "../../shared/gen.js";
+import { task as makeTask } from "./tasks.js";
 
 const ID = "groessen";
 const T = await texts(import.meta.url);
@@ -20,20 +23,11 @@ const oops = (text) => `${oneOf(T.oops)} ${text}`;
 const STARS_PER_GAME = 5;
 const TRACK = 14; // steps: the length of the pencil rows, the height of the tower field
 const GLASS = 12; // steps: the height of a glass
-const COLORS = ["#ff5a36", "#2456b8", "#ffc83a", "#12a564", "#e8488a", "#8a5cf6"];
 const PARCELS = { red: "#ff5a36", blue: "#2456b8", yellow: "#ffc83a", green: "#12a564" };
 const TILT = 14; // degrees the beam of a balance tips
 
-// Animals on the balance, lightest first: kg roughly, only the order matters.
-const ANIMALS = [
-  ["ant", "🐜", 1], ["ladybird", "🐞", 1], ["butterfly", "🦋", 1], ["snail", "🐌", 2], ["frog", "🐸", 3],
-  ["duck", "🦆", 5], ["owl", "🦉", 5], ["rabbit", "🐰", 6], ["fox", "🦊", 7], ["penguin", "🐧", 8],
-  ["kangaroo", "🦘", 10], ["panda", "🐼", 12], ["lion", "🦁", 13], ["crocodile", "🐊", 14],
-  ["giraffe", "🦒", 17], ["rhino", "🦏", 18], ["elephant", "🐘", 20],
-].map(([id, icon, kg]) => ({ id, icon, kg }));
-// Small but heavy, and big but light: the balance shows what the eyes don't.
-const HEAVY = [["stone", "🪨"], ["apple", "🍎"], ["key", "🔑"], ["carrot", "🥕"]].map(([id, icon]) => ({ id, icon }));
-const LIGHT = [["balloon", "🎈"], ["feather", "🪶"], ["leaf", "🍂"]].map(([id, icon]) => ({ id, icon }));
+// Another kind than last time (where the level has more than one), and not the same task again soon.
+const nextTask = gen.generator(makeTask, { avoid: { kind: 1, key: 4 } });
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
@@ -45,7 +39,6 @@ const play = adapt.player(ID, LEVELS); // the level follows the child (shared/ad
 let current = null; // LEVELS[play.level] of this task
 let stars = 0;
 let task = null; // see newTask()
-let lastKind = "";
 let misses = 0;
 let helped = false;
 let locked = true;
@@ -83,100 +76,14 @@ function drawStars() {
 
 // ---------- Making a task
 
-/** n different whole numbers from lo to hi, each at least `gap` apart. */
-function sizes(n, gap, lo, hi) {
-  for (let tries = 0; tries < 200; tries++) {
-    const list = [];
-    for (let i = 0; i < n; i++) list.push(randInt(lo, hi));
-    const sorted = [...list].sort((a, b) => a - b);
-    if (sorted.every((s, i) => i === 0 || s - sorted[i - 1] >= gap)) return list;
-  }
-  return shuffle([...Array(n).keys()].map((i) => lo + i * gap));
-}
-
-const count = (n) => (Array.isArray(n) ? randInt(n[0], n[1]) : n);
-const indexOf = (list, best) => list.indexOf(best(...list));
-
-function pickKind() {
-  const kinds = current.kinds;
-  if (kinds.length === 1) return kinds[0];
-  return shuffle(kinds.filter((k) => k !== lastKind))[0];
-}
-
+/** A task from tasks.js, with the names of the animals, things and parcels in this language. */
 function newTask() {
-  const l = current;
-  const kind = pickKind();
-  lastKind = kind;
-  const dir = l.ask === "mix" && Math.random() < 0.45 ? "less" : "more";
-  const colors = shuffle(COLORS);
-  const t = { kind, dir };
-
-  if (kind === "lang" || kind === "hoch") {
-    const n = Math.min(count(l.n), 4);
-    const hi = kind === "lang" ? 11 : 10;
-    for (let tries = 0; tries < 30; tries++) {
-      const s = sizes(n, l.gap, 3, hi);
-      t.items = s.map((size, i) => ({
-        size,
-        off: l.offset ? randInt(0, Math.min(4, TRACK - size)) : 0,
-        color: colors[i],
-      }));
-      t.answer = indexOf(s, dir === "more" ? Math.max : Math.min);
-      // Not on one line: mostly the end that sticks out furthest is not the answer, so the child has to compare.
-      if (!l.offset || Math.random() < 0.25) break;
-      const ends = t.items.map((it) => it.size + it.off);
-      if (indexOf(ends, dir === "more" ? Math.max : Math.min) !== t.answer) break;
-    }
-  } else if (kind === "wasser") {
-    if (l.widths) {
-      // Two glasses of different widths. The amount is width × height. Mostly the higher water is less.
-      const tricky = Math.random() < 0.6;
-      for (let tries = 0; tries < 200; tries++) {
-        const w = shuffle(pick([[1, 2], [1, 1.6], [1.3, 2]]));
-        const h = [randInt(2, 10), randInt(2, 10)];
-        const v = [w[0] * h[0], w[1] * h[1]];
-        if (v.some((x) => x > 16) || h[0] === h[1]) continue;
-        if (Math.max(...v) < Math.min(...v) * 1.35) continue;
-        if (tricky !== (indexOf(v, Math.max) !== indexOf(h, Math.max))) continue;
-        t.items = h.map((water, i) => ({ water, width: w[i], amount: v[i] }));
-        break;
-      }
-    } else {
-      const n = Math.min(count(l.n), 3);
-      t.items = sizes(n, l.gap, 2, 10).map((water) => ({ water, width: n > 2 ? 1.2 : 1.4, amount: water }));
-    }
-    const amounts = t.items.map((it) => it.amount);
-    t.answer = indexOf(amounts, dir === "more" ? Math.max : Math.min);
-  } else if (kind === "waage") {
-    let a, b;
-    do [a, b] = shuffle(ANIMALS);
-    while (Math.abs(a.kg - b.kg) < 4);
-    t.items = [a, b].map((x) => ({ ...x, name: T.weigh[x.id], scale: 1 }));
-    t.answer = indexOf([a.kg, b.kg], dir === "more" ? Math.max : Math.min);
-  } else if (kind === "trick") {
-    const heavy = { ...pick(HEAVY), kg: 2, scale: 0.6 };
-    const light = { ...pick(LIGHT), kg: 1, scale: 1.6 };
-    t.items = shuffle([heavy, light]).map((x) => ({ ...x, name: T.weigh[x.id] }));
-    t.answer = t.items.findIndex((x) => x.kg === (dir === "more" ? 2 : 1));
-  } else if (kind === "kette") {
-    // Three parcels, weights 3, 2, 1. One balance shows the heaviest against the middle one,
-    // the other the middle one against the lightest. The child sees no balance with all three.
-    const names = shuffle(Object.keys(PARCELS)).slice(0, 3);
-    t.items = names.map((c, i) => ({ color: c, kg: 3 - i, name: T.parcels[c] }));
-    const [h, m, s] = t.items;
-    t.scales = shuffle([shuffle([h, m]), shuffle([m, s])]);
-    t.items = shuffle(t.items);
-    t.answer = t.items.findIndex((x) => x.kg === (dir === "more" ? 3 : 1));
-  } else {
-    // Ordering: pencils or towers, from small to big (or big to small).
-    t.what = pick(["lang", "hoch"]);
-    t.dir = l.down && Math.random() < 0.4 ? "down" : "up";
-    const n = count(l.n);
-    const s = sizes(n, l.gap, 3, t.what === "lang" ? 12 : 13);
-    t.items = s.map((size, i) => ({ size, off: 0, color: colors[i % colors.length] }));
-    t.order = [...t.items.keys()].sort((a, b) => (t.dir === "up" ? s[a] - s[b] : s[b] - s[a]));
-    t.next = 0;
+  const t = nextTask(current);
+  for (const it of t.items) {
+    if (it.id) it.name = T.weigh[it.id];
+    else if (t.kind === "kette") it.name = T.parcels[it.color];
   }
+  if (t.kind === "ordnen") t.next = 0;
   return t;
 }
 
