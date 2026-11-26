@@ -6,8 +6,9 @@
 //   Range       – how big the numbers are: up to 5, 10 or 20. The same idea comes back with bigger
 //                 numbers. Up to 10 the number buttons carry dots; up to 20 they show digits only.
 //
-// Two places are awake: the meadow with the idea "zahl" (a number says how many) and the burrow with
-// "teile" (numbers are made of numbers). The other places are on the map, asleep.
+// Three places are awake: the meadow with the idea "zahl" (a number says how many), the burrow with
+// "teile" (numbers are made of numbers) and the forest with "muster" (a row goes on, because one piece
+// comes again and again). The other places are on the map, asleep.
 
 /** The five perspectives, in the order a child meets them. card = the thinking card a round gives. */
 export const PERSPECTIVES = [
@@ -25,6 +26,7 @@ export const CARDS = {
   vorhersagen: "🔮",
   rueckwaerts: "↩️",
   nachpruefen: "🧐",
+  wiederholen: "🔁",
 };
 
 /** The six places. awake: false = drawn on the map, but nothing to play there yet. */
@@ -32,7 +34,7 @@ export const PLACES = [
   { id: "zahlen", awake: true, ideas: ["zahl"] },
   { id: "teile", awake: true, ideas: ["teile"] },
   { id: "gruppen", awake: false },
-  { id: "regeln", awake: false },
+  { id: "regeln", awake: true, ideas: ["muster"] },
   { id: "raum", awake: false },
   { id: "daten", awake: false },
 ];
@@ -44,6 +46,12 @@ export const PLACES = [
 export const IDEAS = {
   zahl: { place: "zahlen", ranges: [5, 10, 20], cards: { machen: "nachpruefen", anwenden: "vergleichen" } },
   teile: { place: "teile", ranges: [5, 10, 20], tasks: { forschen: 3 } },
+  // Here the range is not the size of the numbers but the length of the piece that comes again: 2, 3 or 4 things.
+  muster: {
+    place: "regeln",
+    ranges: [5, 10, 20],
+    cards: { sehen: "wiederholen", machen: "wiederholen", forschen: "wiederholen", anwenden: "vergleichen", pruefen: "vergleichen" },
+  },
 };
 
 /** The thinking card a round of this idea in this perspective gives. */

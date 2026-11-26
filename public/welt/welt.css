@@ -1071,3 +1071,156 @@ button.pic {
 .groups.big .pic {
   font-size: clamp(15px, 4.6vw, 20px);
 }
+
+/* ====================== The forest: rows that go on (idea "muster") ====================== */
+
+.forest-scene {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  padding: 26px 6px 18px;
+  /* Trees behind, a light path in front: every thing is easy to see on it, green leaves too. */
+  background: linear-gradient(#7fbf7a 0 22%, #f6ecd2 22%);
+}
+
+/* One row of things. --n = how many places; the things shrink so the row fits on one line. */
+.chain {
+  --size: min(34px, calc((min(100vw, 480px) - 54px - var(--k) * 10px) / (var(--n) * 1.24)));
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.chain .piece {
+  display: flex;
+  padding: 5px 0; /* no gap between the pieces: the child finds the piece, the row does not show it */
+  border-radius: 10px;
+  transition: margin 0.3s, background 0.3s;
+}
+
+/* The pieces move apart: this is what comes again and again. */
+.chain.split .piece {
+  margin: 0 2px;
+  padding: 3px 1px;
+  border: 2px dashed var(--ink);
+  background: #fff;
+}
+
+.chain .pic {
+  position: relative;
+  width: calc(var(--size) * 1.24);
+  font-size: var(--size);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.chain .slot {
+  border: 2px dashed var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-size: calc(var(--size) * 0.8);
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.chain .laid {
+  cursor: pointer;
+}
+
+/* Forschen, the hint: a dot under every thing where the row starts again. */
+.chain .pic.start::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.chain .mended {
+  border-radius: 8px;
+  background: #c9efb4;
+}
+
+/* The things to choose from. */
+.kinds,
+.pieces {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.kind {
+  width: 76px;
+  min-height: 76px;
+  padding: 0;
+  font-size: 40px;
+}
+
+.piece-btn {
+  min-height: 64px;
+  padding: 8px 12px;
+}
+
+.piece-card {
+  display: inline-flex;
+}
+
+.piece-card .pic {
+  font-size: 30px;
+}
+
+.kind.right,
+.piece-btn.right,
+.row-btn.right {
+  background: #c9efb4;
+}
+
+.rows {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+}
+
+.row-btn {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 0;
+}
+
+.row-btn .chain {
+  --size: min(30px, calc((min(100vw, 480px) - 64px - var(--k) * 10px) / (var(--n) * 1.24)));
+}
+
+/* Prüfen: the owl stands above its row. While the wrong thing is searched, the things can be tapped. */
+.owl-row {
+  gap: 4px;
+}
+
+.owl-row .owl {
+  font-size: 44px;
+}
+
+.owl-row.fixing .pic {
+  cursor: pointer;
+}
+
+.board.nudge .kind:not(:disabled),
+.board.nudge .piece-btn:not(:disabled),
+.board.nudge .row-btn:not(:disabled),
+.board.nudge .owl-row.fixing .pic {
+  animation: nudge 1.2s ease-in-out infinite;
+}
+
+.board.nudge .kind:nth-child(2n),
+.board.nudge .piece-btn:nth-child(2n),
+.board.nudge .row-btn:nth-child(2n) {
+  animation-delay: 0.3s;
+}
