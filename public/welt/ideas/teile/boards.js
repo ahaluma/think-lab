@@ -13,6 +13,7 @@
 //   ctx.solved(text)   the task is done: praise, the sentence, then the next task
 //   ctx.tap()          the small tap sound
 //   ctx.ready()        the story of the task was shown, the child can answer now (optional)
+//   ctx.fresh()        true in the child's very first round of this perspective: show more, hide less
 //
 // A wrong answer first says what the child did ("Fünf und vier sind neun. Es sind aber sieben."),
 // the hint shows the structure, never just the answer.
@@ -94,6 +95,7 @@ export function sehen(host, t, ctx) {
   scene.append(sign(ctx, t.total), meadow, burrow);
   const hintBox = el("div", "hint-box");
   let locked = true; // until the story was shown
+  let shown = false; // the animals in the burrow are visible (first round)
 
   const answers = strip(ctx, 1, Math.max(5, t.range), (n, b) => {
     if (locked) return;
@@ -105,9 +107,11 @@ export function sehen(host, t, ctx) {
     }
     locked = true;
     b.classList.add("right");
-    den.textContent = "";
-    den.classList.add("open");
-    den.append(group(t.inside, animal.icon));
+    if (!shown) {
+      den.textContent = "";
+      den.classList.add("open");
+      den.append(group(t.inside, animal.icon));
+    }
     ctx.solved(T.together(ctx.word(t.outside), ctx.word(t.inside), ctx.word(t.total)));
   });
 
@@ -124,8 +128,15 @@ export function sehen(host, t, ctx) {
     await Promise.all([ctx.tell(T.sehen.hide), wait(1100)]);
     if (!host.isConnected) return;
     for (const pic of goers) pic.remove();
-    den.classList.remove("open");
-    den.textContent = "?";
+    if (ctx.fresh()) {
+      // The very first round: the burrow stays open and the animals inside can be counted.
+      // From the second round on they hide, and the child works it out from the whole.
+      den.append(group(t.inside, animal.icon));
+      shown = true;
+    } else {
+      den.classList.remove("open");
+      den.textContent = "?";
+    }
     answers.classList.remove("waiting");
     locked = false;
     ctx.ready();
@@ -382,7 +393,7 @@ export function forschen(host, t, ctx) {
 const SCENE_ART = {
   frogs: { known: "🐸", hidden: "🐸", cover: "🌾" },
   eggs: { known: "🐥", hidden: "🥚", cover: "🍃" },
-  apples: { known: "🍎", hidden: "🍎", cover: "🌳" },
+  apples: { known: "🍎", hidden: "🍎", cover: "🌳", fall: true }, // the tree is above, the grass below
 };
 
 export function anwenden(host, t, ctx) {
@@ -392,10 +403,15 @@ export function anwenden(host, t, ctx) {
   const known = el("div", "zone known");
   const hidden = el("div", "zone hidden");
   const whole = group(t.total, art.hidden);
-  hidden.append(whole);
+  // The place (tree, reeds, nest leaf) is in the picture from the start, so "on the tree" is seen.
+  const place = el("span", "cover");
+  place.append(el("span", "cover-icon", art.cover), whole);
+  hidden.append(place);
   const cover = el("span", "cover");
   cover.append(el("span", "cover-icon", art.cover), el("b", "unknown", "?"));
-  scene.append(sign(ctx, t.total), known, hidden);
+  // The picture follows the real world: what falls ends up below. Apples hang on the tree at the
+  // top and fall into the grass at the bottom; frogs hop up onto the leaf, chicks climb out of the nest.
+  scene.append(sign(ctx, t.total), ...(art.fall ? [hidden, known] : [known, hidden]));
   const hintBox = el("div", "hint-box");
   let locked = true; // until the story was shown
 
@@ -423,7 +439,7 @@ export function anwenden(host, t, ctx) {
     await ctx.tell(start);
     if (!host.isConnected) return;
     const movers = [...whole.children].slice(0, t.known);
-    for (const pic of movers) pic.classList.add("go-away");
+    for (const pic of movers) pic.classList.add(art.fall ? "go-down" : "go-away");
     await wait(500);
     for (const pic of movers) pic.remove();
     known.append(group(t.known, art.known));
