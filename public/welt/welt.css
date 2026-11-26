@@ -1708,3 +1708,8 @@ body[data-world="berg"] .caption {
 body[data-world="berg"] .caption.quiet {
   color: var(--ink);
 }
+
+/* Camp "Zaun": everyday looks drawn with emoji (trees, children, flags, lights) */
+.fence-svg .ghost-thing {
+  opacity: 0.35;
+}

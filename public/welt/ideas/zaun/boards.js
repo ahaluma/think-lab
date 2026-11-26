@@ -21,6 +21,23 @@ const INK = "#1b2140";
 const WOOD = "#a8703f";
 const PLANK = "#c48a4e";
 
+/** Everyday looks (tasks.js LOOKS): what stands, what holds the ends, what lies in the middle of a ring. */
+const LOOK = {
+  zaun: { thing: null, ring: { fill: "#8fd3ff" } },
+  baeume: { thing: "🌳", end: "🏠", gap: "hammock", ring: { fill: "#f3dd9b", icon: "🏰" } },
+  kinder: { thing: "🧒", end: "🧑‍🏫", gap: "rope", ring: { fill: "#a7d68c", icon: "⚽" } },
+  fahnen: { thing: "🚩", end: "tree", gap: "string", ring: { fill: "#fff3c4", icon: "🎪" } },
+  lichter: { thing: "🏮", end: "lamp", gap: null, ring: { fill: "#d9dde6", icon: "⛲" } },
+};
+/** The looks of a field (level 4): the animal or thing in the middle and the colour of the spots. */
+const FIELD = {
+  zaun: { icon: "🐐", fill: WOOD, grass: "#a7d68c" },
+  feld: { icon: "⚽", fill: "#e8488a", grass: "#7cc46a" },
+  beet: { icon: "🥕", fill: "#ffc83a", grass: "#c9a27a" },
+};
+/** The texts of a task's look (welt/lang: zaun.looks). */
+const lookOf = (ctx, t) => ctx.T.zaun.looks[t.look ?? "zaun"];
+
 function svgEl(tag, attrs = {}, parent) {
   const e = document.createElementNS(SVG, tag);
   for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
@@ -51,6 +68,29 @@ function tree(parent, x, ground, size = 1) {
   svgEl("rect", { x: x - 7 * size, y: ground - 66 * size, width: 14 * size, height: 66 * size, fill: "#8a5a33", stroke: INK, "stroke-width": 3 }, g);
   svgEl("circle", { cx: x, cy: ground - 82 * size, r: 26 * size, fill: "#57b86a", stroke: INK, "stroke-width": 3 }, g);
   return g;
+}
+
+/** An emoji standing on the ground at (x, y). */
+function emoji(parent, x, y, char, size, cls = "") {
+  const e = svgEl("text", { x, y, "font-size": size, "text-anchor": "middle", class: cls }, parent);
+  e.textContent = char;
+  return e;
+}
+
+/** A street lamp that is already there (the ends of a row of lights). */
+function lamp(parent, x, ground) {
+  const g = svgEl("g", {}, parent);
+  svgEl("rect", { x: x - 3, y: ground - 74, width: 6, height: 74, fill: "#6f7a89", stroke: INK, "stroke-width": 2 }, g);
+  svgEl("circle", { cx: x, cy: ground - 80, r: 10, fill: "#ffc83a", stroke: INK, "stroke-width": 3 }, g);
+  return g;
+}
+
+/** What holds the ends of a "trees" row in this look: a tree, a house, a teacher, a lamp. */
+function endHolder(parent, look, x, ground) {
+  const end = LOOK[look].end ?? "tree";
+  if (end === "tree") return tree(parent, x, ground);
+  if (end === "lamp") return lamp(parent, x, ground);
+  return emoji(parent, x, ground + 2, end, 52);
 }
 
 /** A post: a pointed wooden stake standing at (x, y). ghost = only its place, dashed. */
@@ -86,6 +126,22 @@ function plank(parent, [x1, y1], [x2, y2], h, lying) {
   return g;
 }
 
+/** What lies between two neighbours in a look: a hammock, a rope, a piece of string, or nothing. */
+function lookGap(parent, look, [x1, y1], [x2, y2], h, lying) {
+  const kind = LOOK[look].gap;
+  const g = svgEl("g", { class: lying ? "plank lying" : "plank" }, parent);
+  const color = kind === "hammock" ? "#e8488a" : kind === "rope" ? "#ff5a36" : kind === "string" ? INK : "#e3c79a";
+  if (lying || !kind) {
+    svgEl("line", { x1: x1 + 5, y1: y1 + 10, x2: x2 - 5, y2: y2 + 10, stroke: color, "stroke-width": kind ? 4 : 6, "stroke-linecap": "round" }, g);
+    return g;
+  }
+  const top = kind === "hammock" ? h * 0.55 : kind === "rope" ? h * 0.45 : h * 0.95;
+  const sag = kind === "hammock" ? 14 : kind === "rope" ? 6 : 5;
+  const [ya, yb] = [y1 - top, y2 - top];
+  svgEl("path", { d: `M${x1} ${ya} Q${(x1 + x2) / 2} ${(ya + yb) / 2 + sag} ${x2} ${yb}`, fill: "none", stroke: color, "stroke-width": kind === "hammock" ? 5 : 3, "stroke-linecap": "round" }, g);
+  return g;
+}
+
 /**
  * The places of a fence row from `left` to `right` at height `ground`. More than DRAWN boards: four
  * boards, then "…", then two boards. → { gaps: [{ a, b, dots }], ends: [[x, y]], posts: [end index] }
@@ -117,11 +173,13 @@ function ringLayout(boards) {
  *   count: a label for the number of boards ("15 Bretter"), when the fence is drawn with "…"
  * → { svg, showPosts(), ghostPosts(), raise(), markGaps() }
  */
-function fence(ctx, kind, boards, { boardsAs = "up", postsAs = "up", numbers = false, length = null, every = null, count = null } = {}) {
+function fence(ctx, kind, boards, { look = "zaun", boardsAs = "up", postsAs = "up", numbers = false, length = null, every = null, count = null } = {}) {
+  const L = LOOK[look] ?? LOOK.zaun;
   const svg = canvas(`fence-${kind}`, kind === "ring" ? 96 : 110);
   const rows = [];
   if (kind === "ring") {
-    svgEl("ellipse", { cx: W / 2, cy: 122, rx: 98, ry: 22, fill: "#8fd3ff", stroke: INK, "stroke-width": 3 }, svg);
+    svgEl("ellipse", { cx: W / 2, cy: 122, rx: 98, ry: 22, fill: L.ring.fill, stroke: INK, "stroke-width": 3 }, svg);
+    if (L.ring.icon) emoji(svg, W / 2, 132, L.ring.icon, 22);
     rows.push({ ...ringLayout(boards), h: (y) => 26 + (y - 80) * 0.3 });
   } else if (kind === "sides") {
     svgEl("rect", { y: 112, width: W, height: 26, fill: "#e3c79a" }, svg);
@@ -129,8 +187,8 @@ function fence(ctx, kind, boards, { boardsAs = "up", postsAs = "up", numbers = f
     rows.push({ ...rowLayout("line", boards, 168), h: () => 42 });
   } else {
     if (kind === "trees") {
-      tree(svg, LEFT, 150);
-      tree(svg, RIGHT, 150);
+      endHolder(svg, look, LEFT, 150);
+      endHolder(svg, look, RIGHT, 150);
     }
     rows.push({ ...rowLayout(kind, boards, 150), h: () => 48 });
   }
@@ -150,7 +208,8 @@ function fence(ctx, kind, boards, { boardsAs = "up", postsAs = "up", numbers = f
     for (const g of all) {
       if (g.dots) continue;
       const [a, b] = g.a[0] <= g.b[0] ? [g.a, g.b] : [g.b, g.a];
-      const p = plank(layer, a, b, g.row.h((a[1] + b[1]) / 2), lying);
+      const h = g.row.h((a[1] + b[1]) / 2);
+      const p = L.thing ? lookGap(layer, look, a, b, h, lying) : plank(layer, a, b, h, lying);
       if (!lying) {
         p.classList.add("pop-in");
         layer.prepend(p); // behind the posts
@@ -172,7 +231,11 @@ function fence(ctx, kind, boards, { boardsAs = "up", postsAs = "up", numbers = f
     for (const row of rows) {
       for (const i of [...row.posts].sort((a, b) => row.ends[a][1] - row.ends[b][1])) {
         const [x, y] = row.ends[i];
-        postEls.push(post(layer, x, y, row.h(y) + 4, ghost));
+        if (L.thing) {
+          const step = row.gaps.length ? Math.abs(row.gaps[0].b[0] - row.gaps[0].a[0]) : 40;
+          const size = Math.max(14, Math.min(row.h(y) * 0.8, step * 1.15));
+          postEls.push(emoji(layer, x, y + 2, L.thing, size, ghost ? "ghost-thing" : ""));
+        } else postEls.push(post(layer, x, y, row.h(y) + 4, ghost));
       }
     }
   }
@@ -197,7 +260,9 @@ function fence(ctx, kind, boards, { boardsAs = "up", postsAs = "up", numbers = f
   }
   if (every !== null && kind !== "ring") {
     const g = rows.at(-1).gaps[0];
-    label(labels, (g.a[0] + g.b[0]) / 2, Math.min(H - 4, g.a[1] + 24), every, { size: 13, box: true });
+    // Under the first gap; above it when the numbers of the posts are already under the ground line.
+    const y = numbers ? g.a[1] - 58 : Math.min(H - 4, g.a[1] + 24);
+    label(labels, (g.a[0] + g.b[0]) / 2, y, every, { size: 13, box: true });
   }
   if (every !== null && kind === "ring") label(labels, W / 2, 26, every, { size: 13, box: true });
   if (count !== null) label(labels, W / 2, kind === "trees" ? 26 : 40, count, { size: 14, box: true });
@@ -327,7 +392,8 @@ export function sehen(host, t, ctx) {
   const Z = ctx.T.zaun;
   const boards = t.answer;
   const scene = el("div", "scene card fence-scene");
-  const f = fence(ctx, t.kind, boards, { boardsAs: "none", numbers: true });
+  const L = lookOf(ctx, t);
+  const f = fence(ctx, t.kind, boards, { look: t.look, boardsAs: "none", numbers: true });
   scene.append(f.svg);
   if (ctx.fresh() && boards <= DRAWN) f.markGaps();
   host.append(scene);
@@ -335,10 +401,10 @@ export function sehen(host, t, ctx) {
     onWrong: (k) => ctx.miss(k === t.posts ? Z.sehen.missPosts : Z.sehen.miss[t.kind]),
     onRight: () => {
       f.raise();
-      win(host, ctx, t, Z.sehen.done[t.kind](n(ctx, Z.posts, t.posts), n(ctx, Z.boards, boards)));
+      win(host, ctx, t, Z.sehen.done[t.kind](n(ctx, L.thing, t.posts), n(ctx, L.gap, boards)));
     },
   });
-  story(host, ctx, Z.sehen.story[t.kind](n(ctx, Z.posts, t.posts)), Z.sehen.ask, pad);
+  story(host, ctx, L.see[t.kind], L.seeAsk, pad);
   return {
     hint() {
       f.markGaps();
@@ -495,22 +561,26 @@ function plantEvery(host, t, ctx) {
 /** Level 4: a field seen from above, a × b metres, a post every `every` m all around. */
 function fieldPlan(ctx, t) {
   const Z = ctx.T.zaun;
+  const F = FIELD[t.look] ?? FIELD.zaun;
   const svg = canvas("field", 0);
   const i = t.a / t.every;
   const j = t.b / t.every;
   const w = 250;
   const h = Math.min(118, (w * t.b) / t.a);
   const [x0, y0] = [(W - w) / 2 + 10, 36 + (118 - h) / 2];
-  svgEl("rect", { x: x0, y: y0, width: w, height: h, fill: "#a7d68c", stroke: INK, "stroke-width": 2, "stroke-dasharray": "6 4" }, svg);
-  const corner = svgEl("text", { x: x0 + w / 2 - 12, y: y0 + h / 2 + 10, "font-size": 26 }, svg);
-  corner.textContent = "🐐";
+  svgEl("rect", { x: x0, y: y0, width: w, height: h, fill: F.grass, stroke: INK, "stroke-width": 2, "stroke-dasharray": "6 4" }, svg);
+  if (t.look === "feld") {
+    svgEl("line", { x1: x0 + w / 2, y1: y0, x2: x0 + w / 2, y2: y0 + h, stroke: "#fff", "stroke-width": 2 }, svg);
+    svgEl("circle", { cx: x0 + w / 2, cy: y0 + h / 2, r: Math.min(22, h / 3), fill: "none", stroke: "#fff", "stroke-width": 2 }, svg);
+  }
+  emoji(svg, x0 + w / 2, y0 + h / 2 + 10, F.icon, 26);
   const spots = [];
   for (let k = 0; k < i; k++) spots.push([x0 + (k * w) / i, y0], [x0 + w - (k * w) / i, y0 + h]);
   for (let k = 0; k < j; k++) spots.push([x0 + w, y0 + (k * h) / j], [x0, y0 + h - (k * h) / j]);
   const layer = svgEl("g", {}, svg);
   const draw = (ghost) => {
     layer.innerHTML = "";
-    for (const [x, y] of spots) svgEl("circle", { cx: x, cy: y, r: 5, fill: ghost ? "none" : WOOD, stroke: ghost ? "#e8488a" : INK, "stroke-width": 2.5, class: ghost ? "" : "pop-in" }, layer);
+    for (const [x, y] of spots) svgEl("circle", { cx: x, cy: y, r: 5, fill: ghost ? "none" : F.fill, stroke: ghost ? "#e8488a" : INK, "stroke-width": 2.5, class: ghost ? "" : "pop-in" }, layer);
   };
   label(svg, x0 + w / 2, y0 - 10, Z.metres(ctx.num(t.a)), { size: 13, box: true });
   label(svg, x0 - 8, y0 + h / 2 + 5, Z.metres(ctx.num(t.b)), { size: 13, box: true, anchor: "end" });
@@ -526,10 +596,11 @@ function fenceTask(ctx, t, opts = {}) {
   const known = {
     length: t.length ? (t.kind === "ring" ? Z.around(m(t.length)) : m(t.length)) : null,
     every: t.every ? m(t.every) : null,
-    count: t.ask === "posts" && !t.every && boards > DRAWN ? n(ctx, Z.boards, boards) : null,
+    count: t.ask === "posts" && !t.every && boards > DRAWN ? n(ctx, lookOf(ctx, t).gap, boards) : null,
   };
   if (t.ask === "length") known.length = t.kind === "ring" ? Z.around("?") : "?";
   return fence(ctx, t.kind, boards, {
+    look: t.look,
     boardsAs: t.ask === "length" ? "up" : "lying",
     postsAs: t.ask === "length" ? "up" : "none",
     numbers: t.ask === "length" && t.kind !== "ring",
@@ -541,11 +612,11 @@ function fenceTask(ctx, t, opts = {}) {
 /** The sentence that tells a fence task. */
 function fenceStory(ctx, t) {
   const Z = ctx.T.zaun;
-  const F = Z.forschen;
-  if (t.kind === "rect") return F.field(Z.metres(ctx.num(t.a)), Z.metres(ctx.num(t.b)), Z.metres(ctx.num(t.every)));
-  if (t.ask === "length") return F.back[t.kind](n(ctx, Z.posts, t.posts), Z.metres(ctx.num(t.every)));
-  if (t.every) return F.metres[t.kind](Z.metres(ctx.num(t.length)), Z.metres(ctx.num(t.every)));
-  return F.story[t.kind](n(ctx, Z.boards, t.boards));
+  const L = lookOf(ctx, t);
+  if (t.kind === "rect") return L.field(Z.metres(ctx.num(t.a)), Z.metres(ctx.num(t.b)), Z.metres(ctx.num(t.every)));
+  if (t.ask === "length") return L.back[t.kind](n(ctx, L.thing, t.posts), Z.metres(ctx.num(t.every)));
+  if (t.every) return L.metres[t.kind](Z.metres(ctx.num(t.length)), Z.metres(ctx.num(t.every)));
+  return L.count[t.kind](n(ctx, L.gap, t.boards));
 }
 
 export function forschen(host, t, ctx) {
@@ -563,11 +634,11 @@ export function forschen(host, t, ctx) {
         await wait(350);
         f.raise();
       }
-      const got = t.ask === "length" ? Z.metres(ctx.num(t.answer)) : n(ctx, Z.posts, t.answer);
+      const got = t.ask === "length" ? Z.metres(ctx.num(t.answer)) : n(ctx, lookOf(ctx, t).thing, t.answer);
       win(host, ctx, t, `${F.got(got)} ${F.rule[t.kind]}`);
     },
   });
-  story(host, ctx, fenceStory(ctx, t), t.ask === "length" ? F.askLength : F.ask, pad);
+  story(host, ctx, fenceStory(ctx, t), t.ask === "length" ? F.askLength : lookOf(ctx, t).ask, pad);
   return {
     hint() {
       f.ghostPosts();
@@ -629,8 +700,70 @@ function beadScene(k, closed) {
   };
 }
 
+/** A bar of chocolate with k pieces in a row; the breaks show in the end. */
+function chocScene(k) {
+  const svg = canvas("choc", 180);
+  svgEl("rect", { width: W, height: H, fill: "#fbefe6" }, svg);
+  const [x0, x1, y] = [24, W - 24, 70];
+  const step = (x1 - x0) / k;
+  for (let i = 0; i < k; i++) svgEl("rect", { x: x0 + i * step + 1.5, y, width: step - 3, height: 46, rx: 4, fill: "#7b4a2e", stroke: INK, "stroke-width": 2.5 }, svg);
+  emoji(svg, W / 2, 46, "🍫", 26);
+  const breaks = [];
+  for (let i = 1; i < k; i++) breaks.push(svgEl("line", { x1: x0 + i * step, y1: y - 8, x2: x0 + i * step, y2: y + 54, stroke: "#e8488a", "stroke-width": 3, "stroke-dasharray": "5 4", opacity: 0 }, svg));
+  return { svg, show: () => breaks.forEach((b) => b.setAttribute("opacity", 1)), ghost: () => breaks.forEach((b) => b.setAttribute("opacity", 0.45)) };
+}
+
+/** A train: the engine and k − 1 wagons; the couplings between them show in the end. */
+function trainScene(k) {
+  const svg = canvas("train", 120);
+  svgEl("rect", { y: 132, width: W, height: 6, fill: "#6f7a89" }, svg);
+  const [x0, x1] = [14, W - 14];
+  const step = (x1 - x0) / k;
+  const w = step * 0.78;
+  const links = [];
+  for (let i = 0; i < k; i++) {
+    const x = x0 + i * step;
+    svgEl("rect", { x, y: 98, width: w, height: 28, rx: 4, fill: i === 0 ? "#ff5a36" : BEAD_COLORS[i % BEAD_COLORS.length], stroke: INK, "stroke-width": 2.5 }, svg);
+    for (const dx of [w * 0.25, w * 0.75]) svgEl("circle", { cx: x + dx, cy: 128, r: Math.min(5, w / 6), fill: INK }, svg);
+    if (i > 0) links.push(svgEl("rect", { x: x - (step - w) - 1, y: 110, width: step - w + 2, height: 5, fill: "#e8488a", opacity: 0 }, svg));
+  }
+  emoji(svg, x0 + w / 2, 92, "🚂", 20);
+  return { svg, show: () => links.forEach((l) => l.setAttribute("opacity", 1)), ghost: () => links.forEach((l) => l.setAttribute("opacity", 0.45)) };
+}
+
+/** Pages from `from` to `to`, or the days of a trip: one box per page or day (long rows with "…").
+ *  A trip shows the nights as moons between the days. */
+function stripScene(ctx, t, A) {
+  const svg = canvas("strip", 180);
+  svgEl("rect", { width: W, height: H, fill: "#eef3f8" }, svg);
+  const total = t.to - t.from + 1;
+  const cut = total > 10;
+  const values = cut ? [t.from, t.from + 1, t.from + 2, null, t.to - 1, t.to] : Array.from({ length: total }, (_, i) => t.from + i);
+  const [x0, x1, y] = [16, W - 16, 86];
+  const step = (x1 - x0) / values.length;
+  const w = step - 8;
+  const trip = t.story === "trip";
+  const name = trip ? A.day : A.page;
+  const boxes = [];
+  const moons = [];
+  values.forEach((v, i) => {
+    const x = x0 + i * step + 4;
+    if (v === null) return void label(svg, x + w / 2, y + 20, "…", { size: 26 });
+    boxes.push(svgEl("rect", { x, y, width: w, height: 40, rx: 6, fill: "#fff", stroke: INK, "stroke-width": 2.5 }, svg));
+    if (!cut || i === 0 || i === values.length - 1 || trip) label(svg, x + w / 2, y + 26, name(ctx.num(v)), { size: Math.min(14, w / 3.2) });
+    if (trip && i > 0 && values[i - 1] !== null) {
+      const m = emoji(svg, x - 4, y - 8, "🌙", 16);
+      m.setAttribute("opacity", 0);
+      moons.push(m);
+    }
+  });
+  emoji(svg, W / 2, 50, trip ? "🚌" : "📖", 28);
+  const mark = (o) => (trip && t.ask === "nights" ? moons.forEach((m) => m.setAttribute("opacity", o)) : boxes.forEach((b) => b.setAttribute("fill", o === 1 ? "#ffe59a" : "#fff6d6")));
+  return { svg, show: () => mark(1), ghost: () => mark(0.45) };
+}
+
 /** A time line: k strikes of a bell (dots), the gaps between them, and a label over the whole. */
-function strikes(parent, k, y, text) {
+function strikes(parent, k, y, text, icon = "🔔") {
   const [x0, x1] = [64, W - 22];
   svgEl("line", { x1: x0, y1: y, x2: x1, y2: y, stroke: INK, "stroke-width": 2 }, parent);
   const gaps = [];
@@ -642,7 +775,7 @@ function strikes(parent, k, y, text) {
   svgEl("path", { d: `M${x0} ${y - 12} V${y - 18} H${x1} V${y - 12}`, fill: "none", stroke: INK, "stroke-width": 2 }, parent);
   label(parent, (x0 + x1) / 2, y - 20, text, { size: 13, box: true });
   const bell = svgEl("text", { x: 14, y: y + 9, "font-size": 26 }, parent);
-  bell.textContent = "🔔";
+  bell.textContent = icon;
   return gaps;
 }
 
@@ -677,9 +810,9 @@ function towerScene(ctx, t, A) {
     const [y0, y1] = [base - gap * (from - 1), base - gap * (to - 1)];
     const bx = x + side;
     svgEl("path", { d: `M${bx - 6} ${y0} H${bx} V${y1} H${bx - 6}`, fill: "none", stroke: INK, "stroke-width": 2 }, svg);
-    label(svg, bx + 6, (y0 + y1) / 2 + 5, text, { size: 13, anchor: "start", box: true });
+    label(svg, bx + 6, (y0 + y1) / 2 + 5, text, { size: String(text).length > 9 ? 11 : 13, anchor: "start", box: true });
   };
-  bracket(t.a, 50, A.steps(ctx.num(t.given)));
+  bracket(t.a, 50, `${ctx.num(t.given)} ${A.unit[t.story]}`);
   if (part) bracket(t.d, 140, "?", t.c);
   else bracket(t.b, 140, "?");
   return { svg, show: () => rungs.forEach((r) => r.setAttribute("opacity", 0.7)), ghost: () => rungs.forEach((r) => r.setAttribute("opacity", 0.35)) };
@@ -700,14 +833,14 @@ function sawBackScene(ctx, t, A) {
 }
 
 function timeScene(ctx, t, A, ownGuess = null) {
-  if (t.story === "tower" || t.story === "towerpart") return towerScene(ctx, t, A);
+  if (t.story === "tower" || t.story === "towerpart" || t.story === "floors") return towerScene(ctx, t, A);
   if (t.story === "sawback") return sawBackScene(ctx, t, A);
   const svg = canvas(t.story, 180);
   svgEl("rect", { width: W, height: H, fill: "#eef3f8" }, svg);
   const unit = A.unit[t.story];
   const marks =
-    t.story === "bell"
-      ? [...strikes(svg, t.a, 58, `${ctx.num(t.given)} ${unit}`), ...strikes(svg, t.b, 140, ownGuess ?? "?")]
+    t.story === "bell" || t.story === "run"
+      ? [...strikes(svg, t.a, 58, `${ctx.num(t.given)} ${unit}`, t.story === "run" ? "🌳" : "🔔"), ...strikes(svg, t.b, 140, ownGuess ?? "?", t.story === "run" ? "🌳" : "🔔")]
       : [...cutLog(svg, t.a, 44, `${ctx.num(t.given)} ${unit}`), ...cutLog(svg, t.b, 128, ownGuess ?? "?")];
   return { svg, show: () => marks.forEach((m) => m.setAttribute("opacity", 0.8)), ghost: () => marks.forEach((m) => m.setAttribute("opacity", 0.4)) };
 }
@@ -716,14 +849,25 @@ export function anwenden(host, t, ctx) {
   const A = ctx.T.zaun.anwenden;
   const scene = el("div", "scene card fence-scene");
   const time = "given" in t;
-  const pic = time ? timeScene(ctx, t, A) : t.story === "saw" ? sawScene(t.n) : beadScene(t.n, t.story === "necklace");
+  const count = "from" in t;
+  const trip = t.story === "trip";
+  const pic = time
+    ? timeScene(ctx, t, A)
+    : count
+      ? stripScene(ctx, t, A)
+      : { saw: sawScene, choc: chocScene, train: trainScene }[t.story]?.(t.n) ?? beadScene(t.n, t.story === "necklace");
   scene.append(pic.svg);
   host.append(scene);
   const pad = typed(ctx, host, t.answer, {
-    onWrong: (k) => ctx.miss(time && "b" in t && k === (t.given * t.b) / t.a ? A.twice : A.miss[t.story]),
+    onWrong: (k) => ctx.miss(time && "b" in t && k === (t.given * t.b) / t.a ? A.twice : trip ? A.miss.trip[t.ask] : A.miss[t.story]),
     onRight: () => {
       pic.show();
-      const done = !time
+      const fromTo = [ctx.num(t.from), ctx.num(t.to), ctx.num(t.answer)];
+      const done = count
+        ? trip
+          ? A.done.trip[t.ask](...fromTo)
+          : A.done.pages(...fromTo)
+        : !time
         ? A.done[t.story](ctx.num(t.answer), ctx.num(t.n))
         : t.story === "towerpart"
           ? A.timeDone.towerpart(ctx.num(t.d - t.c), ctx.num(t.answer))
@@ -733,14 +877,16 @@ export function anwenden(host, t, ctx) {
       win(host, ctx, t, done);
     },
   });
-  const tell = !time
+  const tell = count
+    ? A.story[t.story](ctx.num(t.from), ctx.num(t.to))
+    : !time
     ? A.story[t.story](ctx.num(t.n))
     : t.story === "towerpart"
       ? A.story.towerpart(ctx.num(t.a), ctx.num(t.given), ctx.num(t.c), ctx.num(t.d))
       : t.story === "sawback"
         ? A.story.sawback(ctx.num(t.unit), ctx.num(t.given))
         : A.story[t.story](ctx.num(t.a), ctx.num(t.given), ctx.num(t.b));
-  const ask = typeof A.ask[t.story] === "function" ? A.ask[t.story](ctx.num(t.b)) : A.ask[t.story];
+  const ask = trip ? A.ask.trip[t.ask] : typeof A.ask[t.story] === "function" ? A.ask[t.story](ctx.num(t.b)) : A.ask[t.story];
   story(host, ctx, tell, ask, pad);
   return {
     hint() {
@@ -762,7 +908,8 @@ export function pruefen(host, t, ctx) {
   const pic = time ? timeScene(ctx, t, A) : fenceTask(ctx, t);
   const talk = el("div", "talk");
   const bubble = el("span", "bubble");
-  bubble.append(el("span", "", ctx.num(t.said)), el("small", "bubble-word", " " + (time ? A.unit[t.story] : t.ask === "length" ? Z.metres("").trim() : P.postsWord)));
+  const unitWord = time ? A.unit[t.story] : t.ask === "length" ? Z.metres("").trim() : lookOf(ctx, t).word;
+  bubble.append(el("span", "", ctx.num(t.said)), el("small", "bubble-word", " " + unitWord));
   talk.append(el("span", "owl", "🦉"), bubble);
   scene.append(talk, pic.svg);
   let locked = false;
@@ -772,7 +919,7 @@ export function pruefen(host, t, ctx) {
   const no = button("btn go judge-btn", T.pruefen.no, "✗");
   judge.append(yes, no);
   host.append(scene, judge);
-  const said = `${ctx.num(t.said)} ${time ? A.unit[t.story] : t.ask === "length" ? Z.metres("").trim() : P.postsWord}`;
+  const said = `${ctx.num(t.said)} ${unitWord}`;
   const task = time ? `${A.story[t.story](ctx.num(t.a), ctx.num(t.given), ctx.num(t.b))} ${A.ask[t.story](ctx.num(t.b))}` : fenceStory(ctx, t);
   const q = question(host, task, P.ask(said));
 
