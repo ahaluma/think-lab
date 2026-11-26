@@ -60,7 +60,7 @@ export const MOUNTAIN = [
   { id: "vorrat", height: 2, needs: ["huetten"], ideas: ["vorrat"] },
   { id: "ameisen", height: 2, needs: ["zaun"], ideas: ["ameisen"] },
   { id: "waage", height: 2, needs: ["vorrat"], ideas: ["waage"] },
-  { id: "stall", height: 3, needs: ["huetten", "waage"] },
+  { id: "stall", height: 3, needs: ["huetten", "waage"], ideas: ["stall"] },
   { id: "tanz", height: 3, needs: ["ameisen"] },
   { id: "fels", height: 3, needs: ["haken"] },
   { id: "socken", height: 4, needs: ["huetten", "tanz"] },
@@ -101,6 +101,8 @@ export const IDEAS = {
   ameisen: { place: "ameisen", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
   // Camp 6: what weighs the same can take the other's place (scales, sums and differences, weights).
   waage: { place: "waage", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 7: assume they are all the small kind, then swap one at a time (heads and legs, points).
+  stall: { place: "stall", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */

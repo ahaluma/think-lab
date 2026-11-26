@@ -2334,3 +2334,28 @@ body[data-world="berg"] .caption.quiet {
   font-size: 13px;
   font-weight: 700;
 }
+
+/* Camp 7: things to swap (all the small kind at first) */
+.swap-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+}
+
+.swap-btn {
+  min-width: 52px;
+  min-height: 52px;
+  padding: 0 6px;
+  font-size: 26px;
+  background: #fff;
+}
+
+.swap-btn.big {
+  background: var(--sun);
+}
+
+.scale-status.ok {
+  color: var(--ok);
+}
