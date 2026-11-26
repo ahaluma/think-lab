@@ -26,7 +26,7 @@ export default {
 
   // Build a picture: one gap glows.
   pictures: {
-    house: "ein Haus", iceCream: "ein Eis", snowman: "ein Schneemann", tree: "ein Baum", lollipop: "ein Lutscher",
+    house: "ein Haus", iceCream: "ein Eis", caterpillar: "eine Raupe", tree: "ein Baum", lollipop: "ein Lutscher",
     fish: "ein Fisch", boat: "ein Boot", car: "ein Auto", rocket: "eine Rakete", robot: "ein Roboter",
     train: "ein Zug", flower: "eine Blume",
   },
