@@ -65,7 +65,7 @@ export default {
     both: "Each leaf needs something.",
     had: "You had that one already. Find another way!",
     done: (a, b, c, d, total) => `${big(a)} and ${b}, or ${c} and ${d}. Both make ${total}!`,
-    hint: "Tap a leaf and one hops over.",
+    hint: "Drag a thing onto a leaf with your finger. Or tap it and then the leaf.",
     hintMove: "Take one from a leaf and put it on the other.",
     leaf: "Leaf",
     basket: "Basket",
@@ -105,9 +105,6 @@ export default {
     right: (a, b, c) => `Yes! ${big(a)} and ${b} make ${c}.`,
     fixed: (a, b, c) => `Now it is right: ${a} and ${b} make ${c}.`,
     hint: "Count both groups together.",
-    less: "One less",
-    more: "One more",
-    check: "Done",
   },
 
   backup: {

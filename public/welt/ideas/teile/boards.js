@@ -150,16 +150,12 @@ export function machen(host, t, ctx) {
   const found = []; // "3+4"
   let locked = false;
 
+  let held = false; // a thing from the basket was tapped and waits for a leaf
+
   const scene = el("div", "scene card pond-scene");
   const leaves = [0, 1].map((side) => {
     const leaf = button("leaf", `${T.machen.leaf} ${ctx.num(side + 1)}`);
-    leaf.addEventListener("click", () => {
-      if (locked || basket === 0) return;
-      basket--;
-      sides[side]++;
-      ctx.tap();
-      draw();
-    });
+    leaf.addEventListener("click", () => move("basket", side));
     return leaf;
   });
   scene.append(...leaves);
@@ -168,24 +164,80 @@ export function machen(host, t, ctx) {
   const ways = el("div", "ways");
   const check = button("btn ok check-btn", T.machen.check, "✓");
 
+  const count = (where) => (where === "basket" ? basket : sides[where]);
+  const add = (where, d) => (where === "basket" ? (basket += d) : (sides[where] += d));
+
+  /** One thing goes from the basket or a leaf ("basket", 0, 1) to another of them. */
+  function move(from, to) {
+    if (locked || from === to || count(from) === 0) return;
+    add(from, -1);
+    add(to, 1);
+    held = false;
+    ctx.tap();
+    draw();
+  }
+
+  // Children move the things themselves, the way they would with real carrots:
+  //   drag a thing with the finger onto a leaf (or back into the basket), or
+  //   tap a thing in the basket (it lifts), then tap a leaf. A tap on a thing on a leaf takes it back.
+  // A tap on a leaf alone still works: one thing hops over from the basket.
+  function thingPic(where, lifted) {
+    const pic = el("span", "pic thing" + (lifted ? " held" : ""), thing.icon);
+    let start = null;
+    let dragging = false;
+    pic.addEventListener("pointerdown", (e) => {
+      if (locked) return;
+      start = { x: e.clientX, y: e.clientY };
+      dragging = false;
+      pic.setPointerCapture?.(e.pointerId);
+    });
+    pic.addEventListener("pointermove", (e) => {
+      if (!start) return;
+      const dx = e.clientX - start.x;
+      const dy = e.clientY - start.y;
+      if (!dragging && Math.hypot(dx, dy) > 8) {
+        dragging = true;
+        pic.classList.add("dragging");
+      }
+      if (dragging) pic.style.transform = `translate(${dx}px, ${dy}px) scale(1.25)`;
+    });
+    const end = (e) => {
+      if (!start) return;
+      const dragged = dragging;
+      start = null;
+      dragging = false;
+      pic.style.transform = "";
+      pic.classList.remove("dragging");
+      if (e.type === "pointercancel") return;
+      if (!dragged) {
+        if (where === "basket") {
+          held = !held;
+          ctx.tap();
+          draw();
+        } else move(where, "basket");
+        return;
+      }
+      const under = document.elementsFromPoint(e.clientX, e.clientY);
+      const side = leaves.findIndex((leaf) => under.includes(leaf));
+      if (side >= 0) move(where, side);
+      else if (under.includes(basketBox)) move(where, "basket");
+    };
+    pic.addEventListener("pointerup", end);
+    pic.addEventListener("pointercancel", end);
+    pic.addEventListener("click", (e) => e.stopPropagation()); // the leaf below must not take it as its own tap
+    return pic;
+  }
+
   function draw() {
     leaves.forEach((leaf, side) => {
       leaf.innerHTML = "";
-      for (let i = 0; i < sides[side]; i++) {
-        const pic = el("span", "pic", thing.icon);
-        pic.addEventListener("click", (e) => {
-          e.stopPropagation(); // tapping a thing takes it back, tapping the leaf adds one
-          if (locked) return;
-          sides[side]--;
-          basket++;
-          ctx.tap();
-          draw();
-        });
-        leaf.append(pic);
-      }
+      for (let i = 0; i < sides[side]; i++) leaf.append(thingPic(side, false));
     });
     basketBox.innerHTML = "";
-    basketBox.append(el("span", "basket-icon", "🧺"), group(basket, thing.icon));
+    const pics = el("span", "pics");
+    for (let i = 0; i < basket; i++) pics.append(thingPic("basket", held && i === basket - 1));
+    basketBox.append(el("span", "basket-icon", "🧺"), pics);
+    scene.classList.toggle("picking", held && basket > 0);
     check.disabled = basket > 0;
   }
 
@@ -430,23 +482,25 @@ export function pruefen(host, t, ctx) {
   const no = button("btn go judge-btn", T.pruefen.no, "✗");
   judge.append(yes, no);
 
-  const fixer = el("div", "fixer");
-  fixer.hidden = true;
-  const less = button("btn num-btn", T.pruefen.less, "−");
-  const more = button("btn num-btn", T.pruefen.more, "+");
-  const fixed = el("b", "fixed-num", ctx.num(said));
-  const done = button("btn ok check-btn", T.pruefen.check, "✓");
-  fixer.append(less, fixed, more, done);
-
-  const change = (d) => {
+  // The owl was wrong: the child taps the right number, the same number buttons as everywhere.
+  const fixer = strip(ctx, 1, Math.max(5, t.range), (n, b) => {
     if (locked) return;
-    said = Math.max(1, Math.min(20, said + d));
-    fixed.textContent = saidBox.textContent = ctx.num(said);
+    said = n;
+    saidBox.textContent = ctx.num(said);
     drawSaid();
-    ctx.tap();
-  };
-  less.addEventListener("click", () => change(-1));
-  more.addEventListener("click", () => change(1));
+    if (n !== sum) {
+      shake(b);
+      b.disabled = true;
+      ctx.miss(T.pruefen.fixMiss);
+      return;
+    }
+    locked = true;
+    b.classList.add("right");
+    saidBox.classList.remove("wrong");
+    saidBox.classList.add("right");
+    ctx.solved(T.pruefen.fixed(ctx.word(t.a), ctx.word(t.b), ctx.word(sum)));
+  });
+  fixer.hidden = true;
 
   yes.addEventListener("click", () => {
     if (locked) return;
@@ -464,15 +518,6 @@ export function pruefen(host, t, ctx) {
     saidBox.classList.add("wrong");
     ctx.tap();
     ctx.tell(T.pruefen.fix);
-  });
-
-  done.addEventListener("click", () => {
-    if (locked) return;
-    if (said !== sum) return void (shake(fixed), ctx.miss(T.pruefen.fixMiss));
-    locked = true;
-    saidBox.classList.remove("wrong");
-    saidBox.classList.add("right");
-    ctx.solved(T.pruefen.fixed(ctx.word(t.a), ctx.word(t.b), ctx.word(sum)));
   });
 
   host.append(scene, judge, fixer);

@@ -68,7 +68,7 @@ export default {
     both: "Auf jedes Blatt gehört etwas.",
     had: "Das hattest du schon. Finde einen anderen Weg!",
     done: (a, b, c, d, total) => `${big(a)} und ${b}, oder ${c} und ${d}. Beides sind ${total}!`,
-    hint: "Tipp auf ein Blatt, dann hüpft etwas hinüber.",
+    hint: "Zieh etwas mit dem Finger auf ein Blatt. Oder tipp es an und dann das Blatt.",
     hintMove: "Nimm eins von einem Blatt und leg es auf das andere.",
     leaf: "Blatt",
     basket: "Korb",
@@ -111,9 +111,6 @@ export default {
     right: (a, b, c) => `Ja! ${big(a)} und ${b} sind ${c}.`,
     fixed: (a, b, c) => `Jetzt stimmt es: ${big(a)} und ${b} sind ${c}.`,
     hint: "Zähl beide Gruppen zusammen.",
-    less: "Eins weniger",
-    more: "Eins mehr",
-    check: "Fertig",
   },
 
   // Sichern (für Eltern)
