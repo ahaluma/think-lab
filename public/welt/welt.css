@@ -2424,3 +2424,12 @@ body[data-world="berg"] .caption.quiet {
   align-self: center;
   min-width: 160px;
 }
+
+/* Camp 11: the heap to play with */
+.heap .heap-stone {
+  font-size: 22px;
+}
+
+.take-btn:disabled {
+  opacity: 0.4;
+}
