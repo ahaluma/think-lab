@@ -184,7 +184,8 @@ document.getElementById("today").textContent = T.today(t.right, t.wrong, t.round
 
 const placeOfIdea = Object.fromEntries(world.ideas.map((i) => [i.id, i.place]));
 /** "Zahlen bis 10", or for an idea without numbers its own words ("Stücke aus 3 Dingen"). */
-const rangeLabel = (idea) => (T.worldRange[idea.id] || T.worldRange.numbers)(num(idea.range), num(idea.step + 1));
+const SHARE_MOST = { 5: 6, 10: 10, 20: 20 }; // MOST in welt/ideas/gruppen/tasks.js
+const rangeLabel = (idea) => (T.worldRange[idea.id] || T.worldRange.numbers)(num(idea.range), num(idea.step + 1), num(SHARE_MOST[idea.range]));
 
 {
   const section = $("world");

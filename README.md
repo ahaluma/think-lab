@@ -71,12 +71,13 @@ A second way into AnkaPlay is growing next to the games: `/welt/`. The start pag
 The idea: a **grid of ideas and perspectives**. Every mathematical idea can be played in five
 perspectives, each with a fixed symbol: see 👁️, make ✋, explore 🔍, use 🔑, check ✅. The map is a
 piece of nature with six places. A place with something to play is awake, the others sleep.
-Three places are awake:
+Four places are awake:
 
 | Place | Idea | See 👁️ | Make ✋ | Explore 🔍 | Use 🔑 | Check ✅ |
 | --- | --- | --- | --- | --- | --- | --- |
 | Meadow and stream | `zahl`: a number says how many | flowers at a glance | pick n flowers | the missing stepping stone | where are more? | the owl has counted |
 | Burrow and pond | `teile`: numbers are made of numbers | animals hide in the burrow | split on two leaves | the hollow tree | a hidden part | the owl adds |
+| Fruit tree and nests | `gruppen`: groups of the same size, sharing fairly | eggs under the hen | share among the animals | think first: does it come out even? | cherries: for how many birds is it enough? | the owl shared: who has too many? |
 | Forest | `muster`: a row goes on, because one piece comes again and again | what comes next? | lay the next things | which piece comes again? | the same row with other things | the owl laid a row: find the wrong thing |
 
 **Three number ranges: up to 5, 10 and 20** (`ranges` in `frame/ideas.js`). A child starts by age
@@ -86,13 +87,18 @@ show the digit and that many dots. Up to 20 they show only the digit, the dots s
 whole and in the hint. More than ten pictures are drawn smaller, still five in a row. In the range up
 to 20 the stepping stones also go in steps of two.
 
+At the fruit tree the three ranges say how many things there are to share in all: up to 6, 10 or 20
+(`MOST` in `ideas/gruppen/tasks.js`). The answers are small numbers, 1 to 5: how many each gets, or
+for how many it is enough.
+
 The forest has no numbers: every answer is a picture. Its three ranges are the length of the piece
 that repeats: two things (🍄🌰), three (🍄🌰🌰) or four (🍄🌰🍄🍂). A wrong answer is never the same
 row started at another place (`sameWay` in `ideas/muster/tasks.js`), because that would be right too.
 It holds the idea of the old game "Muster-Kette".
 
 The meadow holds the ideas of the old games "Blitzblick", "Wie viele?", "Zahlenzug" and "Wo sind
-mehr?", the forest the idea of "Muster-Kette". These five games have **moved**: in `catalog.js` they
+mehr?", the forest the idea of "Muster-Kette", the fruit tree the idea of "Gerecht teilen". These six
+games have **moved**: in `catalog.js` they
 carry `moved: "<idea>"` and are no longer on the start page (`shared/fit.js`). Their folders stay, and
 parents can switch each one back on per child on `/eltern/`.
 
