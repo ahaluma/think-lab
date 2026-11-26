@@ -65,11 +65,12 @@ function update(change) {
 }
 
 /** The range a child starts an idea in, by age: below SMALL_UNTIL the first, from BIG_FROM the third,
- *  in between the second. Without an age (no child chosen) the first. */
+ *  in between the second. Without an age (no child chosen) the first. An idea with startAt (the
+ *  thinking mountain) starts there for every child. */
 function startRange(idea, kid = profiles.current()) {
   const ranges = IDEAS[idea].ranges;
   const age = profiles.age(kid);
-  const at = age === null || age < SMALL_UNTIL ? 0 : age >= BIG_FROM ? 2 : 1;
+  const at = IDEAS[idea].startAt ?? (age === null || age < SMALL_UNTIL ? 0 : age >= BIG_FROM ? 2 : 1);
   return ranges[Math.min(at, ranges.length - 1)];
 }
 

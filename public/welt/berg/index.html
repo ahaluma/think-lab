@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Denk-Berg · AnkaPlay</title>
+    <meta name="description" content="Der Denk-Berg von AnkaPlay: Knobeln wie bei der Mathe-Olympiade, Lager für Lager. Ohne Werbung, ohne Tracking." />
+    <meta name="theme-color" content="#e9eef2" />
+    <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icon-180.png?v=3" />
+    <link rel="stylesheet" href="/shared/base.css" />
+    <link rel="stylesheet" href="../welt.css" />
+    <script type="module" src="berg.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <div class="topbar">
+        <a class="icon-btn" id="home" href="/welt/" aria-label="Zur Welt"></a>
+        <div class="spacer"></div>
+        <button class="icon-btn sun" id="hear" type="button" data-t-label="hear" aria-label="Vorlesen"></button>
+      </div>
+      <p class="caption" id="caption" aria-live="polite"></p>
+
+      <!-- The mountain: twelve camps on a path from the foot to the top. Only awake camps can be
+           played; the camps are drawn by berg.js from MOUNTAIN in frame/ideas.js.
+           True to the world: trees only at the foot, then grass, rock, and snow only at the top. -->
+      <div class="map card" id="map" aria-label="Der Denk-Berg">
+        <svg viewBox="0 0 360 450" xmlns="http://www.w3.org/2000/svg" id="mountain">
+          <defs>
+            <clipPath id="hill"><path d="M-20 450 L180 36 L380 450Z" /></clipPath>
+          </defs>
+          <rect width="360" height="450" fill="#cfeaff" />
+          <circle cx="306" cy="52" r="22" fill="#ffc83a" stroke="#1b2140" stroke-width="3" />
+          <g fill="#fff" stroke="#1b2140" stroke-width="3">
+            <ellipse cx="60" cy="70" rx="34" ry="12" /><ellipse cx="78" cy="60" rx="20" ry="12" />
+          </g>
+          <!-- a smaller mountain behind -->
+          <path d="M200 450 L300 150 L420 450Z" fill="#a9b4c2" stroke="#1b2140" stroke-width="3" />
+          <path d="M285 195 L300 150 L316 197 L306 190 L298 200 L292 190Z" fill="#fff" stroke="#1b2140" stroke-width="2" />
+          <!-- the mountain, in four heights -->
+          <g clip-path="url(#hill)">
+            <rect width="360" height="450" fill="#fff" />
+            <rect y="150" width="360" height="300" fill="#9aa5b4" />
+            <rect y="262" width="360" height="200" fill="#a7d68c" />
+            <rect y="352" width="360" height="100" fill="#b9e5a0" />
+            <path d="M120 160l14 10M220 200l-12 12M150 236l16 6" stroke="#6f7a89" stroke-width="3" stroke-linecap="round" />
+          </g>
+          <path d="M-20 450 L180 36 L380 450" fill="none" stroke="#1b2140" stroke-width="3" />
+          <!-- trees at the foot -->
+          <g stroke="#1b2140" stroke-width="3">
+            <rect x="22" y="404" width="8" height="20" fill="#8a5a33" /><path d="M26 368l18 38h-36z" fill="#3f9b57" />
+            <rect x="318" y="410" width="8" height="20" fill="#8a5a33" /><path d="M322 374l18 38h-36z" fill="#2f8a4b" />
+            <rect x="290" y="420" width="8" height="18" fill="#8a5a33" /><circle cx="294" cy="408" r="15" fill="#57b86a" />
+          </g>
+          <!-- the path up -->
+          <path id="path" d="M70 448 L100 404 L228 386 L270 348 L150 326 L112 296 L220 282 L246 242 L152 226 L132 196 L206 172 L214 138 L166 116 L180 70"
+            fill="none" stroke="#e3c79a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M70 448 L100 404 L228 386 L270 348 L150 326 L112 296 L220 282 L246 242 L152 226 L132 196 L206 172 L214 138 L166 116 L180 70"
+            fill="none" stroke="#1b2140" stroke-width="2" stroke-dasharray="2 8" stroke-linecap="round" stroke-linejoin="round" />
+          <g id="camps"></g>
+          <!-- the top: the old tower with the telescope -->
+          <g class="place asleep" id="summit" tabindex="0" role="button">
+            <rect x="166" y="40" width="28" height="34" fill="#d9dde6" stroke="#1b2140" stroke-width="3" />
+            <path d="M162 42 L180 24 L198 42Z" fill="#e8488a" stroke="#1b2140" stroke-width="3" />
+            <path d="M188 52 l14 -6 l2 5 l-14 6z" fill="#1b2140" />
+            <rect x="175" y="58" width="10" height="16" fill="#8a5a33" stroke="#1b2140" stroke-width="2" />
+          </g>
+          <text class="walker pulse" id="walker" x="72" y="404" tabindex="0" role="button"></text>
+        </svg>
+      </div>
+
+      <section class="ways-panel card" id="ways" hidden>
+        <h2 id="waysTitle"></h2>
+        <ul class="persp" id="persp"></ul>
+      </section>
+
+      <ul class="think-row" id="cards" data-t-label="yourCards" aria-label="Deine Denk-Tricks"></ul>
+
+      <footer class="map-foot">
+        <a href="/welt/sichern/" data-t="save">Sichern</a>
+        <a href="/datenschutz/" data-t="privacy">Datenschutz</a>
+      </footer>
+    </main>
+  </body>
+</html>

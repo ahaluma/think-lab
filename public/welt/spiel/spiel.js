@@ -16,7 +16,7 @@ import * as gen from "../../shared/gen.js";
 import * as profiles from "../../shared/profiles.js";
 import * as record from "../frame/record.js";
 import { mount, tell, again } from "../frame/voice.js";
-import { IDEAS, CARDS, ROUND_TASKS, perspective, cardOf } from "../frame/ideas.js";
+import { IDEAS, CARDS, ROUND_TASKS, perspective, cardOf, mapOf } from "../frame/ideas.js";
 
 const params = new URLSearchParams(location.search);
 const IDEA = params.get("i") in IDEAS ? params.get("i") : "teile";
@@ -30,6 +30,8 @@ const INTRO = (T[IDEA] ?? T).intro;
 /** "Soon it gets harder / easier": an idea without numbers says it in its own words. */
 const BIGGER = T[IDEA]?.bigger ?? T.bigger;
 const SMALLER = T[IDEA]?.smaller ?? T.smaller;
+/** "A new flower grows": the mountain says it in its own words. */
+const GREW = T[IDEA]?.grew ?? T.grew;
 const P = perspective(params.get("p")) || perspective(record.suggest(IDEA));
 
 const CARD = cardOf(IDEA, P.id);
@@ -169,14 +171,16 @@ async function finish() {
   sound.win();
   celebrate();
   await tell(`${T.done} ${T.cardGot(T.cards[CARD].name)} ${T.cards[CARD].text}`);
-  await tell(moved > 0 ? BIGGER : T.grew);
+  await tell(moved > 0 ? BIGGER : GREW);
   tell(T.feelQuestion);
 }
 
 // ---------- Wire up
 
 fill(T);
-document.title = `${T.perspectives[P.id]} · ${T.title}`;
+/** The thinking mountain names the perspectives in its own words (welt/lang: berg.perspectives). */
+const NAMES = (IDEAS[IDEA].world && T[IDEAS[IDEA].world]?.perspectives) || T.perspectives;
+document.title = `${NAMES[P.id]} · ${T.title}`;
 mount($("caption"));
 $("home").innerHTML = icons.home;
 $("hear").innerHTML = icons.speaker;
@@ -184,7 +188,8 @@ $("play").innerHTML = icons.play;
 $("startArt").textContent = P.icon;
 $("again").textContent = T.again;
 $("other").textContent = T.other;
-$("other").href = `/welt/?o=${IDEAS[IDEA].place}`;
+$("other").href = `${mapOf(IDEA)}?o=${IDEAS[IDEA].place}`;
+$("home").href = mapOf(IDEA);
 $("feel").setAttribute("aria-label", T.feelQuestion);
 for (const b of $("feel").children) {
   b.querySelector("small").textContent = T.feel[b.dataset.feel];

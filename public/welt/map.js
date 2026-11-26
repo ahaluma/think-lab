@@ -188,6 +188,11 @@ for (const [id, icon] of Object.entries(CARDS)) {
   $("cards").append(li);
 }
 
+// ---------- The way to the thinking mountain
+
+$("doorName").textContent = T.berg.door;
+$("doorNote").textContent = T.berg.doorNote;
+
 $("caption").textContent = T.whereTo;
 const asked = placeOf(new URLSearchParams(location.search).get("o"));
 if (asked) openPlace(asked);
