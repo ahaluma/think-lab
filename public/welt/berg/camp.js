@@ -15,7 +15,7 @@
 //   rules[tool]    the tool in one sentence, said after a solved task
 //   hints[tool]    the hint (bulb, or by itself after two misses)
 //   miss[tool]     what a wrong answer gets
-//   tables[id] → [left column, right column]; tableIntro[id](fixed) what the table is about
+//   tables[id] → [left column, right column]; tableIntro[id](fixed, a) what the table is about
 //   reasons[id]    why the owl can be wrong
 //   ways[story or tool](a) → [[tool, text], …]         the "So geht es auch" card; tools[tool] its name
 // and the words every camp shares under berg.owl and berg.table.
@@ -25,7 +25,7 @@ import * as kit from "./kit.js";
 
 /** The task's numbers in the language's digits (lists too); words stay as they are. */
 export function args(ctx, t) {
-  const d = (v) => (typeof v === "number" ? ctx.num(v) : Array.isArray(v) ? v.map(d) : v);
+  const d = (v) => (typeof v === "number" ? ctx.num(v) : Array.isArray(v) ? v.map(d) : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, d(x)])) : v);
   return Object.fromEntries(Object.entries({ ...t.a, answer: t.answer }).map(([k, v]) => [k, d(v)]));
 }
 
@@ -99,7 +99,7 @@ export function campBoards(camp, { TOOLS = {}, DIGITS = 3, machen, picture: draw
     open.classList.add("now");
     host.append(grid);
     const [text, ask] = storyOf(ctx, camp, t);
-    const intro = C.tableIntro[t.table.id](ctx.num(t.table.fixed ?? 0));
+    const intro = C.tableIntro[t.table.id](ctx.num(t.table.fixed ?? 0), args(ctx, t));
     const q = kit.question(host, intro, W.next(ctx.num(nx)));
     let pad = typed(ctx, host, ny, {
       onWrong: () => ctx.miss(W.look),

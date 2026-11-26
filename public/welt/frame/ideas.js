@@ -57,7 +57,7 @@ export const MOUNTAIN = [
   { id: "zaun", height: 1, ideas: ["zaun"] },
   { id: "haken", height: 1, needs: ["zaun"], ideas: ["haken"] },
   { id: "huetten", height: 1, needs: ["haken"], ideas: ["huetten"] },
-  { id: "vorrat", height: 2, needs: ["huetten"] },
+  { id: "vorrat", height: 2, needs: ["huetten"], ideas: ["vorrat"] },
   { id: "ameisen", height: 2, needs: ["zaun"] },
   { id: "waage", height: 2, needs: ["vorrat"] },
   { id: "stall", height: 3, needs: ["huetten", "waage"] },
@@ -95,6 +95,8 @@ export const IDEAS = {
   haken: { place: "haken", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
   // Camp 3: logic puzzles, solved by ruling out (each one checked by a solver: exactly one solution).
   huetten: { place: "huetten", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 4: think backwards (undo every step, the last one first).
+  vorrat: { place: "vorrat", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */

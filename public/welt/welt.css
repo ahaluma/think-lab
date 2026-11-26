@@ -2032,3 +2032,61 @@ body[data-world="berg"] .caption.quiet {
   justify-content: center;
   gap: 10px;
 }
+
+/* Camp 4: the chain of steps, rewound box by box */
+.chain {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: safe center;
+  gap: 4px;
+  padding: 12px 8px;
+  overflow-x: auto;
+}
+
+.chain-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: 46px;
+  height: 46px;
+  padding: 0 6px;
+  font-size: 20px;
+  font-weight: 800;
+  border: 3px dashed var(--ink);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.chain-box.known {
+  border-style: solid;
+  background: #e5f4e4;
+}
+
+.chain-box.now {
+  background: var(--sun);
+}
+
+.chain-step {
+  flex: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 12px;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.chain-step b::after {
+  content: " →";
+}
+
+.chain-undo {
+  min-height: 1.2em;
+  font-size: 13px;
+  font-weight: 800;
+  color: #c4372b;
+}
