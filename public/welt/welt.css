@@ -2090,3 +2090,115 @@ body[data-world="berg"] .caption.quiet {
   font-weight: 800;
   color: #c4372b;
 }
+
+/* Camp 5: figures from matches, a row of beads, days and beads to tap */
+.sticks-scene {
+  overflow-x: auto;
+}
+
+.sticks-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 18px;
+  min-width: min-content;
+  padding: 4px;
+}
+
+.sticks-fig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.sticks-svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.sticks-svg .wood {
+  stroke: #c8742c;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.sticks-svg .slot .wood {
+  stroke: #c9ced8;
+  stroke-dasharray: 4 5;
+}
+
+.sticks-svg .slot.on .wood {
+  stroke: #c8742c;
+  stroke-dasharray: none;
+}
+
+.sticks-svg .hit {
+  stroke: transparent;
+  stroke-width: 22;
+  stroke-linecap: round;
+  cursor: pointer;
+}
+
+.build-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.shape-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px;
+}
+
+.shape {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: 28px;
+}
+
+.shape.slot {
+  border: 3px dashed var(--ink);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.camp-choices.icons .choice-btn {
+  min-width: 60px;
+  font-size: 30px;
+}
+
+.camp-choices:not(.reasons) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+.camp-choices.icons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.camp-choices.icons .choice-btn {
+  width: auto;
+}
+
+.build-box {
+  width: 100%;
+}
+
+.build-box .find-count {
+  white-space: nowrap;
+}
