@@ -1601,3 +1601,55 @@ button.pic {
   font-size: 18px;
   font-weight: 800;
 }
+
+/* Camp "Zaun": after a task, the other tools that solve it (many ways to one answer) */
+.ways-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #fffbea;
+}
+
+.ways-title {
+  font-size: 17px;
+}
+
+.ways-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ways-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.ways-icon {
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.ways-body {
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.ways-next {
+  align-self: center;
+  min-width: 160px;
+}
+
+.numpad-box[hidden],
+.reasons[hidden],
+.fence-tools[hidden] {
+  display: none;
+}

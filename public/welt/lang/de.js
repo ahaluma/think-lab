@@ -483,6 +483,95 @@ export default {
       twice: "Doppelt so viele Stücke heißt nicht doppelt so viele Schnitte. Das ist die Eulen-Falle.",
       rule: "Gezählt werden die Abstände, nicht die Dinge.",
     },
+    // Viele Wege zu einer Antwort: nach jeder Aufgabe die Werkzeuge, die sie auch lösen.
+    ways: {
+      title: "Gelöst! Und so geht es auch:",
+      next: "Weiter",
+      tools: {
+        luecken: "Lücken zählen", klein: "Klein anfangen", zuordnen: "Zuordnen", aufschneiden: "Aufschneiden",
+        umbauen: "Auf Bekanntes zurückführen", zerlegen: "Zerlegen", tabelle: "Tabelle", lineal: "Am Lineal", teil: "Ganzes minus Teil",
+      },
+      line: (b, p) => [
+        ["luecken", `Jedes Brett ist eine Lücke. Dazu ein Pfahl am Ende: ${b} + 1 = ${p}.`],
+        ["klein", `1 Brett: 2 Pfähle. 2 Bretter: 3 Pfähle. Immer eins mehr: ${p}.`],
+        ["zuordnen", `Jedes Brett bringt seinen linken Pfahl mit. Ganz rechts fehlt einer: ${b} + 1 = ${p}.`],
+      ],
+      trees: (b, p) => [
+        ["luecken", `${b} Lücken. Pfähle stehen nur dazwischen: ${b} − 1 = ${p}.`],
+        ["umbauen", `Wie ein Zaun in einer Reihe: ${b} + 1 Stützen. Zwei davon sind Bäume: ${b} + 1 − 2 = ${p}.`],
+        ["klein", `2 Bretter: 1 Pfahl. 3 Bretter: 2 Pfähle. Immer eins weniger: ${p}.`],
+      ],
+      ring: (b, p) => [
+        ["zuordnen", `Jedes Brett bringt den Pfahl rechts von sich mit. Keiner bleibt übrig: ${p}.`],
+        ["aufschneiden", `Schneid den Ring auf: eine Reihe mit ${b} + 1 Pfählen. Der erste und der letzte sind derselbe: ${p}.`],
+      ],
+      sides: (b, one, p) => [
+        ["zerlegen", `Eine Seite: ${b} + 1 = ${one}. Zwei Seiten: 2 · ${one} = ${p}.`],
+        ["luecken", `Alle Lücken: 2 · ${b}. Dazu ein Endpfahl pro Seite: 2 · ${b} + 2 = ${p}.`],
+      ],
+      rect: (i, j, p) => [
+        ["aufschneiden", `Rundherum gibt es kein Ende: so viele Pfähle wie Abstände. ${i} + ${j} + ${i} + ${j} = ${p}.`],
+        ["zerlegen", `Jede Seite wie eine Reihe: 2 · (${i} + 1) + 2 · (${j} + 1). Jede Ecke ist dabei doppelt, also minus 4: ${p}.`],
+      ],
+      back: {
+        line: (p, g, e, L) => [
+          ["luecken", `${p} Pfähle in einer Reihe: ${g} Abstände. ${g} · ${e} = ${L}.`],
+          ["klein", `2 Pfähle: 1 Abstand. 3 Pfähle: 2 Abstände. Immer eins weniger: ${g} · ${e} = ${L}.`],
+        ],
+        trees: (p, g, e, L) => [
+          ["luecken", `${p} Pfähle zwischen zwei Bäumen: ${g} Abstände. ${g} · ${e} = ${L}.`],
+          ["umbauen", `Zähl die Bäume als Pfähle mit: ${p} + 2 in einer Reihe, also ${g} Abstände: ${L}.`],
+        ],
+        ring: (p, g, e, L) => [
+          ["zuordnen", `Jeder Pfahl bringt einen Abstand mit: ${p} · ${e} = ${L}.`],
+          ["aufschneiden", `Aufgeschnitten: ${p} + 1 Pfähle in einer Reihe, also ${p} Abstände: ${L}.`],
+        ],
+      },
+      see: {
+        line: (p, b) => [
+          ["luecken", `${p} Pfähle in einer Reihe: ${p} − 1 = ${b} Lücken.`],
+          ["zuordnen", `Jeder Pfahl außer dem letzten bekommt rechts ein Brett: ${b}.`],
+        ],
+        trees: (p, b) => [
+          ["umbauen", `${p} Pfähle und zwei Bäume: ${p} + 2 Stützen in einer Reihe, also ${b} Lücken.`],
+          ["zuordnen", `Jeder Pfahl bekommt links ein Brett. Ganz rechts zum Baum noch eins: ${p} + 1 = ${b}.`],
+        ],
+      },
+      every: {
+        ends: (L, e, g, c) => [
+          ["luecken", `${L} : ${e} = ${g} Abstände. Bäume: ${g} + 1 = ${c}.`],
+          ["lineal", `Auf dem Lineal: 0, ${e}, 2 · ${e} … bis ${L}. Das sind ${c} Stellen.`],
+        ],
+        between: (L, e, g, c) => [
+          ["luecken", `${L} : ${e} = ${g} Abstände. An den Enden stehen Bäume: ${g} − 1 = ${c} Pfähle.`],
+          ["lineal", `Auf dem Lineal: ${e}, 2 · ${e} … bis kurz vor ${L}. Das sind ${c} Stellen.`],
+        ],
+      },
+      saw: (n, k) => [
+        ["luecken", `${n} Stücke in einer Reihe haben ${k} Stellen dazwischen. Dort wird gesägt.`],
+        ["klein", `2 Stücke: 1 Schnitt. 3 Stücke: 2 Schnitte. Immer eins weniger: ${k}.`],
+      ],
+      beads: (n, k) => [
+        ["luecken", `${n} Perlen in einer Reihe haben ${k} Stellen dazwischen.`],
+        ["klein", `2 Perlen: 1 Knoten. 3 Perlen: 2 Knoten. Immer eins weniger: ${k}.`],
+      ],
+      necklace: (n, k) => [
+        ["zuordnen", `Jede Perle bringt den Knoten rechts von sich mit: ${k}.`],
+        ["aufschneiden", `Aufgeschnitten: eine Reihe mit ${n} − 1 Knoten. Dazu der Knoten am Verschluss: ${k}.`],
+      ],
+      time: (a, given, g1, unit, b, g2, ans, u) => [
+        ["luecken", `Bei ${a} gibt es ${g1} Abstände. Einer: ${given} : ${g1} = ${unit}. Für ${b}: ${g2} · ${unit} = ${ans} ${u}.`],
+        ["tabelle", `1 → 0, 2 → ${unit}, 3 → 2 · ${unit}, … ${b} → ${ans} ${u}.`],
+      ],
+      sawback: (unit, given, cuts, ans) => [
+        ["luecken", `${given} : ${unit} = ${cuts} Schnitte. Ein Schnitt mehr heißt ein Stück mehr: ${ans}.`],
+        ["tabelle", `0 Minuten: 1 Stück. ${unit} Minuten: 2 Stücke. … ${given} Minuten: ${ans} Stücke.`],
+      ],
+      towerpart: (a, given, unit, c, dd, ans, toD, toC) => [
+        ["luecken", `Ein Abstand: ${given} : (${a} − 1) = ${unit}. Von ${c} bis ${dd}: ${dd} − ${c} Abstände, also ${ans}.`],
+        ["teil", `Von 1 bis ${dd}: ${toD}. Von 1 bis ${c}: ${toC}. Der Rest: ${toD} − ${toC} = ${ans}.`],
+      ],
+    },
     pruefen: {
       postsWord: "Pfähle",
       ask: (said) => `Die Eule sagt sofort: „${said}!“ Stimmt das?`,

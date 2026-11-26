@@ -476,6 +476,95 @@ export default {
       twice: "Twice as many pieces does not mean twice as many cuts. That is the owl trap.",
       rule: "You count the distances, not the things.",
     },
+    // Many ways to one answer: after each task, the tools that solve it too.
+    ways: {
+      title: "Solved! And this works too:",
+      next: "Next",
+      tools: {
+        luecken: "Count the gaps", klein: "Start small", zuordnen: "Match up", aufschneiden: "Cut it open",
+        umbauen: "Turn it into a known problem", zerlegen: "Split it", tabelle: "Table", lineal: "On the ruler", teil: "Whole minus part",
+      },
+      line: (b, p) => [
+        ["luecken", `Every board is a gap. Plus one post at the end: ${b} + 1 = ${p}.`],
+        ["klein", `1 board: 2 posts. 2 boards: 3 posts. Always one more: ${p}.`],
+        ["zuordnen", `Every board brings its left post. One is missing on the far right: ${b} + 1 = ${p}.`],
+      ],
+      trees: (b, p) => [
+        ["luecken", `${b} gaps. Posts only stand between them: ${b} − 1 = ${p}.`],
+        ["umbauen", `Like a fence in a row: ${b} + 1 supports. Two of them are trees: ${b} + 1 − 2 = ${p}.`],
+        ["klein", `2 boards: 1 post. 3 boards: 2 posts. Always one less: ${p}.`],
+      ],
+      ring: (b, p) => [
+        ["zuordnen", `Every board brings the post on its right. None is left over: ${p}.`],
+        ["aufschneiden", `Cut the ring open: a row with ${b} + 1 posts. The first and the last are the same: ${p}.`],
+      ],
+      sides: (b, one, p) => [
+        ["zerlegen", `One side: ${b} + 1 = ${one}. Two sides: 2 × ${one} = ${p}.`],
+        ["luecken", `All gaps: 2 × ${b}. Plus one end post per side: 2 × ${b} + 2 = ${p}.`],
+      ],
+      rect: (i, j, p) => [
+        ["aufschneiden", `All round there is no end: as many posts as distances. ${i} + ${j} + ${i} + ${j} = ${p}.`],
+        ["zerlegen", `Each side like a row: 2 × (${i} + 1) + 2 × (${j} + 1). Each corner counted twice, so minus 4: ${p}.`],
+      ],
+      back: {
+        line: (p, g, e, L) => [
+          ["luecken", `${p} posts in a row: ${g} distances. ${g} × ${e} = ${L}.`],
+          ["klein", `2 posts: 1 distance. 3 posts: 2 distances. Always one less: ${g} × ${e} = ${L}.`],
+        ],
+        trees: (p, g, e, L) => [
+          ["luecken", `${p} posts between two trees: ${g} distances. ${g} × ${e} = ${L}.`],
+          ["umbauen", `Count the trees as posts: ${p} + 2 in a row, so ${g} distances: ${L}.`],
+        ],
+        ring: (p, g, e, L) => [
+          ["zuordnen", `Every post brings one distance: ${p} × ${e} = ${L}.`],
+          ["aufschneiden", `Cut open: ${p} + 1 posts in a row, so ${p} distances: ${L}.`],
+        ],
+      },
+      see: {
+        line: (p, b) => [
+          ["luecken", `${p} posts in a row: ${p} − 1 = ${b} gaps.`],
+          ["zuordnen", `Every post except the last gets a board on its right: ${b}.`],
+        ],
+        trees: (p, b) => [
+          ["umbauen", `${p} posts and two trees: ${p} + 2 supports in a row, so ${b} gaps.`],
+          ["zuordnen", `Every post gets a board on its left. One more to the tree on the right: ${p} + 1 = ${b}.`],
+        ],
+      },
+      every: {
+        ends: (L, e, g, c) => [
+          ["luecken", `${L} ÷ ${e} = ${g} distances. Trees: ${g} + 1 = ${c}.`],
+          ["lineal", `On the ruler: 0, ${e}, 2 × ${e} … up to ${L}. That is ${c} places.`],
+        ],
+        between: (L, e, g, c) => [
+          ["luecken", `${L} ÷ ${e} = ${g} distances. Trees stand at the ends: ${g} − 1 = ${c} posts.`],
+          ["lineal", `On the ruler: ${e}, 2 × ${e} … up to just before ${L}. That is ${c} places.`],
+        ],
+      },
+      saw: (n, k) => [
+        ["luecken", `${n} pieces in a row have ${k} places between them. That is where you saw.`],
+        ["klein", `2 pieces: 1 cut. 3 pieces: 2 cuts. Always one less: ${k}.`],
+      ],
+      beads: (n, k) => [
+        ["luecken", `${n} beads in a row have ${k} places between them.`],
+        ["klein", `2 beads: 1 knot. 3 beads: 2 knots. Always one less: ${k}.`],
+      ],
+      necklace: (n, k) => [
+        ["zuordnen", `Every bead brings the knot on its right: ${k}.`],
+        ["aufschneiden", `Cut open: a row with ${n} − 1 knots. Plus the knot at the clasp: ${k}.`],
+      ],
+      time: (a, given, g1, unit, b, g2, ans, u) => [
+        ["luecken", `With ${a} there are ${g1} distances. One: ${given} ÷ ${g1} = ${unit}. For ${b}: ${g2} × ${unit} = ${ans} ${u}.`],
+        ["tabelle", `1 → 0, 2 → ${unit}, 3 → 2 × ${unit}, … ${b} → ${ans} ${u}.`],
+      ],
+      sawback: (unit, given, cuts, ans) => [
+        ["luecken", `${given} ÷ ${unit} = ${cuts} cuts. One cut more means one piece more: ${ans}.`],
+        ["tabelle", `0 minutes: 1 piece. ${unit} minutes: 2 pieces. … ${given} minutes: ${ans} pieces.`],
+      ],
+      towerpart: (a, given, unit, c, dd, ans, toD, toC) => [
+        ["luecken", `One distance: ${given} ÷ (${a} − 1) = ${unit}. From ${c} to ${dd}: ${dd} − ${c} distances, so ${ans}.`],
+        ["teil", `From 1 to ${dd}: ${toD}. From 1 to ${c}: ${toC}. The rest: ${toD} − ${toC} = ${ans}.`],
+      ],
+    },
     pruefen: {
       postsWord: "posts",
       ask: (said) => `The owl says at once: "${said}!" Is that right?`,
