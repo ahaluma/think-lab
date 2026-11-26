@@ -182,6 +182,7 @@ fill(T);
 const NAMES = (IDEAS[IDEA].world && T[IDEAS[IDEA].world]?.perspectives) || T.perspectives;
 document.title = `${NAMES[P.id]} · ${T.title}`;
 mount($("caption"));
+document.body.dataset.world = IDEAS[IDEA].world ?? ""; // the mountain has its own board layout
 $("home").innerHTML = icons.home;
 $("hear").innerHTML = icons.speaker;
 $("play").innerHTML = icons.play;

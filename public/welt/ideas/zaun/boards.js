@@ -258,12 +258,35 @@ function typed(ctx, host, right, { onWrong, onRight }) {
   };
 }
 
-/** Tells the story sentence, then opens the pad and asks. */
-async function story(host, ctx, first, ask, pad) {
-  if (first) await ctx.tell(first);
-  if (!host.isConnected) return;
+/** The whole question, always in sight: a box at the top of the board that stays on screen when the
+ *  page scrolls (numpad, owl, other ways). The caption above keeps only what is new: a miss, a hint,
+ *  praise. Everything else on the board is pushed down (welt.css, .zaun-board).
+ *  Returns { ask(text) } to change the asking line (Prüfen: "Stimmt das?" → "Was ist richtig?"). */
+function question(host, text, ask = "") {
+  host.classList.add("zaun-board");
+  const box = el("div", "task-text card");
+  const said = el("p", "task-story", text);
+  const asked = el("p", "task-ask", ask);
+  said.hidden = !text;
+  asked.hidden = !ask;
+  box.append(said, asked);
+  host.prepend(box);
+  // What scrolls into view must not hide behind the box.
+  const fit = () => host.style.setProperty("--task-h", `${box.offsetHeight + 12}px`);
+  if (typeof ResizeObserver === "function") new ResizeObserver(fit).observe(box);
+  return {
+    ask(next) {
+      asked.textContent = next;
+      asked.hidden = !next;
+    },
+  };
+}
+
+/** Shows the whole question, opens the pad and reads the question aloud. */
+function story(host, ctx, first, ask, pad) {
+  question(host, first, ask);
   pad.open();
-  ctx.tell(ask);
+  ctx.tell(first ? `${first} ${ask}` : ask, "");
 }
 
 const n = (ctx, fn, k) => fn(k, ctx.word(k), ctx.num(k));
@@ -395,7 +418,9 @@ function buildBoards(host, t, ctx) {
   tools.append(counter, check);
   host.append(scene, tools);
   draw();
-  ctx.tell(M.ask(n(ctx, Z.boards, t.boards)));
+  const ask = M.ask(n(ctx, Z.boards, t.boards));
+  question(host, "", ask);
+  ctx.tell(ask, "");
   return { hint: () => M.hint };
 }
 
@@ -458,7 +483,9 @@ function plantEvery(host, t, ctx) {
   tools.append(check);
   host.append(scene, tools);
   draw();
-  ctx.tell(M.every[t.ends ? "ends" : "between"](ctx.num((t.spots - 1) * t.step), ctx.num(t.every)));
+  const ask = M.every[t.ends ? "ends" : "between"](ctx.num((t.spots - 1) * t.step), ctx.num(t.every));
+  question(host, "", ask);
+  ctx.tell(ask, "");
   return { hint: () => M.everyHint(ctx.num(t.every)) };
 }
 
@@ -745,10 +772,12 @@ export function pruefen(host, t, ctx) {
   const no = button("btn go judge-btn", T.pruefen.no, "✗");
   judge.append(yes, no);
   host.append(scene, judge);
+  const said = `${ctx.num(t.said)} ${time ? A.unit[t.story] : t.ask === "length" ? Z.metres("").trim() : P.postsWord}`;
+  const task = time ? `${A.story[t.story](ctx.num(t.a), ctx.num(t.given), ctx.num(t.b))} ${A.ask[t.story](ctx.num(t.b))}` : fenceStory(ctx, t);
+  const q = question(host, task, P.ask(said));
 
   const show = () => (time ? pic.show() : t.ask === "posts" && pic.showPosts());
   const rule = time ? A.rule : Z.forschen.rule[t.kind];
-  const unitWord = time ? A.unit[t.story] : t.ask === "length" ? Z.metres("").trim() : P.postsWord;
   let fixer = null;
   yes.addEventListener("click", () => {
     if (locked) return;
@@ -772,7 +801,8 @@ export function pruefen(host, t, ctx) {
       },
     });
     fixer.open();
-    ctx.tell(P.fix);
+    q.ask(P.fix);
+    ctx.tell(P.fix, "");
   });
 
   // Explaining: why was the owl wrong? The true reason and two that sound good.
@@ -800,17 +830,12 @@ export function pruefen(host, t, ctx) {
     }
     host.append(box);
     ctx.ready();
-    ctx.tell(P.why);
+    q.ask(P.why);
+    ctx.tell(P.why, "");
   }
 
-  (async () => {
-    const said = `${ctx.num(t.said)} ${unitWord}`;
-    const task = time ? `${A.story[t.story](ctx.num(t.a), ctx.num(t.given), ctx.num(t.b))} ${A.ask[t.story](ctx.num(t.b))}` : fenceStory(ctx, t);
-    await ctx.tell(task);
-    if (!host.isConnected) return;
-    ctx.ready();
-    ctx.tell(P.ask(said));
-  })();
+  ctx.ready();
+  ctx.tell(`${task} ${P.ask(said)}`, "");
   return {
     hint() {
       if (time) pic.ghost();

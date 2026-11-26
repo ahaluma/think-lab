@@ -1653,3 +1653,58 @@ button.pic {
 .fence-tools[hidden] {
   display: none;
 }
+
+/* ---------- Denk-Berg rounds: the whole question always in sight.
+   The question box sits at the top and stays there when the page scrolls; the caption above it
+   only carries what is new (a miss, a hint, praise). Picture, number pad, owl and the other ways
+   are pushed down to the bottom of the screen. */
+body[data-world="berg"] .caption {
+  min-height: 2.5em;
+  font-size: clamp(16px, 4.4vw, 18px);
+}
+
+.zaun-board {
+  gap: 10px;
+}
+
+.zaun-board > * {
+  scroll-margin-top: var(--task-h, 0px);
+}
+
+.task-text {
+  position: sticky;
+  top: calc(env(safe-area-inset-top) + 6px);
+  z-index: 2;
+  width: 100%;
+  padding: 12px 14px;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.task-text p {
+  margin: 0;
+  font-size: clamp(18px, 4.9vw, 21px);
+  font-weight: 600;
+  line-height: 1.38;
+  text-wrap: pretty;
+}
+
+.task-text .task-ask {
+  font-weight: 800;
+}
+
+.task-text .task-story + .task-ask {
+  margin-top: 6px;
+}
+
+.task-text p[hidden] {
+  display: none;
+}
+
+/* Everything after the question goes down: the free space sits under the question. */
+.zaun-board > .task-text + * {
+  margin-top: auto;
+}
+
+body[data-world="berg"] .caption.quiet {
+  color: var(--ink);
+}
