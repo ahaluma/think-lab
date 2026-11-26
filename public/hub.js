@@ -71,6 +71,7 @@ function showKid() {
 function showPicker(on) {
   $("picker").hidden = !on;
   $("categories").hidden = on;
+  $("world").hidden = on;
   $("kid").hidden = on || !profiles.current();
   document.querySelector(".hub-head").hidden = on;
   if (on) say(T.whoPlays);

@@ -223,3 +223,9 @@
     padding: 0 10px 0 8px;
   }
 }
+
+/* The door to the new world. */
+.world-door {
+  margin: 12px 0 18px;
+  background: #dff3d3;
+}

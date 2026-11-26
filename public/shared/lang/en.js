@@ -22,6 +22,7 @@ export default {
   whoPlays: "Who is playing?",
   switchKid: "Switch child",
   addKidsHint: "For parents: add children",
+  newWorld: "New: explore the world",
 
   // The number pad (shared/numpad.js): older children type the answer.
   yourAnswer: "Your answer",

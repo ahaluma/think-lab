@@ -63,8 +63,8 @@ Rule of thumb: a game only uses its own folder plus `shared/`. Games never impor
 
 ## The new world (`public/welt/`), stage 1 of the redesign
 
-A second way into AnkaPlay is growing next to the games: `/welt/`. Nothing links to it yet, so the
-app online stays as it is. Open the address by hand to try it.
+A second way into AnkaPlay is growing next to the games: `/welt/`. The start page has a door to it
+("Neu: die Welt entdecken"), the games stay as they are.
 
 The idea: a **grid of ideas and perspectives**. Every mathematical idea can be played in five
 perspectives, each with a fixed symbol: see 👁️, make ✋, explore 🔍, use 🔑, check ✅. The map is a
