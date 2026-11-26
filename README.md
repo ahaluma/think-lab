@@ -88,6 +88,19 @@ public/welt/
 public/sw.js               ← keeps copies of the files, so the app works without a connection
 ```
 
+**How children learn, and what follows for every board** (keep to this when you add an idea):
+
+- **From the thing to the picture to the number** (Bruner; "concrete, pictorial, abstract"). The child
+  first moves or sees real things, then pictures and dots, and only at the end bare digits.
+- **Help that fades** (Vygotsky, scaffolding). The first round of a perspective shows more: in "see"
+  the animals stay visible in the burrow. From the second round on they hide.
+- **Show, do not tell** (little to hold in the head). The story of a task happens on screen in steps,
+  with one short sentence per step. Short, everyday words; no school words.
+- **The picture is true to the world.** Apples fall down, so the tree is above and the grass below.
+- **Whole and parts, in rows of five.** Dots and things are laid out so that 5 and 10 are seen at a glance.
+- **A wrong answer explains, it does not punish.** It says what the child did; the hint shows the structure.
+- **Coming back counts.** An idea counts as understood only when it works on two different days.
+
 A round has no points, no clock and no streak. After a round a flower grows on the map and the
 child says how it felt (easy, just right, hard). `node tools/check-welt.mjs` checks the tasks.
 

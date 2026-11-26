@@ -502,7 +502,8 @@
   background: rgba(255, 255, 255, 0.55);
 }
 
-.zone.hidden {
+/* Only the upper zone leaves room for the sign. */
+.use-scene .zone ~ .zone {
   margin-right: 0;
 }
 
@@ -751,7 +752,12 @@
 }
 
 .pic.go-in { animation: go-in 1s ease-in forwards; }
+@keyframes go-down {
+  to { transform: translateY(60px) scale(0.8); opacity: 0; }
+}
+
 .pic.go-away { animation: go-away 0.5s ease-in forwards; }
+.pic.go-down { animation: go-down 0.5s ease-in forwards; }
 
 /* The owl's number with its dots. */
 .bubble {

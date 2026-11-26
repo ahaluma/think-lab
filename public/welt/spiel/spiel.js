@@ -49,6 +49,7 @@ let misses = 0;
 let firstTries = 0; // tasks of the round right the first time (the surprise task is not counted)
 let board = null;
 let busy = false;
+let fresh = false; // the child plays this perspective for the first time: the boards show more
 
 function show(name) {
   for (const [key, el] of Object.entries(screens)) el.hidden = key !== name;
@@ -73,6 +74,7 @@ const ctx = {
   tell,
   tap: () => sound.tap(),
   ready: () => restNudge(),
+  fresh: () => fresh && !steps[at]?.transfer,
 
   /** A wrong answer. Resolves when the sentence (and the hint after the second miss) was said. */
   async miss(text) {
@@ -134,6 +136,7 @@ async function runStep() {
 
 function startRound() {
   range = record.range(IDEA);
+  fresh = record.state(IDEA, P.id) === "new";
   const full = IDEAS[IDEA].tasks?.[P.id] ?? ROUND_TASKS;
   const count = kidAge !== null && kidAge <= SHORT_UNTIL ? Math.min(full, SHORT_TASKS) : full;
   const others = SURPRISE.filter((id) => id !== P.id && record.state(IDEA, id) !== "new");
