@@ -298,10 +298,30 @@ export default {
     perspectives: { sehen: "Verstehen", machen: "Ausprobieren", forschen: "Regel finden", anwenden: "Übertragen", pruefen: "Begründen" },
     mapLabel: "Der Denk-Berg: such dir ein Lager aus",
     whereTo: "Expedition Denk-Berg. Ausrüstung: Kopf. Ziel: ganz oben.",
-    building: "Hier wird noch gebaut. Bald geht es weiter.",
-    // names: die Lager, die vorher gemeistert sein müssen (drei der fünf Wege verstanden)
-    opensAfter: (names) => `Dieses Lager öffnet sich nach ${names.map((n) => `„${n}“`).join(" und ")}. Dort musst du drei Wege verstanden haben.`,
-    summitAfter: (got, of) => `Der Gipfel öffnet sich, wenn alle ${of} Lager gemeistert sind. Geschafft: ${got}.`,
+    fogLabel: "Nebel über dem Berg",
+    fog: "Oben ist Nebel. Versteh hier drei Wege 🌼, dann lichtet er sich.",
+    fogBuilding: "Oben ist Nebel. Da wird gerade noch gebaut. Bald geht es weiter.",
+    summitSoon: "Ganz oben. Hier gibt es bald Wettbewerbsrunden mit allen Werkzeugen.",
+    // Das Werkzeug jedes Lagers, kurz (für das Erinnerungsbild)
+    tools: {
+      zaun: "Lücken zählen", haken: "Alle der Reihe nach", huetten: "Ausschließen", vorrat: "Rückwärts denken",
+      ameisen: "Regel finden", waage: "Ersetzen", stall: "Annehmen und verbessern", tanz: "Paare bilden",
+      fels: "Ordentlich zählen", socken: "Der schlimmste Fall", steine: "Vom Ende her", mauer: "Eingrenzen",
+    },
+    // Ein neues Lager erreicht: die Überraschung und das Erinnerungsbild
+    keep: {
+      title: "Neues Lager erreicht!",
+      text: (camp) => `Der Nebel ist weg. Vor dir: ${camp}.`,
+      offer: "Hier ist ein Erinnerungsbild für dich.",
+      save: "Bild speichern",
+      saved: "Gespeichert.",
+      close: "Weiter klettern",
+      alt: "Erinnerungsbild vom Denk-Berg",
+      headline: (name, rank) => (name ? `${name} hat Lager ${rank} erreicht` : `Lager ${rank} erreicht`),
+      tools: (list) => `Gemeistert: ${list.join(", ")}`,
+      solved: (n) => `${n} Aufgaben am Berg gelöst`,
+      locale: "de-DE",
+    },
     // Der Rucksack: eine Aufgabe aus einem früheren Lager mitten in der Runde
     pack: (name) => `Rucksack! Eine Aufgabe aus „${name}“.`,
     pad: { answer: "Deine Antwort", erase: "Löschen", check: "Prüfen" },

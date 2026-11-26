@@ -1,18 +1,22 @@
 // The map of the thinking mountain (Denk-Berg): a path from the foot to the top with twelve camps
 // (MOUNTAIN in frame/ideas.js). Each camp carries one thinking tool for Mathe-Olympiade problems.
-// A camp opens when the camps it needs are mastered (record.mastered); a closed camp names them.
-// A mastered camp gets a lantern. The summit opens when every camp is mastered. The rounds are the
+// A camp opens when the camps it needs are mastered (record.mastered). Only open camps are drawn:
+// above the highest one the mountain is in fog, so a child does not know how many camps there are
+// until the top. A camp that appears for the first time is a surprise, with a keepsake picture to
+// save (berg/keepsake.js). A mastered camp gets a lantern. The summit shows when every camp is mastered. The rounds are the
 // same as in the nature world (welt/spiel/), so record.js, the cards and the parents' report work as there.
 //
 //   /welt/berg/          the mountain
 //   /welt/berg/?o=zaun   the mountain with this camp open
 
-import { sound, icons } from "../../shared/kit.js";
+import { sound, icons, celebrate } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as profiles from "../../shared/profiles.js";
 import * as record from "../frame/record.js";
 import { mount, tell, again } from "../frame/voice.js";
 import { MOUNTAIN, PERSPECTIVES, CARDS } from "../frame/ideas.js";
+import { store } from "../../shared/store.js";
+import { keepsake } from "./keepsake.js";
 
 const T = await texts(new URL("../map.js", import.meta.url).href); // welt/lang/<language>.js
 const B = T.berg;
@@ -52,8 +56,10 @@ const isMastered = (c) => built(c) && c.ideas.every((idea) => record.mastered(id
 /** The camps still missing before this one opens (empty: open). */
 const missing = (c) => (c.needs ?? []).map((id) => byId[id]).filter((n) => !isMastered(n));
 const isOpen = (c) => built(c) && !missing(c).length;
-/** What a closed camp says: still being built, or which camps come first. */
-const closedText = (c) => (built(c) ? B.opensAfter(missing(c).map((n) => B.camps[n.id])) : B.building);
+/** The camps a child can see: the open ones. All the others are hidden in the fog. */
+const visible = MOUNTAIN.filter(isOpen);
+const top = visible.at(-1);
+const summitOpen = MOUNTAIN.every(isMastered);
 const node = (tag, attrs = {}, parent) => {
   const e = document.createElementNS(SVG, tag);
   for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
@@ -90,11 +96,6 @@ function camp(c) {
   }
   const go = () => {
     sound.tap();
-    if (!open) {
-      $("ways").hidden = true;
-      tell(named(B.camps[c.id], closedText(c)));
-      return;
-    }
     openCamp(c);
   };
   g.addEventListener("click", go);
@@ -102,19 +103,37 @@ function camp(c) {
   return g;
 }
 
-for (const c of MOUNTAIN) $("camps").append(camp(c));
+for (const c of visible) $("camps").append(camp(c));
+
+// ---------- The fog: everything above the highest open camp. Tap it: how to see further.
 {
-  const summit = $("summit");
-  summit.setAttribute("aria-label", B.camps.gipfel);
+  const fogY = summitOpen ? -40 : AT[top.id][1] - 34;
+  const fog = node("g", { class: "fog", tabindex: 0, role: "button", "aria-label": B.fogLabel });
+  const sky = node("g", { "clip-path": "url(#hill)" }, fog);
+  node("rect", { x: 0, y: 0, width: 360, height: Math.max(0, fogY), fill: "#eef2f6" }, sky);
+  for (let x = -10; x <= 370; x += 34) node("ellipse", { cx: x, cy: fogY, rx: 26, ry: 13, fill: "#eef2f6", stroke: "#c9d2dc", "stroke-width": 2 }, fog);
+  for (let x = 30; x <= 330; x += 60) node("ellipse", { cx: x, cy: fogY - 40, rx: 30, ry: 12, fill: "#f6f8fb", opacity: 0.9 }, sky);
+  $("camps").before(fog);
+  if (summitOpen) fog.style.display = "none";
   const go = () => {
     sound.tap();
     $("ways").hidden = true;
-    // The summit: competition rounds with every tool. It opens when every camp is mastered.
-    const before = MOUNTAIN.filter((c) => !isMastered(c));
-    tell(named(B.camps.gipfel, before.length ? B.summitAfter(num(MOUNTAIN.length - before.length), num(MOUNTAIN.length)) : B.building));
+    // Every camp in sight mastered and still fog: the next camp is still being built.
+    tell(visible.every(isMastered) ? B.fogBuilding : B.fog);
   };
-  summit.addEventListener("click", go);
-  summit.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && go());
+  fog.addEventListener("click", go);
+  fog.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && go());
+  // The summit (competition rounds) shows only when every camp is mastered.
+  const summit = $("summit");
+  if (!summitOpen) summit.style.display = "none";
+  summit.setAttribute("aria-label", B.camps.gipfel);
+  const atTop = () => {
+    sound.tap();
+    $("ways").hidden = true;
+    tell(named(B.camps.gipfel, B.summitSoon));
+  };
+  summit.addEventListener("click", atTop);
+  summit.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && atTop());
 }
 
 // ---------- Flowers: what has grown at the foot
@@ -162,8 +181,7 @@ function openCamp(c) {
 
 // ---------- The animal waits at the highest open camp. Tap = play there.
 
-const awake = MOUNTAIN.filter(isOpen);
-const here = awake.at(-1);
+const here = top;
 const walker = $("walker");
 walker.textContent = kid?.animal || "🐰";
 walker.setAttribute("aria-label", T.comeHere);
@@ -189,7 +207,59 @@ for (const [id, icon] of Object.entries(CARDS)) {
 }
 
 $("caption").textContent = B.whereTo;
-const asked = awake.find((c) => c.id === new URLSearchParams(location.search).get("o"));
+const asked = visible.find((c) => c.id === new URLSearchParams(location.search).get("o"));
 if (asked) openCamp(asked);
+
+// ---------- A new camp: the surprise, and a keepsake to save (once per camp and child)
+
+const SEEN = `berg:seen:${kid?.id || "guest"}`;
+const seen = store.get(SEEN, ["zaun"]);
+const fresh = visible.filter((c) => !seen.includes(c.id));
+if (fresh.length) {
+  store.set(SEEN, [...seen, ...fresh.map((c) => c.id)]);
+  const c = fresh.at(-1);
+  setTimeout(() => reveal(c), 600);
+}
+
+async function reveal(c) {
+  const K = B.keep;
+  const box = $("reached");
+  const rank = visible.indexOf(c) + 1;
+  const tools = visible.filter(isMastered).map((m) => B.tools[m.id]);
+  const solved = MOUNTAIN.flatMap((m) => m.ideas ?? []).reduce((k, idea) => k + record.solved(idea), 0);
+  const picture = keepsake({
+    title: B.title,
+    headline: K.headline(kid?.name || "", num(rank)),
+    camp: B.camps[c.id].replace(/^[^:]*:\s*/, ""),
+    lines: [...(tools.length ? [K.tools(tools)] : []), K.solved(num(solved))],
+    date: new Date().toLocaleDateString(K.locale, { day: "numeric", month: "long", year: "numeric" }),
+    brand: "AnkaPlay",
+    animal: kid?.animal || "🐰",
+    camps: visible.slice(0, rank).map((v) => AT[v.id]),
+  });
+  $("reachedTitle").textContent = K.title;
+  $("reachedText").textContent = K.text(B.camps[c.id]);
+  const img = $("reachedImg");
+  img.src = picture.toDataURL("image/png");
+  img.alt = K.alt;
+  $("reachedSave").textContent = K.save;
+  $("reachedSave").onclick = () => {
+    sound.tap();
+    const a = document.createElement("a");
+    a.href = img.src;
+    a.download = `denk-berg-${rank}.png`;
+    a.click();
+    tell(K.saved);
+  };
+  $("reachedClose").textContent = K.close;
+  $("reachedClose").onclick = () => {
+    sound.tap();
+    box.hidden = true;
+  };
+  box.hidden = false;
+  sound.win();
+  celebrate();
+  await tell(`${K.title} ${K.text(B.camps[c.id])} ${K.offer}`);
+}
 
 navigator.serviceWorker?.register("/sw.js").catch(() => {});

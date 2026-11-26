@@ -115,6 +115,11 @@ export function played(idea) {
   return PERSPECTIVES.filter(({ id }) => state(idea, id) !== "new").map(({ id }) => id);
 }
 
+/** How many tasks of an idea the child has solved, in every perspective and range. */
+export function solved(idea) {
+  return Object.entries(all().cells).filter(([k]) => k.startsWith(idea + "/")).reduce((n, [, c]) => n + (c.n || 0) + (c.tn || 0), 0);
+}
+
 /** The last day the child played this idea ("2026-11-26"), or "" if never. */
 export function lastDay(idea) {
   return Object.entries(all().cells).filter(([k, c]) => k.startsWith(idea + "/") && c.last).map(([, c]) => c.last).sort().at(-1) || "";

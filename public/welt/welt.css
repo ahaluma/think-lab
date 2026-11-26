@@ -1983,3 +1983,52 @@ body[data-world="berg"] .caption.quiet {
   width: 100%;
   padding: 10px 12px;
 }
+
+/* Thinking mountain: the fog above the highest open camp, and the surprise of a new camp */
+.fog {
+  cursor: pointer;
+}
+
+.reached {
+  position: fixed;
+  inset: auto 12px calc(env(safe-area-inset-bottom) + 12px) 12px;
+  z-index: 20;
+  max-width: 460px;
+  max-height: calc(100dvh - 24px);
+  margin: 0 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  text-align: center;
+  background: #fffbea;
+}
+
+.reached[hidden] {
+  display: none;
+}
+
+.reached h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.reached p {
+  margin: 0;
+  font-size: 17px;
+}
+
+.reached-img {
+  width: min(100%, 300px);
+  margin: 0 auto;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+}
+
+.reached-btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
