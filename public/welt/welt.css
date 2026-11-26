@@ -1008,3 +1008,66 @@ button.pic {
   transform-box: fill-box;
   transform-origin: center;
 }
+
+/* ====================== Bigger numbers: up to 20 ====================== */
+
+/* More than ten pictures: smaller, still five in a row, so the tens are seen. */
+.pics.many .pic {
+  font-size: clamp(18px, 5.4vw, 24px);
+}
+
+.pics.many {
+  gap: 1px 3px;
+}
+
+.flower-scene .pics.many .pic,
+.field .pics.many .pic,
+.basket .pics.many button.pic {
+  font-size: clamp(20px, 6.2vw, 27px);
+}
+
+.side .pics.many .pic {
+  font-size: clamp(16px, 4.8vw, 21px);
+}
+
+.io .pics.many {
+  grid-template-columns: repeat(5, auto);
+  gap: 0 1px;
+}
+
+.io .pics.many .pic {
+  font-size: 15px;
+}
+
+.leaf .pic {
+  font-size: clamp(20px, 6vw, 30px);
+}
+
+/* Number buttons up to 20: digits only, four rows of five. */
+.strip.plain {
+  gap: 6px;
+}
+
+.strip.plain .num-btn {
+  min-height: 46px;
+  font-size: 22px;
+}
+
+/* A row of many places wraps after five, like everything else. */
+.parts-hint {
+  max-width: 220px;
+  margin: 0 auto;
+}
+
+/* The owl's two groups with more than ten things in all: both must fit side by side. */
+.groups.big {
+  gap: 8px;
+}
+
+.groups.big .part {
+  padding: 6px 4px;
+}
+
+.groups.big .pic {
+  font-size: clamp(15px, 4.6vw, 20px);
+}

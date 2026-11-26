@@ -17,9 +17,9 @@ export const button = (className, label, text) => {
   return b;
 };
 
-/** n pictures, at most five in a row, so 5 and 10 are easy to see. */
+/** n pictures, at most five in a row, so 5, 10, 15 and 20 are easy to see. More than ten: smaller ("many"). */
 export function group(n, icon, className = "") {
-  const g = el("span", "pics " + className);
+  const g = el("span", "pics " + className + (n > 10 ? " many" : ""));
   for (let i = 0; i < n; i++) g.append(el("span", "pic pop", icon));
   return g;
 }
@@ -34,15 +34,22 @@ export function sign(ctx, n) {
   return s;
 }
 
-/** Number buttons from..to in rows of five. onPick(n, button). */
+/**
+ * Number buttons from..to in rows of five. onPick(n, button).
+ * Up to 10 every button shows the digit and that many dots: a child who cannot read digits yet
+ * counts the dots. Above 10 the buttons show digits only: older children read the number.
+ */
 export function strip(ctx, from, to, onPick) {
-  const box = el("div", "strip");
+  const dotted = to <= 10;
+  const box = el("div", dotted ? "strip" : "strip plain");
   for (let n = from; n <= to; n++) {
     const b = button("btn num-btn", ctx.word(n));
-    // The digit and that many dots: a child who cannot read digits yet counts the dots.
-    const dots = el("span", "num-dots");
-    for (let i = 0; i < n; i++) dots.append(el("i"));
-    b.append(el("b", "", ctx.num(n)), dots);
+    b.append(el("b", "", ctx.num(n)));
+    if (dotted) {
+      const dots = el("span", "num-dots");
+      for (let i = 0; i < n; i++) dots.append(el("i"));
+      b.append(dots);
+    }
     b.addEventListener("click", () => onPick(n, b));
     box.append(b);
   }

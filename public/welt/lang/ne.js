@@ -135,6 +135,10 @@ export default {
       miss: (before, chosen) => `${before} पछि ${chosen} आउँदैन।`,
       done: (before, n) => `${before} पछि ${n} आउँछ।`,
       hint: "थोप्ला गन। हरेक पटक एउटा बढी हुन्छ।",
+      missStep: "हेर: फड्को कत्रो छ?",
+      doneStep: (before, n) => `सधैँ दुई बढी: ${before} पछि ${n} आउँछ।`,
+      hintPlain: "हरेक पटक एउटा बढी हुन्छ।",
+      hintStep: "भ्यागुतो लामो फड्को मार्छ। हरेक पटक दुई बढी हुन्छ।",
       stones: "खोलाका ढुङ्गा",
     },
     anwenden: {

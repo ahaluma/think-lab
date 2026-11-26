@@ -145,6 +145,10 @@ export default {
       miss: (before, chosen) => `Nach ${before} kommt nicht ${chosen}.`,
       done: (before, n) => `Nach ${before} kommt ${n}.`,
       hint: "Zähl die Punkte. Es ist immer einer mehr.",
+      missStep: "Schau: Wie groß sind die Schritte?",
+      doneStep: (before, n) => `Immer zwei mehr: Nach ${before} kommt ${n}.`,
+      hintPlain: "Es ist immer einer mehr.",
+      hintStep: "Der Frosch macht große Sprünge. Es sind immer zwei mehr.",
       stones: "Steine im Bach",
     },
     anwenden: {
