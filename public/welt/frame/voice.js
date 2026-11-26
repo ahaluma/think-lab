@@ -22,8 +22,9 @@ export function mount(el) {
 export function tell(text) {
   last = text;
   if (caption) caption.textContent = text;
-  if (aloud) return say(text);
-  return new Promise((resolve) => setTimeout(resolve, Math.min(2500, 600 + text.length * 25)));
+  // Time to read or look, also when the phone has no voice and say() comes back at once.
+  const pause = new Promise((resolve) => setTimeout(resolve, Math.min(2500, 600 + text.length * 25)));
+  return aloud ? Promise.all([say(text), pause]) : pause;
 }
 
 export function again() {

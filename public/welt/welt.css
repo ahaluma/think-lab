@@ -717,3 +717,90 @@
 .walker:focus:not(:focus-visible) {
   outline: none;
 }
+
+/* ---------- Understandable without words (first feedback from a five-year-old) */
+
+/* Number buttons: the digit and that many dots, five in a row like fingers. */
+.strip .num-btn {
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  line-height: 1;
+}
+
+.num-dots {
+  display: grid;
+  grid-template-columns: repeat(5, 6px);
+  gap: 2px;
+  min-height: 14px;
+  align-content: start;
+}
+
+.num-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.75;
+}
+
+/* While the story of a task is shown, the answers wait. */
+.strip.waiting {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Sehen: animals walk down into the burrow. Anwenden: a part moves away. */
+@keyframes go-in {
+  to { transform: translateY(70px) scale(0.4); opacity: 0; }
+}
+
+@keyframes go-away {
+  to { transform: translateY(-50px) scale(0.6); opacity: 0; }
+}
+
+.pic.go-in { animation: go-in 1s ease-in forwards; }
+.pic.go-away { animation: go-away 0.5s ease-in forwards; }
+
+/* The owl's number with its dots. */
+.bubble {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bubble .sign-dots {
+  grid-template-columns: repeat(5, 8px);
+}
+
+.bubble .sign-dots i {
+  width: 8px;
+  height: 8px;
+}
+
+/* The nudge: after a while without a tap, the things to tap wiggle one after another. */
+@keyframes nudge {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-8px); }
+}
+
+.board.nudge .strip:not(.waiting) .num-btn:not(:disabled),
+.board.nudge .leaf,
+.board.nudge .judge-btn,
+.board.nudge .fixer .btn,
+.board.nudge .check-btn:not(:disabled) {
+  animation: nudge 1.2s ease-in-out infinite;
+}
+
+.board.nudge .num-btn:nth-child(2n),
+.board.nudge .leaf:nth-child(2),
+.board.nudge .judge-btn:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board.nudge * { animation: none !important; }
+}
