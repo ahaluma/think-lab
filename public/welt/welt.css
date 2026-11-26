@@ -2373,3 +2373,44 @@ body[data-world="berg"] .caption.quiet {
 .dancer.grouped[data-g="3"] { background: #ffe8c2; }
 .dancer.grouped[data-g="4"] { background: #e6dcff; }
 .dancer.grouped[data-g="5"] { background: #c9f2ee; }
+
+/* Camp 9: signs on the rock */
+.rock-scene {
+  display: flex;
+  justify-content: center;
+}
+
+.rock-svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.rock-line {
+  stroke: #5b4636;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.rock-label {
+  font-size: 15px;
+  font-weight: 800;
+  fill: var(--ink);
+}
+
+.rock-svg .tri {
+  fill: rgba(255, 200, 58, 0.65);
+}
+
+.rock-svg .tri.again {
+  fill: rgba(232, 72, 138, 0.45);
+}
+
+.clock-face { fill: #fff; stroke: var(--ink); stroke-width: 3; }
+.clock-tick { stroke: var(--ink); stroke-width: 2; }
+.clock-twelve { fill: #e8488a; }
+.clock-hour { stroke: var(--ink); stroke-width: 6; stroke-linecap: round; }
+.clock-minute { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+
+.net-cell { fill: #fff; stroke: var(--ink); stroke-width: 2.5; }
+.net-cell.mark { fill: var(--sun); }
+.net-num { font-size: 22px; font-weight: 800; fill: var(--ink); }
