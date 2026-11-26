@@ -3,15 +3,18 @@
 // the first. "Tippe auf das dritte Tier!" – the child taps it. Later levels: "Das wievielte Tier ist der
 // Löwe?" (one of three answers, the number pad from 8), "Wer steht direkt vor dem Löwen?", and counting
 // from the back. After two wrong answers the places (1, 2, 3 …) appear under the animals.
+// Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // See levels.js. All texts are in lang/<language>.js.
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, pick, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { numpad } from "../../shared/numpad.js";
 import * as profiles from "../../shared/profiles.js";
 import { things } from "../../shared/things.js";
 import { LEVELS } from "./levels.js";
+import * as gen from "../../shared/gen.js";
+import { task } from "./tasks.js";
 
 const ID = "wer-ist-erster";
 const T = await texts(import.meta.url);
@@ -20,6 +23,11 @@ const oops = (text) => `${oneOf(T.oops)} ${text}`;
 
 // Animals with a name for this game (lang/<language>.js "names"), each looks different.
 const ANIMALS = things(T).filter((t) => T.names[t.id]).map((t) => ({ ...t, ...T.names[t.id] }));
+const ANIMAL_IDS = ANIMALS.map((t) => t.id);
+const byId = Object.fromEntries(ANIMALS.map((t) => [t.id, t]));
+
+// Not the same task (kind, size, place) as in the last 2.
+const nextTask = gen.generator(task, { avoid: { key: 2 } });
 
 const STARS_PER_GAME = 5;
 
@@ -36,7 +44,7 @@ let target = 0; // index (front = 0) of the animal to find
 let ref = 0; // "beside": the animal the question is about
 let dir = "front"; // "beside": "front" or "behind"
 let askLast = false; // "ends" / "tap": the question is "the last animal"
-let lastTask = "";
+let placeChoices = []; // "which": the three places to pick from
 let misses = 0;
 let help = false; // the places show under the animals
 let locked = true;
@@ -132,35 +140,10 @@ function question() {
 }
 
 function newTask() {
-  const l = current;
-  for (let tries = 0; tries < 8; tries++) {
-    kind = pick(l.kinds);
-    const size = randInt(l.n[0], l.n[1]);
-    queue = shuffle(ANIMALS).slice(0, size);
-    askLast = false;
-    if (kind === "ends") {
-      askLast = Math.random() < 0.5;
-      target = askLast ? size - 1 : 0;
-    } else if (kind === "tap") {
-      // Sometimes "the last one", so the child learns that the last has a place too.
-      askLast = Math.random() < 0.2;
-      target = askLast ? size - 1 : randInt(1, Math.min(l.upTo, size)) - 1;
-    } else if (kind === "which") {
-      target = randInt(0, size - 1);
-    } else if (kind === "beside") {
-      dir = pick(["front", "behind"]);
-      ref = dir === "front" ? randInt(1, size - 1) : randInt(0, size - 2);
-      target = dir === "front" ? ref - 1 : ref + 1;
-    } else {
-      // From the back: the second, third … (the first from the back is simply the last).
-      target = size - randInt(2, size - 1);
-    }
-    const key = `${kind}${askLast}${dir}${size}-${target}`;
-    if (key !== lastTask) {
-      lastTask = key;
-      return;
-    }
-  }
+  const t = nextTask(current, ANIMAL_IDS);
+  ({ kind, target, ref, dir, askLast } = t);
+  queue = t.queue.map((id) => byId[id]);
+  placeChoices = t.choices;
 }
 
 async function newRound() {
@@ -212,7 +195,7 @@ function drawAnswers() {
     pad = numpad(answers, T, { digits: 1, onCheck: (k) => choose(null, k) });
     return;
   }
-  for (const k of choices()) {
+  for (const k of placeChoices) {
     const btn = el("button", "btn answer");
     btn.type = "button";
     btn.setAttribute("aria-label", place(k));
@@ -220,15 +203,6 @@ function drawAnswers() {
     btn.addEventListener("click", () => choose(btn, k));
     answers.append(btn);
   }
-}
-
-/** The right place and two neighbours (the usual mistake: one off, or counted from the back). */
-function choices() {
-  const answer = target + 1;
-  const ok = (k) => k >= 1 && k <= n() && k !== answer;
-  const likely = shuffle([answer - 1, answer + 1, fromBack(target)].filter(ok));
-  const more = [answer - 2, answer + 2, 1, n()].filter(ok);
-  return [answer, ...[...new Set([...likely, ...more])].slice(0, 2)].sort((a, b) => a - b);
 }
 
 /** btn: the answer button tapped, or null when typed on the number pad. Returns whether k was right. */
