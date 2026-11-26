@@ -2,17 +2,25 @@
 // Cards with a number (4) and cards with that many things (4 apples). The child finds the pairs.
 // First all cards lie open, so the child only has to match. Later they lie face down: a real memory game.
 // Every card is read out when tapped ("vier" / "vier Äpfel"). Levels go up to 6 pairs and 10 (see LEVELS).
+// Every board comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
+import * as gen from "../../shared/gen.js";
+import { task } from "./tasks.js";
 
 const ID = "zahlen-memory";
 const T = await texts(import.meta.url);
 const THINGS = things(T);
+const THING_IDS = THINGS.map((t) => t.id); // only things with a name in this language
+const byId = Object.fromEntries(THINGS.map((t) => [t.id, t]));
+
+// Not the same numbers as on the last board (where the level has more than one set of numbers).
+const nextBoard = gen.generator(task, { avoid: { key: 1 } });
 const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Juhu! Das passt! Drei." – a different praise each time
 const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Ups! Das passt nicht."
 
@@ -72,9 +80,7 @@ function newBoard() {
   locked = true;
   picked = null;
   found = 0;
-  const numbers = shuffle([...Array(l.max).keys()].map((i) => i + 1)).slice(0, l.pairs);
-  const pics = shuffle(THINGS).slice(0, l.pairs);
-  const cards = shuffle(numbers.flatMap((n, i) => [makeCard(n, "number"), makeCard(n, "things", pics[i])]));
+  const cards = nextBoard(l, THING_IDS).cards.map((c) => makeCard(c.n, c.kind, byId[c.thing]));
 
   const board = $("board");
   board.innerHTML = "";
