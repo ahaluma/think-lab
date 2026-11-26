@@ -386,3 +386,44 @@
   outline: 3px solid var(--blue);
   outline-offset: 2px;
 }
+
+/* ---------- The world: a card per place, a row per perspective */
+#world h2 a {
+  color: inherit;
+}
+
+#world .idea {
+  margin: 2px 0 10px;
+}
+
+.world-head {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.way {
+  align-items: center;
+}
+
+.way .state {
+  flex: none;
+  padding: 3px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.way .state.new {
+  border-color: transparent;
+  background: transparent;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.way .state.understood {
+  background: #c9efb4;
+}

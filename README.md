@@ -90,7 +90,15 @@ row started at another place (`sameWay` in `ideas/muster/tasks.js`), because tha
 It holds the idea of the old game "Muster-Kette".
 
 The meadow holds the ideas of the old games "Blitzblick", "Wie viele?", "Zahlenzug" and "Wo sind
-mehr?". Those games stay on the start page until the parents' report can show the world's progress.
+mehr?", the forest the idea of "Muster-Kette". These five games have **moved**: in `catalog.js` they
+carry `moved: "<idea>"` and are no longer on the start page (`shared/fit.js`). Their folders stay, and
+parents can switch each one back on per child on `/eltern/`.
+
+**The parents' report** (`/eltern/`) shows the world first: one card per place with the range the
+child plays in, the rounds, and for each of the five perspectives new / played / understood and how
+many of the last tasks were right at the first try (`record.report(kid)` in `frame/record.js`). The
+chart of the last 14 days counts answers from the games and from the world together (`daily` in the
+world record). "Fortschritt löschen" clears both.
 
 ```
 public/welt/

@@ -9,6 +9,8 @@
 //   record.state("teile", "sehen")        → "new" | "played" | "understood" (in the current range)
 //   record.suggest("teile")               → the perspective to play next
 //   record.all()                          → the whole record (a fresh copy)
+//   record.report(kid)                    → what the parents' page shows: per idea the range, the rounds
+//                                           and the state of each perspective; and the counts per day
 //
 // Stored shape (localStorage "thinklab:welt:<child id>", version 1):
 //   { v: 1, rounds: 3, ranges: { teile: 5 }, cards: { vergleichen: 2 },
@@ -16,6 +18,7 @@
 //                                 share: 0.8, feel: "ok" } } }
 //
 //   cell   – one idea in one perspective in one number range.
+//   daily  – { "2026-11-26": { right, wrong, rounds } }: tasks right the first time / not, finished rounds.
 //   recent – the last 10 tasks: 1 = right the first time. days – the last days it was played (up to 5).
 //   share  – right the first time in the last round (0 … 1). feel – what the child said: easy / ok / hard.
 //
@@ -37,6 +40,9 @@ export const OPEN_AFTER = 3;
 export const SMALL_UNTIL = 6;
 /** Children from this age start in the third range (up to 20), so they are not under-challenged. */
 export const BIG_FROM = 7;
+
+/** The counts per day (rec.daily) are kept this many days. The parents' report shows the last 14. */
+export const DAYS_KEPT = 60;
 
 const key = (kidId = profiles.current()?.id) => `welt:${kidId || "guest"}`;
 const cellKey = (idea, p, range) => `${idea}/${p}/${range}`;
@@ -60,9 +66,9 @@ function update(change) {
 
 /** The range a child starts an idea in, by age: below SMALL_UNTIL the first, from BIG_FROM the third,
  *  in between the second. Without an age (no child chosen) the first. */
-function startRange(idea) {
+function startRange(idea, kid = profiles.current()) {
   const ranges = IDEAS[idea].ranges;
-  const age = profiles.age(profiles.current());
+  const age = profiles.age(kid);
   const at = age === null || age < SMALL_UNTIL ? 0 : age >= BIG_FROM ? 2 : 1;
   return ranges[Math.min(at, ranges.length - 1)];
 }
@@ -72,11 +78,11 @@ function startRange(idea) {
  * (the range did not exist yet, or the child had a birthday) moves up to the start range of the age,
  * unless the child itself said "hard" and went down (rec.lowered).
  */
-export function range(idea) {
-  const rec = all();
+export function range(idea, kid = profiles.current()) {
+  const rec = all(kid?.id);
   const ranges = IDEAS[idea].ranges;
   const saved = rec.ranges[idea];
-  const start = startRange(idea);
+  const start = startRange(idea, kid);
   if (!ranges.includes(saved)) return start;
   return saved < start && !rec.lowered?.[idea] ? start : saved;
 }
@@ -91,6 +97,14 @@ export const understood = (c) =>
 export function state(idea, p) {
   const c = cell(idea, p);
   return !c || !c.n ? "new" : understood(c) ? "understood" : "played";
+}
+
+/** Counts one task or round for today (rec.daily), for the parents' report. Old days are dropped. */
+function count(rec, what) {
+  const daily = (rec.daily ??= {});
+  const day = (daily[today()] ??= { right: 0, wrong: 0, rounds: 0 });
+  day[what]++;
+  for (const date of Object.keys(daily).sort().slice(0, -DAYS_KEPT)) delete daily[date];
 }
 
 /** One task done. transfer: the surprise task at the end of a round in another perspective; it is
@@ -108,6 +122,7 @@ export function task(idea, p, r, firstTry, transfer = false) {
     c.recent = [...c.recent, firstTry ? 1 : 0].slice(-RECENT);
     c.last = today();
     if (!c.days.includes(c.last)) c.days = [...c.days, c.last].slice(-5);
+    count(rec, firstTry ? "right" : "wrong");
   });
 }
 
@@ -116,6 +131,7 @@ export function round(idea, p, r, { first, tasks, card = null }) {
   let moved = 0;
   update((rec) => {
     rec.rounds++;
+    count(rec, "rounds");
     rec.by ??= {};
     rec.by[idea] = (rec.by[idea] || 0) + 1;
     if (card) rec.cards[card] = (rec.cards[card] || 0) + 1;
@@ -170,6 +186,34 @@ export function grown(idea) {
   const by = rec.by || {};
   if (idea in by || idea !== "teile") return by[idea] || 0;
   return Math.max(0, rec.rounds - Object.values(by).reduce((a, b) => a + b, 0));
+}
+
+/**
+ * The progress of one child (or the guest) for the parents' page (eltern/report.js):
+ *   { ideas: [{ id, place, range, step, steps, rounds, last, perspectives: [{ id, state, right, of }] }], daily }
+ *   step/steps – the range is the step-th of steps (1-based). last – the last day played ("2026-11-26") or null.
+ *   right/of   – of the last `of` tasks in this range (up to 10), `right` were right the first time.
+ */
+export function report(kid) {
+  const rec = all(kid?.id);
+  const by = rec.by || {};
+  const ideas = Object.entries(IDEAS).map(([id, idea]) => {
+    const r = range(id, kid);
+    const perspectives = PERSPECTIVES.map((p) => {
+      const c = rec.cells[cellKey(id, p.id, r)];
+      const played = Boolean(c && c.n);
+      return {
+        id: p.id,
+        state: !played ? "new" : understood(c) ? "understood" : "played",
+        right: played ? c.recent.reduce((a, b) => a + b, 0) : 0,
+        of: played ? c.recent.length : 0,
+      };
+    });
+    const days = Object.entries(rec.cells).filter(([k, c]) => k.startsWith(id + "/") && c.last).map(([, c]) => c.last);
+    const rounds = id in by || id !== "teile" ? by[id] || 0 : Math.max(0, rec.rounds - Object.values(by).reduce((a, b) => a + b, 0));
+    return { id, place: idea.place, range: r, step: idea.ranges.indexOf(r) + 1, steps: idea.ranges.length, rounds, last: days.sort().at(-1) || null, perspectives };
+  });
+  return { ideas, daily: rec.daily || {} };
 }
 
 export function reset(kidId) {

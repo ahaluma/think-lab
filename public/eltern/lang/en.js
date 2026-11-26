@@ -49,5 +49,13 @@ export default {
   typeAge: (n) => `without your choice: typing from age ${n}`,
   typeLabel: (name) => `${name} types the answer`,
   showGame: (game, name) => `Show ${game} to ${name}`,
+  // The world
+  worldTitle: "The world",
+  worldNote: "In the world your child plays every idea in five ways: see, make, explore, use, check. “Understood” means: 8 of the last 10 tasks right at the first try, on two different days.",
+  worldStats: (rounds, date) => `${rounds} ${rounds === 1 ? "round" : "rounds"} · last played ${date}`,
+  worldFirst: (right, of) => `${right} of ${of} right at the first try`,
+  worldStates: { new: "new", played: "played", understood: "understood" },
+  worldRange: { numbers: (n) => `Numbers up to ${n}`, muster: (n, k) => `Rows made of pieces with ${k} things` },
+  moved: (place) => `hidden, now in the world (${place})`,
   weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
 };

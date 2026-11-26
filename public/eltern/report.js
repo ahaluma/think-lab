@@ -1,5 +1,6 @@
 // Parents' page: the children on this device (shared/profiles.js) and the progress report
-// of one child (shared/progress.js). Ordered like the catalog: category → skill → game.
+// of one child: first the new world (welt/frame/record.js), place by place, then the games
+// (shared/progress.js), ordered like the catalog: category → skill → game.
 // Each game has a switch: does this child see it on the start page? (shared/fit.js)
 import { CATEGORIES, GAMES } from "../catalog.js";
 import { texts, fill, local, lang, LANGS, num } from "../shared/i18n.js";
@@ -7,8 +8,11 @@ import { icons } from "../shared/kit.js";
 import * as progress from "../shared/progress.js";
 import * as profiles from "../shared/profiles.js";
 import * as fit from "../shared/fit.js";
+import * as record from "../welt/frame/record.js";
+import { PERSPECTIVES } from "../welt/frame/ideas.js";
 
 const T = await texts(import.meta.url);
+const W = await texts(new URL("../welt/map.js", import.meta.url).href); // names of places, ideas, perspectives
 fill(T);
 document.title = `${T.title} · AnkaPlay`;
 const $ = (id) => document.getElementById(id);
@@ -18,6 +22,7 @@ $("home").innerHTML = icons.home;
 const kids = profiles.all();
 const shown = profiles.get(new URLSearchParams(location.search).get("kind")) || profiles.current();
 const data = progress.all(shown?.id);
+const world = record.report(shown);
 const kidName = (kid) => kid.name || T.noName;
 
 // The levels of every game, for their labels ("Zählen bis 5").
@@ -150,8 +155,11 @@ const days = [];
 for (let i = 13; i >= 0; i--) {
   const date = new Date();
   date.setDate(date.getDate() - i);
-  const day = data.days[progress.today(date)] || { right: 0, wrong: 0, rounds: 0 };
-  days.push({ date, ...day });
+  // Games and world together: an answer is an answer.
+  const key = progress.today(date);
+  const sum = { right: 0, wrong: 0, rounds: 0 };
+  for (const day of [data.days[key], world.daily[key]]) for (const k in sum) sum[k] += day?.[k] || 0;
+  days.push({ date, ...sum });
 }
 const most = Math.max(1, ...days.map((d) => d.right + d.wrong));
 
@@ -172,6 +180,42 @@ for (const d of days) {
 const t = days[days.length - 1];
 document.getElementById("today").textContent = T.today(t.right, t.wrong, t.rounds);
 
+// ---------- The world: place → idea → five perspectives
+
+const placeOfIdea = Object.fromEntries(world.ideas.map((i) => [i.id, i.place]));
+/** "Zahlen bis 10", or for an idea without numbers its own words ("Stücke aus 3 Dingen"). */
+const rangeLabel = (idea) => (T.worldRange[idea.id] || T.worldRange.numbers)(num(idea.range), num(idea.step + 1));
+
+{
+  const section = $("world");
+  $("worldNote").textContent = T.worldNote;
+  for (const idea of world.ideas) {
+    const box = el("div", "card skill");
+    box.append(el("h3", "", W.places[idea.place]), el("p", "muted idea", W.ideas[idea.id]));
+    const meter = el("div", "meter");
+    const fillBar = el("div", "meter-fill");
+    fillBar.style.width = (idea.step / idea.steps) * 100 + "%";
+    meter.append(fillBar);
+    const head = el("div", "world-head");
+    head.append(
+      el("span", "", `${T.level(num(idea.step), num(idea.steps))} · ${rangeLabel(idea)}`),
+      meter,
+      el("span", "muted", idea.rounds ? T.worldStats(idea.rounds, idea.last ? showDate(idea.last) : "–") : T.notPlayed),
+    );
+    box.append(head);
+    for (const p of idea.perspectives) {
+      const row = el("div", "game way " + p.state);
+      row.append(el("span", "game-icon", PERSPECTIVES.find((x) => x.id === p.id).icon));
+      const info = el("div", "game-info");
+      info.append(el("strong", "", W.perspectives[p.id]));
+      info.append(el("span", "muted", p.of ? T.worldFirst(num(p.right), num(p.of)) : T.notPlayed));
+      row.append(info, el("span", "state " + p.state, T.worldStates[p.state]));
+      box.append(row);
+    }
+    section.append(box);
+  }
+}
+
 // ---------- Category → skill → game
 
 /** "3–6 Jahre", plus why the game is hidden or that the parents decided. */
@@ -182,6 +226,7 @@ function ageHint(game, kid) {
   const why = fit.why(game, kid);
   if (choice === true && why) parts.push(T.switchedOn);
   else if (choice === false && !why) parts.push(T.switchedOff);
+  else if (why === "moved") parts.push(T.moved(W.places[placeOfIdea[game.moved]]));
   else if (why === "young") parts.push(T.tooYoung(num(from)));
   else if (why === "old") parts.push(T.tooEasy);
   return parts.join(" · ");
@@ -330,6 +375,7 @@ for (const category of CATEGORIES) {
 $("reset").addEventListener("click", () => {
   if (confirm(shown ? T.resetConfirmKid(kidName(shown)) : T.resetConfirm)) {
     progress.reset(shown?.id);
+    record.reset(shown?.id);
     location.reload();
   }
 });
