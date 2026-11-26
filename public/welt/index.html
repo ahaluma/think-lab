@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AnkaPlay Welt</title>
+    <meta name="description" content="Die AnkaPlay Welt: Mathe entdecken in der Natur. Ohne Werbung, ohne Tracking." />
+    <meta name="theme-color" content="#e9eef2" />
+    <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icon-180.png?v=3" />
+    <link rel="stylesheet" href="/shared/base.css" />
+    <link rel="stylesheet" href="welt.css" />
+    <script type="module" src="map.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <div class="topbar">
+        <a class="icon-btn" id="home" href="/" data-t-label="allGames" aria-label="Alle Spiele"></a>
+        <div class="spacer"></div>
+        <button class="icon-btn sun" id="hear" type="button" data-t-label="hear" aria-label="Vorlesen"></button>
+      </div>
+      <p class="caption" id="caption" aria-live="polite"></p>
+
+      <!-- The world: one landscape with six places. Only places with something to play are awake. -->
+      <div class="map card" id="map" data-t-label="mapLabel" aria-label="Die Welt">
+        <svg viewBox="0 0 360 430" xmlns="http://www.w3.org/2000/svg">
+          <rect width="360" height="200" fill="#cfeaff" />
+          <path d="M0 175 Q95 75 195 155 T360 135 V230 H0Z" fill="#8fcf8a" />
+          <rect y="190" width="360" height="240" fill="#b9e5a0" />
+          <path d="M262 172 C235 225 150 245 188 300 S300 345 262 430" fill="none" stroke="#8fd3ff" stroke-width="24" stroke-linecap="round" />
+
+          <!-- Sky: data and chance -->
+          <g class="place" data-o="daten" tabindex="0" role="button">
+            <rect x="20" y="8" width="320" height="80" fill="transparent" />
+            <circle cx="305" cy="46" r="22" fill="#ffc83a" stroke="#1b2140" stroke-width="3" />
+            <g fill="#fff" stroke="#1b2140" stroke-width="3">
+              <ellipse cx="92" cy="52" rx="40" ry="15" />
+              <ellipse cx="112" cy="40" rx="24" ry="15" />
+            </g>
+            <path d="M160 36q8-9 16 0q8-9 16 0M196 62q7-8 14 0q7-8 14 0" fill="none" stroke="#1b2140" stroke-width="3" stroke-linecap="round" />
+            <text class="zzz" x="238" y="40">💤</text>
+          </g>
+
+          <!-- Hill and lake: space and measure -->
+          <g class="place" data-o="raum" tabindex="0" role="button">
+            <rect x="200" y="100" width="150" height="90" fill="transparent" />
+            <ellipse cx="282" cy="160" rx="56" ry="17" fill="#8fd3ff" stroke="#1b2140" stroke-width="3" />
+            <path d="M246 160q10-6 20 0M290 164q10-6 20 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+            <text class="zzz" x="270" y="132">💤</text>
+          </g>
+
+          <!-- Fruit tree and nests: groups -->
+          <g class="place" data-o="gruppen" tabindex="0" role="button">
+            <rect x="14" y="170" width="140" height="125" fill="transparent" />
+            <rect x="56" y="232" width="14" height="40" fill="#8a5a33" stroke="#1b2140" stroke-width="3" />
+            <circle cx="63" cy="212" r="36" fill="#57b86a" stroke="#1b2140" stroke-width="3" />
+            <g fill="#ff5a36" stroke="#1b2140" stroke-width="2">
+              <circle cx="48" cy="200" r="6" /><circle cx="74" cy="196" r="6" /><circle cx="62" cy="222" r="6" /><circle cx="84" cy="220" r="6" />
+            </g>
+            <ellipse cx="120" cy="276" rx="20" ry="9" fill="#c79a62" stroke="#1b2140" stroke-width="3" />
+            <g fill="#fff" stroke="#1b2140" stroke-width="2"><ellipse cx="113" cy="271" rx="5" ry="6" /><ellipse cx="125" cy="271" rx="5" ry="6" /></g>
+            <text class="zzz" x="100" y="196">💤</text>
+          </g>
+
+          <!-- Forest: patterns and rules -->
+          <g class="place" data-o="regeln" tabindex="0" role="button">
+            <rect x="232" y="196" width="124" height="100" fill="transparent" />
+            <g stroke="#1b2140" stroke-width="3">
+              <rect x="262" y="252" width="10" height="28" fill="#8a5a33" /><path d="M267 204l26 52h-52z" fill="#3f9b57" />
+              <rect x="310" y="258" width="10" height="28" fill="#8a5a33" /><path d="M315 212l26 52h-52z" fill="#2f8a4b" />
+              <rect x="286" y="268" width="10" height="24" fill="#8a5a33" /><circle cx="291" cy="252" r="22" fill="#57b86a" />
+            </g>
+            <text class="zzz" x="318" y="206">💤</text>
+          </g>
+
+          <!-- Meadow and stream: numbers -->
+          <g class="place" data-o="zahlen" tabindex="0" role="button">
+            <rect x="150" y="285" width="200" height="80" fill="transparent" />
+            <g fill="#d9dde6" stroke="#1b2140" stroke-width="3">
+              <ellipse cx="164" cy="300" rx="11" ry="7" /><ellipse cx="189" cy="303" rx="11" ry="7" /><ellipse cx="214" cy="306" rx="11" ry="7" />
+            </g>
+            <g stroke="#1b2140" stroke-width="2">
+              <circle cx="268" cy="322" r="7" fill="#e8488a" /><circle cx="296" cy="340" r="7" fill="#ffc83a" /><circle cx="322" cy="318" r="7" fill="#fff" />
+            </g>
+            <text class="zzz" x="286" y="308">💤</text>
+          </g>
+
+          <!-- Burrow and pond: parts and wholes -->
+          <g class="place" data-o="teile" tabindex="0" role="button">
+            <rect x="10" y="318" width="210" height="106" fill="transparent" />
+            <ellipse cx="172" cy="402" rx="38" ry="15" fill="#8fd3ff" stroke="#1b2140" stroke-width="3" />
+            <ellipse cx="184" cy="400" rx="14" ry="6" fill="#6cc070" stroke="#1b2140" stroke-width="2" />
+            <path d="M22 408 Q78 300 134 408Z" fill="#b98a5a" stroke="#1b2140" stroke-width="3" />
+            <ellipse cx="78" cy="392" rx="22" ry="16" fill="#3b2a1d" />
+            <g id="flowers"></g>
+            <text class="zzz" x="60" y="336">💤</text>
+          </g>
+
+          <!-- The child's animal stands where the next activity is. -->
+          <text class="walker pulse" id="walker" x="120" y="372" tabindex="0" role="button"></text>
+        </svg>
+      </div>
+
+      <!-- A place is open: the five perspectives, each with its fixed symbol. -->
+      <section class="ways-panel card" id="ways" hidden>
+        <h2 id="waysTitle"></h2>
+        <ul class="persp" id="persp"></ul>
+      </section>
+
+      <ul class="think-row" id="cards" data-t-label="yourCards" aria-label="Deine Denk-Tricks"></ul>
+
+      <footer class="map-foot">
+        <a href="/welt/sichern/" data-t="save">Sichern</a>
+        <a href="/datenschutz/" data-t="privacy">Datenschutz</a>
+      </footer>
+    </main>
+  </body>
+</html>
