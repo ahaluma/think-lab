@@ -3,12 +3,15 @@
 // a number, or hangs the wagons on in the right order. Every right step is read out loud,
 // so the child hears the number row again and again.
 // Levels go from 1–4 up to numbers near 20 (see LEVELS).
+// Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // All texts are in lang/<language>.js; number words are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, pick, randInt, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
+import * as gen from "../../shared/gen.js";
+import { task } from "./tasks.js";
 
 const ID = "zahlenzug";
 const T = await texts(import.meta.url);
@@ -19,6 +22,9 @@ const STARS_PER_GAME = 5;
 const COLORS = ["#ff8a8a", "#ffc83a", "#7ed68b", "#8fd3ff", "#c9b6ff"];
 
 // Levels: see levels.js (easy to hard).
+
+// Not the same task as in the last 2 (a level like "1–4, one missing" has only 4 tasks).
+const nextTask = gen.generator(task, { avoid: { key: 2 } });
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
@@ -89,29 +95,21 @@ function question() {
 function newRound() {
   level = play.level;
   const l = LEVELS[level];
-  kind = l.kind === "mixed" ? pick(["after", "before"]) : l.kind;
-  const from = randInt(...l.from);
+  const t = nextTask(l);
+  kind = t.kind;
+  row = t.row || [];
+  shown = t.shown;
+  answer = t.answer;
   $("answers").innerHTML = "";
   $("yard").innerHTML = "";
+  drawTrain(t.train);
 
-  if (kind === "missing") {
-    row = Array.from({ length: l.len }, (_, i) => from + i);
-    const hole = randInt(0, l.len - 1);
-    answer = row[hole];
-    drawTrain(row.map((n, i) => (i === hole ? null : n)));
-    drawAnswers();
-  } else if (kind === "after" || kind === "before") {
-    // "before" needs a number of at least 2, so the answer is 1 or more.
-    shown = kind === "before" ? Math.max(2, from) : from;
-    answer = kind === "after" ? shown + 1 : shown - 1;
-    drawTrain(kind === "after" ? [shown, null] : [null, shown]);
-    drawAnswers();
-  } else {
-    row = Array.from({ length: l.len }, (_, i) => from + i);
+  if (kind === "order") {
     next = 0;
     missed = false;
-    drawTrain(row.map(() => null));
-    drawYard();
+    drawYard(t.yard);
+  } else {
+    drawAnswers(t.choices);
   }
 
   show("round");
@@ -119,11 +117,10 @@ function newRound() {
   say(question());
 }
 
-// Three number buttons: the right one and two near ones, smallest first.
-function drawAnswers() {
-  const near = shuffle([-2, -1, 1, 2].map((d) => answer + d).filter((n) => n >= 1 && n <= 20));
+// Three number buttons, smallest first.
+function drawAnswers(choices) {
   const answers = $("answers");
-  for (const n of [answer, ...near.slice(0, 2)].sort((a, b) => a - b)) {
+  for (const n of choices) {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "btn answer";
@@ -135,9 +132,9 @@ function drawAnswers() {
 }
 
 // "order": the wagons wait mixed up in the yard.
-function drawYard() {
+function drawYard(order) {
   const yard = $("yard");
-  for (const i of shuffle([...row.keys()])) {
+  for (const i of order) {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "btn wagon";
