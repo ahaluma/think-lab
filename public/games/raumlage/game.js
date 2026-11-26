@@ -6,12 +6,15 @@
 // and in the shelf oben / in der Mitte / unten with links / in der Mitte / rechts. Levels: levels.js.
 // A wrong tap on an animal says where that one is ("Der Fuchs ist neben dem Tisch."),
 // after two wrong answers the right place glows (with left / right: the "L" of the left hand).
+// Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // All texts are in lang/<language>.js.
 
-import { say, oneOf, sound, celebrate, shuffle, pick, randInt, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
+import * as gen from "../../shared/gen.js";
+import { task as makeTask, PETS as ALL_PETS, SIDES, fits } from "./tasks.js";
 
 const ID = "raumlage";
 const T = await texts(import.meta.url);
@@ -21,23 +24,13 @@ const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const STARS_PER_GAME = 5;
 
-// The animals of this game. Their names (who / to whom) are in lang/<language>.js under "pets".
-const PETS = [
-  { id: "rabbit", icon: "🐰" },
-  { id: "cat", icon: "🐱" },
-  { id: "dog", icon: "🐶" },
-  { id: "bear", icon: "🐻" },
-  { id: "fox", icon: "🦊" },
-  { id: "frog", icon: "🐸" },
-  { id: "duck", icon: "🦆" },
-  { id: "mouse", icon: "🐭" },
-  { id: "pig", icon: "🐷" },
-  { id: "owl", icon: "🦉" },
-  { id: "panda", icon: "🐼" },
-  { id: "lion", icon: "🦁" },
-]
-  .filter((p) => T.pets[p.id])
-  .map((p) => ({ ...p, nom: T.pets[p.id][0], dat: T.pets[p.id][1] }));
+// The animals with a name in this language (who / to whom: lang/<language>.js "pets").
+const PETS = ALL_PETS.filter((p) => T.pets[p.id]).map((p) => ({ ...p, nom: T.pets[p.id][0], dat: T.pets[p.id][1] }));
+const PET_IDS = PETS.map((p) => p.id);
+const byId = Object.fromEntries(PETS.map((p) => [p.id, p]));
+
+// Not the same question about the same animal again soon, and other animals than in the last picture.
+const nextTask = gen.generator(makeTask, { avoid: { key: 3, look: 1 } });
 
 // Places around the table: x and bottom in % of the picture, size and layer.
 // "hinter" sits lower, smaller and behind the table cloth, so only the head shows.
@@ -49,9 +42,6 @@ const SPOTS = {
   vor: { x: 50, b: 0, s: 1.25, z: 5 },
   hinter: { x: 50, b: 50, s: 0.85, z: 1 },
 };
-// Places that would cover each other: never both in one picture.
-const CLASH = { auf: ["hinter"], hinter: ["auf"], unter: ["vor"], vor: ["unter"] };
-const SIDES = ["links", "rechts"];
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
@@ -138,73 +128,49 @@ function waiting(pet) {
 
 // ---------- Tasks
 
-/** Which word is asked: mostly one of the level's new words (focus), sometimes any. */
-function askPlace(l) {
-  const from = l.focus && Math.random() < 0.7 ? l.focus : l.places;
-  return pick(from);
-}
-
-/** Where an animal can sit for these words ("neben" = left or right). */
-const spotsFor = (places) => [...new Set(places.flatMap((p) => (p === "neben" ? SIDES : [p])))];
-
-/** Does the animal at `spot` fit the word `place`? */
-const fits = (spot, place) => spot === place || (place === "neben" && SIDES.includes(spot));
-
 /** The word for a spot in this level: "neben" when the level does not know left and right. */
 const wordFor = (spot, l) => (SIDES.includes(spot) && !l.places.includes(spot) ? "neben" : spot);
 
-function tableWho(l) {
+function tableWho(l, t) {
   const el = stage("table");
   drawTable(el);
-  const asked = askPlace(l);
-  const target = asked === "neben" ? pick(SIDES) : asked;
-  const taken = [target];
-  for (const spot of shuffle(spotsFor(l.places))) {
-    if (taken.length >= l.pets) break;
-    if (taken.includes(spot) || taken.some((t) => CLASH[t]?.includes(spot))) continue;
-    if (asked === "neben" && SIDES.includes(spot)) continue; // only one animal next to the table
-    taken.push(spot);
-  }
-  const pets = shuffle(PETS).slice(0, taken.length);
   let targetEl = null;
-  taken.forEach((spot, i) => {
-    const pet = pets[i];
+  for (const { pet: id, spot } of t.pets) {
+    const pet = byId[id];
     const b = petButton(pet, (btn) =>
-      answer(btn, spot === target, T.isAt(cap(pet.nom), T.where[wordFor(spot, l)])),
+      answer(btn, spot === t.target, T.isAt(cap(pet.nom), T.where[wordFor(spot, l)])),
     );
     placeAt(b, spot);
     el.append(b);
-    if (spot === target) targetEl = b;
-  });
+    if (spot === t.target) targetEl = b;
+  }
   waiting(null);
   return {
-    question: T.who(T.where[asked]),
+    question: T.who(T.where[t.asked]),
     target: targetEl,
-    right: T.isAt(cap(pets[0].nom), T.where[asked]),
-    leftRight: SIDES.includes(asked),
+    right: T.isAt(cap(byId[t.pets[0].pet].nom), T.where[t.asked]),
+    leftRight: SIDES.includes(t.asked),
   };
 }
 
-function tablePut(l) {
+function tablePut(l, t) {
   const el = stage("table");
   drawTable(el);
-  const asked = askPlace(l);
-  const pet = pick(PETS);
+  const pet = byId[t.pet];
   let targetEl = null;
-  for (const spot of spotsFor(l.places)) {
-    const ok = fits(spot, asked);
+  for (const spot of t.spots) {
+    const ok = fits(spot, t.asked);
     const b = slotButton(T.where[wordFor(spot, l)], (btn) => answer(btn, ok, null, () => land(btn, pet)));
     placeAt(b, spot);
     el.append(b);
-    if (ok && !targetEl) targetEl = b;
+    if (spot === t.target) targetEl = b;
   }
   waiting(pet);
   return {
-    question: T.put(T.to[asked]),
+    question: T.put(T.to[t.asked]),
     target: targetEl,
-    right: T.nowAt(T.where[asked]),
-    leftRight: SIDES.includes(asked),
-    again: T.put(T.to[asked]),
+    right: T.nowAt(T.where[t.asked]),
+    leftRight: SIDES.includes(t.asked),
   };
 }
 
@@ -215,28 +181,24 @@ function land(slot, pet) {
   slot.textContent = pet.icon;
 }
 
-function row(l) {
+function row(l, t) {
   const el = stage("row");
-  const n = l.pets;
-  const pets = shuffle(PETS).slice(0, n);
-  const kind = pick(l.ask);
-  let i, question, right;
-  if (kind === "zwischen") {
-    i = randInt(1, n - 2);
+  const pets = t.pets.map((id) => byId[id]);
+  const i = t.target;
+  let question, right;
+  if (t.ask === "zwischen") {
     question = T.between(pets[i - 1].dat, pets[i + 1].dat);
     right = T.isBetween(cap(pets[i].nom), pets[i - 1].dat, pets[i + 1].dat);
-  } else if (kind === "links") {
-    i = randInt(0, n - 2);
+  } else if (t.ask === "links") {
     question = T.leftOf(pets[i + 1].dat);
     right = T.isLeftOf(cap(pets[i].nom), pets[i + 1].dat);
   } else {
-    i = randInt(1, n - 1);
     question = T.rightOf(pets[i - 1].dat);
     right = T.isRightOf(cap(pets[i].nom), pets[i - 1].dat);
   }
   const line = document.createElement("div");
   line.className = "row-pets";
-  line.style.setProperty("--n", n);
+  line.style.setProperty("--n", pets.length);
   let targetEl = null;
   pets.forEach((pet, k) => {
     const b = petButton(pet, (btn) => answer(btn, k === i, null));
@@ -247,27 +209,24 @@ function row(l) {
   bench.className = "bench";
   el.append(line, bench);
   waiting(null);
-  return { question, target: targetEl, right, leftRight: kind !== "zwischen" };
+  return { question, target: targetEl, right, leftRight: t.ask !== "zwischen" };
 }
 
-function shelf(l) {
+function shelf(l, t) {
   const el = stage("shelf");
   const grid = document.createElement("div");
   grid.className = "shelf";
   el.append(grid);
-  const cells = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-  const used = cells.slice(0, l.pets);
-  const pets = shuffle(PETS).slice(0, l.pets + 1);
-  const put = l.input === "put";
-  const target = put ? cells[l.pets] : used[0];
-  const newcomer = pets[l.pets];
+  const put = t.input === "put";
+  const target = t.target;
+  const newcomer = put ? byId[t.newcomer] : null;
   let targetEl = null;
   for (let c = 0; c < 9; c++) {
     const box = document.createElement("div");
     box.className = "cell";
-    const k = used.indexOf(c);
-    if (k >= 0) {
-      const pet = pets[k];
+    const sits = t.pets.find((p) => p.cell === c);
+    if (sits) {
+      const pet = byId[sits.pet];
       const b = petButton(pet, (btn) =>
         put ? wrongTap(btn) : answer(btn, c === target, T.sitsAt(cap(pet.nom), T.cells[c])),
       );
@@ -280,13 +239,13 @@ function shelf(l) {
     }
     grid.append(box);
   }
-  waiting(put ? newcomer : null);
+  waiting(newcomer);
   return put
     ? { question: T.put(T.cells[target]), target: targetEl, right: T.nowSits(T.cells[target]), leftRight: target % 3 !== 1 }
     : {
         question: T.whoSits(T.cells[target]),
         target: targetEl,
-        right: T.sitsAt(cap(pets[0].nom), T.cells[target]),
+        right: T.sitsAt(cap(byId[t.pets[0].pet].nom), T.cells[target]),
         leftRight: target % 3 !== 1,
       };
 }
@@ -304,7 +263,7 @@ async function wrongTap(b) {
 }
 
 const MAKERS = {
-  table: (l) => (l.input === "put" ? tablePut(l) : tableWho(l)),
+  table: (l, t) => (l.input === "put" ? tablePut(l, t) : tableWho(l, t)),
   row,
   shelf,
 };
@@ -312,14 +271,11 @@ const MAKERS = {
 // ---------- One task
 
 async function newTask() {
-  current = LEVELS[play.level];
-  if (current.scene === "mix") {
-    const id = pick(current.levels);
-    current = LEVELS.find((l) => l.id === id);
-  }
+  const t = nextTask(LEVELS[play.level], PET_IDS);
+  current = LEVELS.find((l) => l.id === t.level); // in "mix" levels one of the others
   locked = true;
   misses = 0;
-  task = MAKERS[current.scene](current);
+  task = MAKERS[current.scene](current, t);
   show("round");
   await say(task.question);
   locked = false;
