@@ -29,6 +29,8 @@ const FLOWER_SPOTS = {
   zahl: [[246, 346], [282, 356], [312, 344], [338, 334], [258, 326], [300, 326], [336, 356], [228, 360], [270, 340], [322, 330], [296, 346], [244, 334]],
 };
 const FLOWER_COLORS = ["#e8488a", "#ffc83a", "#fff", "#ff5a36"];
+// Where the yellow play sign of an awake place stands: "here you can play".
+const SIGN_AT = { teile: [40, 338], zahlen: [326, 366] };
 // Where the child's animal stands at each place.
 const WALKER_AT = { teile: [120, 372], zahlen: [222, 338] };
 
@@ -38,6 +40,25 @@ const placeOf = (id) => awake.find((p) => p.id === id);
 const ideaOf = (place) => place.ideas[0]; // one idea per place so far
 
 // ---------- Places
+
+/** A round yellow sign with a play triangle. It pulses, so an awake place is seen at once. */
+function playSign(x, y) {
+  const g = document.createElementNS(SVG, "g");
+  g.setAttribute("class", "play-sign");
+  g.setAttribute("transform", `translate(${x} ${y})`);
+  const inner = document.createElementNS(SVG, "g");
+  const disc = document.createElementNS(SVG, "circle");
+  disc.setAttribute("r", 15);
+  disc.setAttribute("fill", "#ffc83a");
+  disc.setAttribute("stroke", "#1b2140");
+  disc.setAttribute("stroke-width", 3);
+  const arrow = document.createElementNS(SVG, "path");
+  arrow.setAttribute("d", "M-5 -8 L9 0 L-5 8Z");
+  arrow.setAttribute("fill", "#1b2140");
+  inner.append(disc, arrow);
+  g.append(inner);
+  return g;
+}
 
 for (const g of document.querySelectorAll(".place")) {
   const place = PLACES.find((p) => p.id === g.dataset.o);
@@ -52,6 +73,7 @@ for (const g of document.querySelectorAll(".place")) {
     }
     openPlace(place);
   };
+  if (place.awake && SIGN_AT[place.id]) g.append(playSign(...SIGN_AT[place.id]));
   g.addEventListener("click", go);
   g.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") go();

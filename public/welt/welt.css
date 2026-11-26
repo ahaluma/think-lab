@@ -1001,3 +1001,10 @@ button.pic {
 [hidden] {
   display: none !important;
 }
+
+/* The play sign of an awake place on the map. */
+.play-sign g {
+  animation: pulse 1.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
