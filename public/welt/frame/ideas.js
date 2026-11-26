@@ -65,7 +65,7 @@ export const MOUNTAIN = [
   { id: "fels", height: 3, needs: ["haken"], ideas: ["fels"] },
   { id: "socken", height: 4, needs: ["huetten", "tanz"], ideas: ["socken"] },
   { id: "steine", height: 4, needs: ["vorrat", "tanz"], ideas: ["steine"] },
-  { id: "mauer", height: 4, needs: ["vorrat", "waage"] },
+  { id: "mauer", height: 4, needs: ["vorrat", "waage"], ideas: ["mauer"] },
 ];
 
 /** The camp an idea belongs to (or undefined for an idea of the nature world). */
@@ -111,6 +111,8 @@ export const IDEAS = {
   socken: { place: "socken", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
   // Camp 11: games against the owl, thought from the end (heaps, counting games, chocolate).
   steine: { place: "steine", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 12: number walls and riddles, narrowed down clue by clue (gaps, magic squares, codes).
+  mauer: { place: "mauer", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */
