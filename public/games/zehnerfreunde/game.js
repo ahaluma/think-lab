@@ -3,19 +3,27 @@
 // 7 and 3 are "friends", together they make 10. At the end the missing animals walk into the empty places.
 // Levels: first a single row of 5, then 10 with the top row full, then any amount, then the animals
 // mixed up on the frame, then the frame only shown briefly, then only numbers: 7 + ? = 10 (see levels.js).
+// Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
+import * as gen from "../../shared/gen.js";
+import { task } from "./tasks.js";
 
 const ID = "zehnerfreunde";
 const T = await texts(import.meta.url);
 const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Sieben und drei sind zusammen zehn."
 const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Zähl die leeren Plätze!"
 const THINGS = things(T);
+const THING_IDS = THINGS.map((t) => t.id); // only things with a name in this language
+const byId = Object.fromEntries(THINGS.map((t) => [t.id, t]));
+
+// A new thing for the last 3 tasks, and never the same number of animals twice in a row.
+const nextTask = gen.generator(task, { avoid: { thing: 3, have: 1 } });
 
 const STARS_PER_GAME = 5;
 
@@ -33,7 +41,7 @@ let have = 0; // animals in the frame
 let answer = 0; // empty places: total - have
 let places = []; // which places hold an animal
 let thing = null;
-let lastThing = null;
+let choices = []; // the three buttons of this task
 let first = true; // numbers: the gap comes second (7 + ? = 10) or first (? + 3 = 10)
 let misses = 0;
 let showing = false;
@@ -104,13 +112,9 @@ async function newRound() {
   current = LEVELS[level];
   locked = true;
   misses = 0;
-  have = randInt(...current.have);
-  answer = current.total - have;
-  thing = shuffle(THINGS.filter((t) => t !== lastThing))[0];
-  lastThing = thing;
-  first = !(current.swap && Math.random() < 0.5);
-  // In order (first row first), or on random places.
-  places = current.show === "scatter" ? shuffle([...Array(current.total).keys()]).slice(0, have) : [...Array(have).keys()];
+  const t = nextTask(current, THING_IDS);
+  ({ have, answer, places, first, choices } = t);
+  thing = byId[t.thing];
 
   drawFrame();
   drawSum();
@@ -129,17 +133,11 @@ async function newRound() {
   say(question());
 }
 
-// Three choices: the answer, the number of animals (a common mix-up) and a neighbour, smallest first.
+// Three choices (from the task): the answer, the number of animals (a common mix-up) and a neighbour.
 function drawAnswers() {
-  const choices = new Set([answer]);
-  if (have !== answer && have <= current.total) choices.add(have);
-  for (const n of shuffle([answer - 1, answer + 1, answer + 2, answer - 2])) {
-    if (choices.size >= 3) break;
-    if (n >= 0 && n <= current.total) choices.add(n);
-  }
   const answers = $("answers");
   answers.innerHTML = "";
-  for (const n of [...choices].sort((a, b) => a - b)) {
+  for (const n of choices) {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "btn answer";
