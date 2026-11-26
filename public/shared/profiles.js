@@ -235,4 +235,5 @@ export function remove(id) {
   if (p.current === id) p.current = p.kids[0]?.id ?? null;
   write(p);
   store.remove(`progress:${id}`);
+  store.remove(`welt:${id}`); // the new world (welt/frame/record.js)
 }

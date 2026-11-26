@@ -46,5 +46,13 @@ export default {
   typeAge: (n) => `तपाईंले नछान्दा: ${n} वर्षदेखि टाइप गर्ने`,
   typeLabel: (name) => `${name} आफैँ उत्तर टाइप गर्छ`,
   showGame: (game, name) => `${name} लाई ${game} देखाउने`,
+  // The world
+  worldTitle: "संसार",
+  worldNote: "संसारमा तपाईंको बच्चाले हरेक विचार पाँच तरिकाले खेल्छ: हेर्ने, बनाउने, खोज्ने, प्रयोग गर्ने, जाँच्ने। “बुझेको” भनेको: पछिल्ला १० मध्ये ८ प्रश्न पहिलो पटकमै सही, दुई फरक दिनमा।",
+  worldStats: (rounds, date) => `${rounds} राउन्ड · अन्तिम पटक ${date}`,
+  worldFirst: (right, of) => `${of} मध्ये ${right} पहिलो पटकमै सही`,
+  worldStates: { new: "नयाँ", played: "खेलेको", understood: "बुझेको" },
+  worldRange: { numbers: (n) => `${n} सम्मका सङ्ख्या`, muster: (n, k) => `${k} वटा चिजको टुक्राबाट बनेका लहर` },
+  moved: (place) => `लुकाइएको, अब संसारमा छ (${place})`,
   weekdays: ["आ", "सो", "मं", "बु", "बि", "शु", "श"],
 };

@@ -3,7 +3,7 @@
 //   import * as fit from "/shared/fit.js";
 //   fit.visible(game, kid)    → show this game on the child's start page?
 //   fit.startLevel(LEVELS, kid) → index of the level a child starts with (first time in a game)
-//   fit.why(game, kid)        → "young" / "old" / null: why a game is hidden by age
+//   fit.why(game, kid)        → "moved" / "young" / "old" / null: why a game is hidden
 //   fit.ageTop(LEVELS, kid)   → index of the last level made for the child's age (quick placement stops here)
 //   fit.ceiling(LEVELS, kid, gameId) → index of the hardest level the child may reach (age + AHEAD,
 //                               or all levels when the parents opened them on /eltern/)
@@ -23,8 +23,10 @@ export const EASY_GRACE = 2;
  *  the parents open them on /eltern/ (kid.harder[gameId]). */
 export const AHEAD = 1;
 
-/** "young": the child is younger than the game; "old": the game is too easy now; null: it fits. */
+/** "moved": the game's idea is played in the new world now (catalog.js); "young": the child is younger
+ *  than the game; "old": the game is too easy now; null: it fits. */
 export function why(game, kid) {
+  if (game.moved) return "moved";
   const a = age(kid);
   if (a === null || !game.ages) return null;
   const [min, max] = game.ages;
@@ -33,7 +35,7 @@ export function why(game, kid) {
   return null;
 }
 
-/** Parents' choice first, then the age. Without a child (or without an age): every game. */
+/** Parents' choice first, then the age. Without a child (or without an age): every game that has not moved. */
 export function visible(game, kid) {
   const choice = kid?.games?.[game.id];
   if (choice === true || choice === false) return choice;

@@ -49,5 +49,13 @@ export default {
   typeAge: (n) => `ohne Ihre Wahl: ab ${n} Jahren eintippen`,
   typeLabel: (name) => `${name} tippt die Antwort selbst ein`,
   showGame: (game, name) => `${game} für ${name} zeigen`,
+  // Die Welt
+  worldTitle: "Die Welt",
+  worldNote: "In der Welt spielt Ihr Kind jede Idee auf fünf Arten: sehen, machen, forschen, anwenden, prüfen. „Verstanden“ heißt: 8 der letzten 10 Aufgaben beim ersten Versuch richtig, an zwei verschiedenen Tagen.",
+  worldStats: (rounds, date) => `${rounds} ${rounds === 1 ? "Runde" : "Runden"} · zuletzt ${date}`,
+  worldFirst: (right, of) => `${right} von ${of} beim ersten Versuch richtig`,
+  worldStates: { new: "neu", played: "gespielt", understood: "verstanden" },
+  worldRange: { numbers: (n) => `Zahlen bis ${n}`, muster: (n, k) => `Reihen aus Stücken mit ${k} Dingen` },
+  moved: (place) => `ausgeblendet, jetzt in der Welt (${place})`,
   weekdays: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };
