@@ -33,6 +33,7 @@ think-lab/
 │   │   ├── progress.js      ← progress report saved on this device, one per child
 │   │   ├── profiles.js      ← children on this device (name, age, animal)
 │   │   ├── fit.js           ← which games and start levels fit a child's age
+│   │   ├── gen.js           ← task generators: random kit, seeds (?seed=7), no repeats
 │   │   ├── rechnen.js       ← arithmetic tasks for Plus (later Minus): numbers, answer choices, column sums
 │   │   ├── numpad.js        ← number pad for typed answers (children from 8, parents can switch it)
 │   │   ├── things.js        ← the 34 animals and things that number games count and compare
@@ -44,12 +45,15 @@ think-lab/
 │   │       ├── game.css
 │   │       ├── game.js      ← the game, no texts
 │   │       ├── levels.js    ← its levels: id, age, label, parameters
+│   │       ├── tasks.js     ← task(level, r): makes one task as plain data (shared/gen.js)
 │   │       └── lang/de.js   ← every sentence of this game
 │   ├── eltern/              ← parents' page: the progress report
 │   ├── datenschutz/         ← privacy policy (DE/EN/NE); your contact details go in contact.js
 │   ├── _headers             ← security and cache settings for Cloudflare
 │   ├── 404.html             ← "page not found"
 │   └── favicon.svg, icon-*.png, manifest.webmanifest  ← the AnkaPlay logo and home-screen icon
+├── tools/
+│   └── check-tasks.mjs      ← optional: node tools/check-tasks.mjs checks every game's tasks.js
 ├── templates/
 │   └── game/                ← copy this folder to start a new game
 └── wrangler.jsonc           ← Cloudflare settings: serve public/ as a website
@@ -173,6 +177,21 @@ On the phone, open the site and choose **"Zum Home-Bildschirm"** (Safari) or **"
 | `oneOf(T.praise)`, `oneOf(T.oops)` | A different praise (`"Toll!"`, `"Juhu!"` …) or soft hint (`"Fast!"`, `"Ups!"` …) each time, never twice in a row |
 | `things(T)` (`shared/things.js`) | The 34 animals and things with icon and names in the current language |
 | `T.amount(n, thing, T.numbers[n])` | `"drei Elefanten"`, `"one elephant"`, `"तीनवटा हात्ती"` |
+
+### Tasks come from a generator (`shared/gen.js`)
+
+Where a game has tasks (rounds), one function makes each task, so every round is different. The game file only draws what it gets.
+
+- `games/<id>/tasks.js` exports `task(level, r)`: it returns one task as **plain data** (numbers, ids, places; no DOM, no texts). `level` is the object from `levels.js`, so the level's parameters decide how hard it is. `r` is the random kit (`r.int(1, 5)`, `r.pick(list)`, `r.shuffle(list)`, `r.sample(list, n)`, `r.chance(0.3)`): use it instead of `Math.random`, `randInt` or `shuffle` from `kit.js`.
+- It may also export `check(task, level)`, which returns a list of problems (empty = fine).
+- `game.js` makes one generator and asks it for each task:
+  ```js
+  const nextTask = gen.generator(task, { avoid: { thing: 3, count: 1 } }); // not the same thing as in the last 3 tasks, not the same number as last time
+  const t = nextTask(LEVELS[play.level]);
+  ```
+- **Testing:** open a game with `?seed=7` in the address (`/games/wie-viele/?seed=7`) and it deals the same tasks every time (at the same level). Without a seed every game is different. `node tools/check-tasks.mjs` (optional, nothing to install) makes 2000 tasks per level of every game with a `tasks.js`, runs `check()` on them and shows how many different tasks each level has.
+
+`wie-viele` is the example. `shared/rechnen.js` is the same idea for the arithmetic games and moves to this pattern when Plus does.
 
 ## Guidelines for every game
 
