@@ -153,6 +153,28 @@ spots in `map.js`, and list the two new files in `public/sw.js`. A round is `/we
 A round has no points, no clock and no streak. After a round a flower grows on the map and the
 child says how it felt (easy, just right, hard). `node tools/check-welt.mjs` checks the tasks.
 
+## The thinking mountain (`public/welt/berg/`)
+
+A second world for **Mathe-Olympiade training, for children of 9 to 12** (starting at the level of
+grade 3 in Hamburg). The map of the nature world has a door to it ("Zum Denk-Berg"). The plan is the
+doc "Plan: Olympiade-Welt (Denk-Berg)".
+
+- **A mountain with twelve camps** in four heights (about the olympiad level of grades 3, 4, 5, 6) and
+  a summit (`MOUNTAIN` in `frame/ideas.js`). Each camp is one family of problems with one thinking tool,
+  and camps higher up need the tools from below (`needs`). Camp 1 "Zaun" (posts and gaps) is awake.
+- **The rounds are the same frame** as in the nature world (`welt/spiel/`, `frame/record.js`): an idea
+  with `world: "berg"` links back to `/welt/berg/`, and `startAt: 0` lets every child start at level 1.
+- **The five perspectives** keep their ids but on the mountain they are named like the steps of a
+  mathematician (`berg.perspectives` in `lang/`): understand 👁️, try out ✋, find the rule 🔍,
+  transfer 🔑, explain why ✅. In "explain why" the owl answers fast and sure, is often wrong by one gap,
+  and the child finds the right number and then picks *why* she was wrong.
+- **Four levels up to the hardest for 12-year-olds.** In camp 1: (1) long fences, (2) with metres, a
+  bell, a tower, (3) backwards and with time, (4) a field with corners, time backwards, part of a tower.
+  Fences with more than 12 boards are drawn with "…": the child has to think, not count.
+  Answers are typed on the number pad (`shared/numpad.js`).
+- **The voice** is the expedition's logbook: first person, short, dry and a bit cheeky. An original
+  story with its own characters (the child's animal, the goat, the owl).
+
 ## Languages
 
 Every page speaks German, English and Nepali (नेपाली). The start page has flag buttons; the choice is saved on the device and the read-aloud voice switches with it. Without a choice, the phone's language is used, otherwise German.

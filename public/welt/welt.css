@@ -1492,3 +1492,112 @@ button.pic {
 .place-game .g-two {
   font-size: 22px;
 }
+
+/* ---------- The way to the thinking mountain (on the map of the world) */
+.mountain-door {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  color: inherit;
+  text-decoration: none;
+  background: #eef3f8;
+}
+
+.mountain-door .door-icon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.mountain-door .door-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.mountain-door small {
+  color: var(--muted);
+}
+
+/* ---------- The thinking mountain: camps */
+.camp .play-sign {
+  pointer-events: none;
+}
+
+/* ---------- Camp "Zaun": fences drawn as SVG */
+.fence-scene {
+  padding: 0;
+  min-height: 0;
+  background: none;
+}
+
+.fence-scene .fence-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.fence-svg .pop-in {
+  animation: pop 0.35s ease-out both;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.fence-svg .gap {
+  transition: opacity 0.3s;
+}
+
+.fence-build .spot {
+  cursor: pointer;
+}
+
+.fence-build .spot.on ellipse {
+  fill: #5d3c20;
+}
+
+.board.nudge .fence-build .spot:not(.on) ellipse {
+  animation: nudge 1.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.fence-tools {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.fence-count {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+  font-size: 26px;
+}
+
+.fence-count b {
+  font-size: 30px;
+}
+
+.fence-count small {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.owl-fence {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  background: none;
+}
+
+.bubble .bubble-word {
+  font-size: 18px;
+  font-weight: 800;
+}

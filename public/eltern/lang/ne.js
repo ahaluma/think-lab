@@ -52,7 +52,7 @@ export default {
   worldStats: (rounds, date) => `${rounds} राउन्ड · अन्तिम पटक ${date}`,
   worldFirst: (right, of) => `${of} मध्ये ${right} पहिलो पटकमै सही`,
   worldStates: { new: "नयाँ", played: "खेलेको", understood: "बुझेको" },
-  worldRange: { numbers: (n) => `${n} सम्मका सङ्ख्या`, gruppen: (n, k, most) => `${most} वटासम्म चिज बाँड्ने`, muster: (n, k) => `${k} वटा चिजको टुक्राबाट बनेका लहर` },
+  worldRange: { numbers: (n) => `${n} सम्मका सङ्ख्या`, gruppen: (n, k, most) => `${most} वटासम्म चिज बाँड्ने`, zaun: () => "खम्बा र खाली ठाउँ", muster: (n, k) => `${k} वटा चिजको टुक्राबाट बनेका लहर` },
   moved: (place) => `लुकाइएको, अब संसारमा छ (${place})`,
   weekdays: ["आ", "सो", "मं", "बु", "बि", "शु", "श"],
 };

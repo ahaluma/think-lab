@@ -10,6 +10,10 @@
 // "teile" (numbers are made of numbers), the forest with "muster" (a row goes on, because one piece
 // comes again and again) and the fruit tree with "gruppen" (groups of the same size, sharing fairly).
 // The other places are on the map, asleep.
+//
+// A second world grows next to it: the thinking mountain (welt/berg/), for Mathe-Olympiade training.
+// Its places are camps on the way up (MOUNTAIN). Each camp gives one thinking tool, and the camps
+// higher up need the tools from below. The first camp is awake: "zaun" (posts and gaps).
 
 /** The five perspectives, in the order a child meets them. card = the thinking card a round gives. */
 export const PERSPECTIVES = [
@@ -29,6 +33,7 @@ export const CARDS = {
   nachpruefen: "🧐",
   teilen: "🤝",
   wiederholen: "🔁",
+  luecken: "🪵",
 };
 
 /** The six places. awake: false = drawn on the map, but nothing to play there yet.
@@ -43,8 +48,26 @@ export const PLACES = [
   { id: "daten", awake: false },
 ];
 
+/** The camps of the thinking mountain, from the foot to the top, four heights of three camps each.
+ *  needs: the camps that must have been played before this one wakes up (the plan: "Plan: Olympiade-Welt").
+ *  Only awake camps have an idea; the others are drawn on the mountain, asleep. */
+export const MOUNTAIN = [
+  { id: "zaun", height: 1, awake: true, ideas: ["zaun"] },
+  { id: "haken", height: 1, needs: ["zaun"] },
+  { id: "huetten", height: 1, needs: ["haken"] },
+  { id: "vorrat", height: 2, needs: ["huetten"] },
+  { id: "ameisen", height: 2, needs: ["zaun"] },
+  { id: "waage", height: 2, needs: ["vorrat"] },
+  { id: "stall", height: 3, needs: ["huetten", "waage"] },
+  { id: "tanz", height: 3, needs: ["ameisen"] },
+  { id: "fels", height: 3, needs: ["haken"] },
+  { id: "socken", height: 4, needs: ["huetten", "tanz"] },
+  { id: "steine", height: 4, needs: ["vorrat", "tanz"] },
+  { id: "mauer", height: 4, needs: ["vorrat", "waage"] },
+];
+
 /**
- * Ideas. ranges: smallest first. tasks: how many tasks a round has in each perspective (default 5).
+ * Ideas. world: "berg" for an idea of the thinking mountain (its map is welt/berg/, its place is a camp). ranges: smallest first. tasks: how many tasks a round has in each perspective (default 5).
  * cards: the thinking card of a perspective, where the usual one (PERSPECTIVES) does not fit the idea.
  */
 export const IDEAS = {
@@ -58,7 +81,15 @@ export const IDEAS = {
   },
   // Here the range is how many things there are to share in all: up to 6, 10 or 20.
   gruppen: { place: "gruppen", ranges: [5, 10, 20], cards: { sehen: "teilen", machen: "teilen", anwenden: "teilen" } },
+  // The thinking mountain (for 9 to 12), camp 1: posts and gaps. Here the range is a level:
+  // 1 long fences, 2 with metres (and bells, towers), 3 backwards and with time, 4 masters (a field
+  // with corners, time backwards). Level 4 is the hardest this family gets for 12-year-olds.
+  // startAt: every child starts at this level, whatever the age (the mountain is climbed from below).
+  zaun: { place: "zaun", world: "berg", ranges: [1, 2, 3, 4], startAt: 0, cards: { sehen: "luecken", anwenden: "luecken" } },
 };
+
+/** The map an idea lives on: "/welt/" or "/welt/berg/". */
+export const mapOf = (idea) => (IDEAS[idea]?.world ? `/welt/${IDEAS[idea].world}/` : "/welt/");
 
 /** The thinking card a round of this idea in this perspective gives. */
 export const cardOf = (idea, p) => IDEAS[idea]?.cards?.[p] ?? perspective(p)?.card ?? null;
