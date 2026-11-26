@@ -16,6 +16,7 @@ export default {
   ideas: { zahl: "A number says how many", teile: "Numbers are made of numbers", muster: "A row always goes on like this", gruppen: "Sharing fairly: everyone gets the same" },
   perspectives: { sehen: "See", machen: "Make", forschen: "Explore", anwenden: "Use", pruefen: "Check" },
   states: { new: "new", played: "played", understood: "understood" },
+  together2: "Play together",
   yourCards: "Your thinking tricks",
 
   toMap: "Back to the map",

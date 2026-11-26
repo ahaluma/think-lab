@@ -8,4 +8,5 @@ export default {
   noMatch: "यो मिलेन।",
   boardDone: "सबै जोडी भेटियो!",
   wellDone: "स्याबास! तीनवटा तारा!",
+  toWorld: "नक्सामा फर्क",
 };

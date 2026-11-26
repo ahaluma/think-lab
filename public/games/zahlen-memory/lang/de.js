@@ -10,4 +10,5 @@ export default {
   noMatch: "Das passt nicht.",
   boardDone: "Alle Paare gefunden!",
   wellDone: "Toll gemacht! Drei Sterne!",
+  toWorld: "Zur Karte",
 };

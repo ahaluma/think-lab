@@ -114,3 +114,14 @@
 .board.many .pics.lots {
   font-size: clamp(14px, 4.6vw, 22px);
 }
+
+/* 11 to 20 things: still five in a row, so 10 is two full rows. */
+.pics.heaps {
+  gap: 0;
+  font-size: clamp(11px, 3.7vw, 17px);
+  line-height: 1.05;
+}
+
+.pics.heaps i {
+  width: 19%;
+}

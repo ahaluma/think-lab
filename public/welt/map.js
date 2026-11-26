@@ -11,6 +11,8 @@ import * as profiles from "../shared/profiles.js";
 import * as record from "./frame/record.js";
 import { mount, tell, again } from "./frame/voice.js";
 import { PLACES, PERSPECTIVES, CARDS } from "./frame/ideas.js";
+import { GAMES } from "../catalog.js";
+import { local } from "../shared/i18n.js";
 
 const T = await texts(import.meta.url);
 fill(T);
@@ -126,6 +128,31 @@ function openPlace(place) {
     li.append(a);
     list.append(li);
   }
+  // Games that live at this place as they are, to play together (the memory game at the meadow).
+  const extra = $("games");
+  extra.innerHTML = "";
+  for (const id of place.games || []) {
+    const game = GAMES.find((g) => g.id === id);
+    if (!game) continue;
+    const a = document.createElement("a");
+    a.href = `/games/${game.id}/?welt`;
+    a.className = "place-game";
+    const icon = document.createElement("span");
+    icon.className = "p-icon";
+    icon.textContent = game.icon;
+    const name = document.createElement("span");
+    name.className = "g-name";
+    name.textContent = local(game.name);
+    const two = document.createElement("span");
+    two.className = "g-two";
+    two.textContent = "👧🧑";
+    two.setAttribute("aria-label", T.together2);
+    a.append(icon, name, two);
+    const li = document.createElement("li");
+    li.append(a);
+    extra.append(li);
+  }
+  extra.hidden = !extra.childElementCount;
   $("ways").hidden = false;
   $("ways").scrollIntoView({ block: "nearest", behavior: "smooth" });
   tell(T.pickWay);

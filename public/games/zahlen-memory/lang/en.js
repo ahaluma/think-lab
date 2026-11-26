@@ -10,4 +10,5 @@ export default {
   noMatch: "That's not a pair.",
   boardDone: "You found all the pairs!",
   wellDone: "Well done! Three stars!",
+  toWorld: "Back to the map",
 };

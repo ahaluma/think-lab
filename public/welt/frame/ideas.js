@@ -31,9 +31,11 @@ export const CARDS = {
   wiederholen: "🔁",
 };
 
-/** The six places. awake: false = drawn on the map, but nothing to play there yet. */
+/** The six places. awake: false = drawn on the map, but nothing to play there yet.
+ *  games: games from catalog.js that live at this place as they are (their own page, their own levels):
+ *  games to play together, like the memory game. The map shows them below the five perspectives. */
 export const PLACES = [
-  { id: "zahlen", awake: true, ideas: ["zahl"] },
+  { id: "zahlen", awake: true, ideas: ["zahl"], games: ["zahlen-memory"] },
   { id: "teile", awake: true, ideas: ["teile"] },
   { id: "gruppen", awake: true, ideas: ["gruppen"] },
   { id: "regeln", awake: true, ideas: ["muster"] },
