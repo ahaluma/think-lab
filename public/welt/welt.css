@@ -595,8 +595,7 @@
   text-align: center;
 }
 
-.judge,
-.fixer {
+.judge {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -612,17 +611,6 @@
   width: 120px;
   min-height: 84px;
   font-size: 44px;
-}
-
-.fixer .num-btn {
-  width: 64px;
-}
-
-.fixed-num {
-  min-width: 64px;
-  font-size: 44px;
-  font-weight: 900;
-  text-align: center;
 }
 
 /* ---------- Done: the thinking card */
@@ -790,7 +778,7 @@
 .board.nudge .strip:not(.waiting) .num-btn:not(:disabled),
 .board.nudge .leaf,
 .board.nudge .judge-btn,
-.board.nudge .fixer .btn,
+.board.nudge .basket .thing,
 .board.nudge .check-btn:not(:disabled) {
   animation: nudge 1.2s ease-in-out infinite;
 }
@@ -803,4 +791,36 @@
 
 @media (prefers-reduced-motion: reduce) {
   .board.nudge * { animation: none !important; }
+}
+
+/* ---------- Machen: the child moves the things itself (drag, or tap a thing and then a leaf) */
+.thing {
+  touch-action: none; /* the finger drags the thing, not the page */
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+  transition: transform 0.12s ease-out;
+}
+
+.thing.dragging {
+  position: relative;
+  z-index: 5;
+  transition: none;
+  pointer-events: none; /* so the leaf below is found when the finger lifts */
+  filter: drop-shadow(0 6px 4px rgba(27, 33, 64, 0.35));
+}
+
+.thing.held {
+  transform: translateY(-10px) scale(1.3);
+  filter: drop-shadow(0 6px 4px rgba(27, 33, 64, 0.35));
+}
+
+.basket .pics {
+  min-height: 56px;
+}
+
+.pond-scene.picking .leaf {
+  outline: 4px dashed var(--ink);
+  outline-offset: -8px;
+  animation: nudge 1.2s ease-in-out infinite;
 }
