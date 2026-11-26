@@ -191,7 +191,7 @@ Where a game has tasks (rounds), one function makes each task, so every round is
   ```
 - **Testing:** open a game with `?seed=7` in the address (`/games/wie-viele/?seed=7`) and it deals the same tasks every time (at the same level). Without a seed every game is different. `node tools/check-tasks.mjs` (optional, nothing to install) makes 2000 tasks per level of every game with a `tasks.js`, runs `check()` on them and shows how many different tasks each level has.
 
-`wie-viele` is the example; `wo-sind-mehr`, `blitzblick`, `zahlenzug`, `wer-kommt-dazu`, `zahlenhaus` and `zehnerfreunde` use it too. `shared/rechnen.js` is the same idea for the arithmetic games and moves to this pattern when Plus does.
+`wie-viele` is the example; `wo-sind-mehr`, `blitzblick`, `zahlenzug`, `wer-kommt-dazu`, `zahlenhaus`, `zehnerfreunde` and `gleich-machen` use it too. `shared/rechnen.js` is the same idea for the arithmetic games and moves to this pattern when Plus does.
 
 ## Guidelines for every game
 

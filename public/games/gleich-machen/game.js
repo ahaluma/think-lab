@@ -5,25 +5,32 @@
 // After two wrong answers the animals line up in pairs (a line between partners) and the ones without
 // a partner glow. Later levels: give the number instead of tapping (one of three, or the number pad
 // from 8), then numbers only, then the other way round: how many must come out of the house (4 + 3 = 7).
+// Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // See levels.js. All texts are in lang/<language>.js; names of the animals are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, pick, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { numpad } from "../../shared/numpad.js";
 import * as profiles from "../../shared/profiles.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
+import * as gen from "../../shared/gen.js";
+import { task, ON_MEADOW } from "./tasks.js";
 
 const ID = "gleich-machen";
 const T = await texts(import.meta.url);
 const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Drei Hasen gehen nach Hause."
 const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal genau!"
 
-// Only animals that can stand on a meadow (no fruit, cars or fish).
-const ON_MEADOW = ["rabbit", "fox", "panda", "lion", "elephant", "giraffe", "unicorn", "duck", "penguin", "frog",
-  "turtle", "snail", "ladybird", "butterfly", "owl", "kangaroo", "dinosaur", "rhino", "ant", "crocodile"];
+// Only animals that can stand on a meadow (ON_MEADOW in tasks.js) and have a name in this language.
 const ANIMALS = things(T).filter((t) => ON_MEADOW.includes(t.id));
+const ANIMAL_IDS = ANIMALS.map((t) => t.id);
+const byId = Object.fromEntries(ANIMALS.map((t) => [t.id, t]));
+
+// Every task comes from task() in tasks.js (shared/gen.js).
+// A new animal for the last 3 tasks, and not the same task as in the last 2.
+const nextTask = gen.generator(task, { avoid: { animal: 3, key: 2 } });
 
 const STARS_PER_GAME = 5;
 const HOP_MS = 280;
@@ -44,8 +51,7 @@ let bigSide = 0; // 0: the upper meadow has more, 1: the lower one
 let slots = 10; // places per meadow: 10 (5 × 2) or 20 (10 × 2)
 let meadows = []; // [{ animals: [{ slot, home, extra }] }, …]
 let thing = null;
-let lastThing = null;
-let lastTask = "";
+let answerChoices = []; // the three number buttons of this task
 let misses = 0;
 let pictures = true; // animals on the meadows (false: only a number sign)
 let pairs = false; // the help: animals in a row, partners joined by a line
@@ -216,22 +222,11 @@ function question() {
 }
 
 function newTask() {
-  const l = current;
-  way = l.way === "mix" ? pick(["weg", "dazu"]) : l.way;
-  for (let i = 0; i < 6; i++) {
-    answer = randInt(l.diff[0], Math.min(l.diff[1], l.max - 1));
-    small = randInt(1, l.max - answer);
-    big = small + answer;
-    if (`${way}${big}-${small}` !== lastTask) break; // never the same task twice in a row
-  }
-  lastTask = `${way}${big}-${small}`;
-  bigSide = randInt(0, 1);
-  slots = l.max > 10 ? 20 : 10;
-  meadows = [0, 1].map((m) => {
-    const n = m === bigSide ? big : small;
-    const places = shuffle([...Array(slots).keys()]).slice(0, n);
-    return { animals: places.map((slot) => ({ slot, home: false, extra: false, fresh: true })) };
-  });
+  const t = nextTask(current, ANIMAL_IDS);
+  ({ way, big, small, answer, bigSide, slots } = t);
+  thing = byId[t.animal];
+  answerChoices = t.choices;
+  meadows = t.places.map((places) => ({ animals: places.map((slot) => ({ slot, home: false, extra: false, fresh: true })) }));
 }
 
 async function newRound() {
@@ -240,8 +235,6 @@ async function newRound() {
   misses = 0;
   pairs = false;
   pictures = current.show !== "numbers";
-  thing = shuffle(ANIMALS.filter((t) => t !== lastThing))[0];
-  lastThing = thing;
   newTask();
   drawEq();
   drawAnswers();
@@ -302,7 +295,7 @@ function tapHouse(m, house) {
   } else {
     if (m === bigSide) return void wrongSide(house);
     const used = new Set(animals.map((a) => a.slot));
-    const free = shuffle([...Array(slots).keys()].filter((s) => !used.has(s)));
+    const free = nextTask.r.shuffle([...Array(slots).keys()].filter((s) => !used.has(s)));
     if (!free.length) return nudge(house);
     sound.tap();
     animals.push({ slot: free[0], home: false, extra: true, fresh: true });
@@ -358,7 +351,7 @@ function drawAnswers() {
     pad = numpad(answers, T, { digits: 2, onCheck: (n) => choose(null, n), display: $("eq").querySelector(".gap") });
     return;
   }
-  for (const n of choices()) {
+  for (const n of answerChoices) {
     const btn = el("button", "btn answer");
     btn.type = "button";
     btn.setAttribute("aria-label", word(n));
@@ -366,15 +359,6 @@ function drawAnswers() {
     btn.addEventListener("click", () => choose(btn, n));
     answers.append(btn);
   }
-}
-
-/** The answer and two typical mistakes (what is left, one more or one less), smallest first. */
-function choices() {
-  const ok = (n) => n >= 1 && n <= 20 && n !== answer;
-  const likely = shuffle([small, answer + 1, answer - 1].filter(ok));
-  const more = [answer + 2, answer - 2, big].filter(ok);
-  const picked = [...new Set([...likely, ...more])].slice(0, 2);
-  return [answer, ...picked].sort((x, y) => x - y);
 }
 
 /** btn: the answer button tapped, or null when typed on the number pad. Returns whether n was right. */
