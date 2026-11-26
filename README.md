@@ -2,6 +2,8 @@
 
 Small number and logic games for young children („अङ्क“ / *anka* = number), in German, English and Nepali. Each game is tiny and does one thing well.
 
+**What we are building and why:** see [docs/VISION.md](docs/VISION.md) (learning goals, design principles, how difficulty adapts, open questions for reviewers).
+
 - Plain HTML, CSS and JavaScript. **No libraries, no build step, no npm.**
 - Mobile first: big buttons, works on any phone or tablet.
 - Little or no reading needed: pictures, spoken German (the browser's own voice) and sounds.
