@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sichern · AnkaPlay</title>
+    <meta name="theme-color" content="#e9eef2" />
+    <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+    <link rel="stylesheet" href="/shared/base.css" />
+    <link rel="stylesheet" href="../welt.css" />
+    <script type="module" src="sichern.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <div class="topbar">
+        <a class="icon-btn" id="home" href="/welt/" data-t-label="toMap" aria-label="Zur Karte"></a>
+      </div>
+      <section class="backup card">
+        <h1 id="title"></h1>
+        <p id="note"></p>
+        <button class="btn sun" id="save" type="button"></button>
+        <button class="btn" id="load" type="button"></button>
+        <input id="file" type="file" accept="application/json,.json" hidden />
+        <p class="status" id="status" aria-live="polite"></p>
+        <p id="keepNote"></p>
+        <button class="btn" id="keep" type="button"></button>
+        <p class="status" id="keepStatus" aria-live="polite"></p>
+      </section>
+    </main>
+  </body>
+</html>

@@ -61,6 +61,36 @@ think-lab/
 
 Rule of thumb: a game only uses its own folder plus `shared/`. Games never import from each other, so you can change or delete one without breaking the others. Games sit flat in `games/` (not `games/rechnen/plus/`), so a game keeps its address even if you move it to another category.
 
+## The new world (`public/welt/`), stage 1 of the redesign
+
+A second way into AnkaPlay is growing next to the games: `/welt/`. Nothing links to it yet, so the
+app online stays as it is. Open the address by hand to try it.
+
+The idea: a **grid of ideas and perspectives**. Every mathematical idea can be played in five
+perspectives, each with a fixed symbol: see 👁️, make ✋, explore 🔍, use 🔑, check ✅. The map is a
+piece of nature with six places. A place with something to play is awake, the others sleep.
+Stage 1 has one idea, "numbers are made of numbers", at the burrow and the pond.
+
+```
+public/welt/
+├── index.html, map.js     ← the map
+├── welt.css               ← all styles of the new world
+├── frame/                 ← the same for every idea
+│   ├── ideas.js           ← the grid: perspectives, thinking cards, places, ideas
+│   ├── record.js          ← what the child can do, per idea, perspective and number range
+│   └── voice.js           ← every sentence is spoken (if on) and always shown as text
+├── ideas/teile/           ← one idea
+│   ├── tasks.js           ← the tasks of the five perspectives (data only)
+│   └── boards.js          ← how each perspective looks and reacts
+├── spiel/                 ← one round: tasks, one surprise from another perspective, a thinking card
+├── sichern/               ← for parents: save everything to a file, load it again
+└── lang/                  ← de, en, ne
+public/sw.js               ← keeps copies of the files, so the app works without a connection
+```
+
+A round has no points, no clock and no streak. After a round a flower grows on the map and the
+child says how it felt (easy, just right, hard). `node tools/check-welt.mjs` checks the tasks.
+
 ## Languages
 
 Every page speaks German, English and Nepali (नेपाली). The start page has flag buttons; the choice is saved on the device and the read-aloud voice switches with it. Without a choice, the phone's language is used, otherwise German.

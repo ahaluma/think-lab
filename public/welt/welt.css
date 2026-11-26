@@ -1,0 +1,719 @@
+/* The new world: the map (welt/index.html), a round (welt/spiel/) and the boards of the ideas.
+   Builds on shared/base.css (colours, .btn, .card, .icon-btn, animations). */
+
+:root {
+  --sky: #cfeaff;
+  --grass: #b9e5a0;
+  --leaf: #6cc070;
+  --water: #8fd3ff;
+  --earth: #b98a5a;
+  --dark-earth: #3b2a1d;
+}
+
+/* ---------- Caption: always there. Smaller when the voice reads the sentence anyway. */
+.caption.quiet {
+  min-height: 3.2em;
+  font-size: clamp(15px, 4.3vw, 18px);
+  color: var(--muted);
+}
+
+/* ---------- Map */
+.map {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.map svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.place {
+  cursor: pointer;
+}
+
+.place:focus-visible {
+  outline: 4px solid var(--go);
+  outline-offset: 2px;
+}
+
+.place.asleep {
+  filter: grayscale(0.85);
+  opacity: 0.6;
+}
+
+.place .zzz {
+  font-size: 18px;
+}
+
+.place:not(.asleep) .zzz {
+  display: none;
+}
+
+.walker {
+  font-size: 34px;
+  cursor: pointer;
+}
+
+.ways-panel {
+  width: 100%;
+  padding: 12px;
+}
+
+.ways-panel h2 {
+  margin: 0 0 10px;
+  font-size: 19px;
+  text-align: center;
+}
+
+.persp {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.persp a {
+  position: relative;
+  min-height: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 0 var(--ink);
+  text-decoration: none;
+}
+
+.persp a:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.persp .p-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.persp .p-name {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.persp .p-state {
+  position: absolute;
+  top: -10px;
+  right: -6px;
+  font-size: 20px;
+}
+
+.persp a.next {
+  background: var(--sun);
+}
+
+.persp a.understood {
+  background: #d9f5cf;
+}
+
+.think-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.think-row li {
+  position: relative;
+  font-size: 30px;
+  filter: grayscale(1);
+  opacity: 0.3;
+}
+
+.think-row li.got {
+  filter: none;
+  opacity: 1;
+}
+
+.map-foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 15px;
+}
+
+.map-foot a {
+  color: var(--muted);
+}
+
+/* ---------- Round: steps in the top bar */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.steps li.done { background: var(--ok); }
+.steps li.now { background: var(--sun); }
+
+.steps li.gift {
+  width: auto;
+  height: auto;
+  border: 0;
+  background: none;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.steps li.gift.done { filter: grayscale(1); opacity: 0.5; }
+
+#hint {
+  font-size: 26px;
+}
+
+.board {
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.start-art {
+  font-size: 96px;
+  letter-spacing: 0;
+}
+
+/* ---------- Pieces every board uses */
+.scene {
+  position: relative;
+  width: 100%;
+  min-height: 190px;
+  padding: 12px;
+  overflow: hidden;
+  background: linear-gradient(var(--sky) 0 45%, var(--grass) 45%);
+}
+
+.pics {
+  display: inline-grid;
+  grid-template-columns: repeat(5, auto);
+  gap: 2px 4px;
+  justify-content: center;
+}
+
+.pic {
+  font-size: clamp(24px, 7.4vw, 32px);
+  line-height: 1.15;
+}
+
+.sign {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 10px 6px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.scene > .sign {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
+.sign b {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.sign-dots {
+  display: grid;
+  grid-template-columns: repeat(5, 6px);
+  gap: 3px;
+}
+
+.sign-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.strip {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.num-btn {
+  min-height: 56px;
+  padding: 0;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.num-btn.right,
+.said.right {
+  background: var(--ok);
+  color: #fff;
+}
+
+.check-btn {
+  width: 120px;
+  font-size: 34px;
+}
+
+.unknown {
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--muted);
+}
+
+.ways {
+  min-height: 38px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.chip {
+  padding: 2px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.chip small {
+  color: var(--ok);
+  font-size: 18px;
+}
+
+.hint-box {
+  min-height: 42px;
+  display: flex;
+  justify-content: center;
+}
+
+.parts-hint {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.parts-hint .place {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 3px dashed var(--ink);
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: default;
+}
+
+.parts-hint .place.full {
+  border-style: solid;
+  background: #fff;
+}
+
+/* ---------- Sehen: the burrow */
+.burrow-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.meadow {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  padding-right: 64px; /* room for the sign */
+}
+
+.burrow {
+  width: min(240px, 80%);
+  margin-bottom: -12px;
+  padding: 14px 20px 0;
+  border: 3px solid var(--ink);
+  border-bottom: 0;
+  border-radius: 120px 120px 0 0;
+  background: var(--earth);
+}
+
+.den {
+  min-height: 72px;
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border-radius: 90px 90px 0 0;
+  background: var(--dark-earth);
+  color: #fff;
+  font-size: 44px;
+  font-weight: 900;
+}
+
+.den.open {
+  background: #6a4a33;
+}
+
+/* ---------- Machen: two leaves on the pond */
+.pond-scene {
+  display: flex;
+  gap: 12px;
+  background: var(--water);
+}
+
+.leaf {
+  flex: 1;
+  min-height: 150px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 10px;
+  border: 3px solid var(--ink);
+  border-radius: 50% 50% 46% 46% / 54% 54% 46% 46%;
+  background: var(--leaf);
+}
+
+.basket {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.basket-icon {
+  font-size: 44px;
+  line-height: 1;
+}
+
+/* ---------- Forschen: the hollow tree */
+.tree-scene {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.io {
+  width: 29%;
+  min-height: 104px;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border: 3px dashed var(--ink);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.io .pics {
+  grid-template-columns: repeat(3, auto);
+}
+
+.io .pic {
+  font-size: 22px;
+}
+
+.tree {
+  position: relative;
+  line-height: 1;
+}
+
+.tree-top {
+  font-size: clamp(72px, 24vw, 100px);
+}
+
+.tree-hole {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  width: 16%;
+  height: 22%;
+  margin-left: -8%;
+  border-radius: 50%;
+  background: #2b1d12;
+}
+
+.tree.working {
+  animation: bounce 0.5s ease-in-out;
+}
+
+.flow {
+  font-size: 20px;
+}
+
+.strip.predict .num-btn {
+  background: #fff3c4;
+}
+
+.know-btn {
+  min-width: 120px;
+  font-size: 30px;
+}
+
+/* ---------- Anwenden: little scenes */
+.use-scene {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 16px;
+}
+
+.zone {
+  min-height: 76px;
+  display: grid;
+  place-items: center;
+  margin-right: 64px; /* room for the sign */
+  padding: 6px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.zone.hidden {
+  margin-right: 0;
+}
+
+.cover {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cover-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.use-frogs { background: var(--water); }
+.use-frogs .known { border-radius: 50%; background: var(--leaf); }
+.use-eggs .hidden,
+.use-eggs .known { border-radius: 16px 16px 60px 60px; background: #e3c79a; }
+.use-apples .known { background: var(--grass); }
+
+/* ---------- Prüfen: the owl */
+.owl-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.talk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.owl {
+  font-size: 56px;
+  line-height: 1;
+}
+
+.bubble {
+  padding: 6px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 18px 18px 18px 4px;
+  background: #fff;
+  font-size: 30px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.said {
+  display: inline-block;
+  min-width: 1.4em;
+  padding: 0 6px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.said.wrong {
+  background: #ffd9d0;
+}
+
+.groups {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding-bottom: 12px;
+}
+
+.part {
+  position: relative;
+  min-width: 64px;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  border: 3px dashed var(--ink);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.part .count {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  min-width: 30px;
+  margin-left: -15px;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  background: var(--sun);
+  font-size: 18px;
+  text-align: center;
+}
+
+.judge,
+.fixer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.judge[hidden],
+.fixer[hidden] {
+  display: none;
+}
+
+.judge-btn {
+  width: 120px;
+  min-height: 84px;
+  font-size: 44px;
+}
+
+.fixer .num-btn {
+  width: 64px;
+}
+
+.fixed-num {
+  min-width: 64px;
+  font-size: 44px;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* ---------- Done: the thinking card */
+.think-card {
+  width: min(100%, 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px;
+  text-align: center;
+  background: #fff8dc;
+}
+
+.think-icon {
+  font-size: 64px;
+  line-height: 1.1;
+}
+
+.think-card strong {
+  font-size: 24px;
+}
+
+.think-card span:last-child {
+  font-size: 17px;
+}
+
+.feel {
+  display: flex;
+  gap: 10px;
+}
+
+.feel-btn {
+  min-width: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px;
+  border: 3px solid transparent;
+  border-radius: 16px;
+  background: none;
+  font-size: 44px;
+  line-height: 1.1;
+}
+
+.feel-btn small {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.feel-btn.on {
+  border-color: var(--ink);
+  background: #fff;
+}
+
+.next {
+  display: flex;
+  gap: 12px;
+}
+
+/* ---------- Parents: save and load */
+.backup {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  font-size: 17px;
+  user-select: text;
+}
+
+.backup h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.backup p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.backup .btn {
+  font-size: 19px;
+}
+
+.backup .status {
+  min-height: 1.5em;
+  font-weight: 800;
+}
+
+/* A tap should not leave a focus frame on the map; the keyboard still gets one. */
+.place:focus:not(:focus-visible),
+.walker:focus:not(:focus-visible) {
+  outline: none;
+}
