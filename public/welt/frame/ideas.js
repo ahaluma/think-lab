@@ -68,8 +68,7 @@ export const MOUNTAIN = [
 
 /**
  * Ideas. world: "berg" for an idea of the thinking mountain (its map is welt/berg/, its place is a camp). ranges: smallest first. tasks: how many tasks a round has in each perspective (default 5).
- * dare: true – Mutproben: after three clean tasks a task one range higher, and once an entry dare
- * (record.js lift, entryDare). cards: the thinking card of a perspective, where the usual one (PERSPECTIVES) does not fit the idea.
+ * cards: the thinking card of a perspective, where the usual one (PERSPECTIVES) does not fit the idea.
  */
 export const IDEAS = {
   zahl: { place: "zahlen", ranges: [5, 10, 20], cards: { machen: "nachpruefen", anwenden: "vergleichen" } },
@@ -86,7 +85,7 @@ export const IDEAS = {
   // 1 long fences, 2 with metres (and bells, towers), 3 backwards and with time, 4 masters (a field
   // with corners, time backwards). Level 4 is the hardest this family gets for 12-year-olds.
   // startAt: every child starts at this level, whatever the age (the mountain is climbed from below).
-  zaun: { place: "zaun", world: "berg", ranges: [1, 2, 3, 4], startAt: 0, dare: true, cards: { sehen: "luecken", anwenden: "luecken" } },
+  zaun: { place: "zaun", world: "berg", ranges: [1, 2, 3, 4], startAt: 0, cards: { sehen: "luecken", anwenden: "luecken" } },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */

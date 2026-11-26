@@ -5,11 +5,6 @@
 //                                 without i: "teile", without p: the suggested perspective
 //   /welt/spiel/?p=sehen&seed=7   the same tasks every time (shared/gen.js)
 //
-// Dares (Mutproben, ideas with dare: true): after DARE_AFTER tasks in a row right at the first try and
-// without a hint, the next task comes from the next range. Solved the same way, the child stays up
-// there; otherwise nothing changes. Once per idea an entry dare of the third range starts the round.
-// A dare is not counted in the round (no penalty).
-//
 // This file is the frame every idea shares: steps, voice and caption, hint button, counting what was
 // right the first time, saving (frame/record.js). The idea itself is in welt/ideas/<idea>/:
 // tasks.js makes each task as plain data, boards.js draws it and takes the answer.
@@ -37,8 +32,6 @@ const BIGGER = T[IDEA]?.bigger ?? T.bigger;
 const SMALLER = T[IDEA]?.smaller ?? T.smaller;
 /** "A new flower grows": the mountain says it in its own words. */
 const GREW = T[IDEA]?.grew ?? T.grew;
-/** Dares: what is said before and after (welt/lang: <world>.dare). */
-const DARE = (IDEAS[IDEA].world && T[IDEAS[IDEA].world]?.dare) || {};
 const P = perspective(params.get("p")) || perspective(record.suggest(IDEA));
 
 const CARD = cardOf(IDEA, P.id);
@@ -60,14 +53,10 @@ const nextTask = gen.generator(task, { avoid: { key: 2 } });
 const screens = { start: $("start"), board: $("board"), done: $("done") };
 
 let range = record.range(IDEA);
-let steps = []; // [{ p, transfer, dare: range of a dare | undefined, entry }]
+let steps = []; // [{ p, transfer }]
 let at = 0;
 let misses = 0;
 let firstTries = 0; // tasks of the round right the first time (the surprise task is not counted)
-let counted = 0; // tasks of the round in `range` (a dare and the surprise task are not counted)
-let hinted = false; // the hint showed in this task
-let streak = 0; // tasks in a row right the first time without a hint
-let dared = false; // one dare per round
 let board = null;
 let busy = false;
 let fresh = false; // the child plays this perspective for the first time: the boards show more
@@ -81,8 +70,8 @@ function drawSteps() {
   $("steps").innerHTML = "";
   steps.forEach((step, i) => {
     const li = document.createElement("li");
-    li.textContent = step.transfer ? "🎁" : step.dare ? "💪" : "";
-    li.className = (step.transfer || step.dare ? "gift " : "") + (i < at ? "done" : i === at ? "now" : "");
+    li.textContent = step.transfer ? "🎁" : "";
+    li.className = (step.transfer ? "gift " : "") + (i < at ? "done" : i === at ? "now" : "");
     $("steps").append(li);
   });
 }
@@ -110,29 +99,12 @@ const ctx = {
     busy = true;
     const step = steps[at];
     const first = misses === 0;
-    const clean = first && !hinted;
-    record.task(IDEA, step.p, step.dare ?? range, first, step.transfer);
-    let dareSaid = "";
-    if (step.dare) {
-      if (step.entry) record.entryDone(IDEA);
-      if (clean) {
-        range = step.dare;
-        record.lift(IDEA, range);
-        counted = 1; // from now on the round counts in the new range, the dare is its first task
-        firstTries = 1;
-      }
-      dareSaid = DARE[clean ? (step.entry ? "entryUp" : "up") : "back"];
-    } else if (!step.transfer) {
-      counted++;
-      if (first) firstTries++;
-      streak = clean ? streak + 1 : 0;
-    }
+    record.task(IDEA, step.p, range, first, step.transfer);
+    if (first && !step.transfer) firstTries++;
     sound.right();
     at++;
-    planDare();
     drawSteps();
     await Promise.all([tell(`${oneOf(T.praise)} ${text}`), wait(900)]);
-    if (dareSaid) await tell(dareSaid);
     await wait(300);
     busy = false;
     if (at < steps.length) runStep();
@@ -152,21 +124,7 @@ function restNudge() {
 }
 $("board").addEventListener("pointerdown", restNudge);
 
-/** After DARE_AFTER clean tasks the next task of the round becomes a dare (one per round). */
-function planDare() {
-  if (!IDEAS[IDEA].dare || dared || streak < record.DARE_AFTER) return;
-  const ranges = IDEAS[IDEA].ranges;
-  const up = ranges[ranges.indexOf(range) + 1];
-  if (up === undefined) return;
-  dared = true;
-  const next = steps[at];
-  const dare = { p: P.id, transfer: false, dare: up };
-  if (next && !next.transfer) steps[at] = dare;
-  else steps.splice(at, 0, dare);
-}
-
 async function hint() {
-  hinted = true;
   const text = board?.hint?.();
   if (text) await tell(text);
 }
@@ -174,7 +132,6 @@ async function hint() {
 async function runStep() {
   const step = steps[at];
   misses = 0;
-  hinted = false;
   drawSteps();
   $("board").innerHTML = "";
   $("board").className = `screen board board-${step.p}`;
@@ -182,11 +139,7 @@ async function runStep() {
     sound.tap();
     await tell(T.surprise);
   }
-  if (step.dare) {
-    sound.tap();
-    await tell(DARE[step.entry ? "entry" : "go"]);
-  }
-  const t = nextTask({ p: step.p, range: step.dare ?? range });
+  const t = nextTask({ p: step.p, range });
   board = BOARDS[step.p]($("board"), t, ctx);
   restNudge();
 }
@@ -199,13 +152,8 @@ function startRound() {
   const others = SURPRISE.filter((id) => id !== P.id && record.state(IDEA, id) !== "new");
   steps = Array.from({ length: count }, () => ({ p: P.id, transfer: false }));
   if (others.length) steps.push({ p: nextTask.r.pick(others), transfer: true });
-  const entry = IDEAS[IDEA].dare ? record.entryDare(IDEA) : null;
-  if (entry !== null) steps.unshift({ p: P.id, transfer: false, dare: entry, entry: true });
   at = 0;
   firstTries = 0;
-  counted = 0;
-  streak = 0;
-  dared = entry !== null;
   busy = false;
   nextTask.forget();
   show("board");
@@ -213,7 +161,8 @@ function startRound() {
 }
 
 async function finish() {
-  const moved = record.round(IDEA, P.id, range, { first: firstTries, tasks: counted, card: CARD });
+  const tasks = steps.filter((s) => !s.transfer).length;
+  const moved = record.round(IDEA, P.id, range, { first: firstTries, tasks, card: CARD });
   $("cardIcon").textContent = CARDS[CARD];
   $("cardName").textContent = T.cards[CARD].name;
   $("cardText").textContent = T.cards[CARD].text;
