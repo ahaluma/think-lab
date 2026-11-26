@@ -1,14 +1,17 @@
 // "Wie viele?" – a counting game for about 4 to 6 years.
 // The child sees some things, can tap each one to count out loud, then taps the right number.
 // It starts with 1 to 3 things and goes up to 10; the level follows the child (shared/adapt.js), see levels.js.
+// Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // All texts are in lang/<language>.js.
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, store, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, store, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as progress from "../../shared/progress.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
+import * as gen from "../../shared/gen.js";
+import { task, SLOTS } from "./tasks.js";
 
 const ID = "wie-viele";
 const T = await texts(import.meta.url);
@@ -16,11 +19,15 @@ const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Drei Äpfel." �
 const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal!"
 
 const STARS_PER_GAME = 5;
-const SLOTS = 12; // 4 x 3 places in the tray
 
 // Levels: see levels.js (easy to hard).
 
 const THINGS = things(T);
+const THING_IDS = THINGS.map((t) => t.id); // only things with a name in this language
+const byId = Object.fromEntries(THINGS.map((t) => [t.id, t]));
+
+// A new thing for the last 3 tasks, and never the same number twice in a row.
+const nextTask = gen.generator(task, { avoid: { thing: 3, count: 1 } });
 
 // Older versions saved only the highest number ("wie-viele:max"). Take it over once.
 const oldMax = store.get("wie-viele:max", null);
@@ -36,11 +43,9 @@ const screens = { start: $("start"), round: $("round"), done: $("done") };
 
 const play = adapt.player(ID, LEVELS); // the level follows the child (shared/adapt.js)
 let level = play.level;
-let max = LEVELS[level].max;
 let stars = 0;
 let answer = 0;
 let thing = null;
-let lastThing = null;
 let tapped = 0;
 let locked = false;
 
@@ -72,15 +77,14 @@ function amount(n) {
 
 function newRound() {
   level = play.level;
-  max = LEVELS[level].max;
   locked = false;
   tapped = 0;
-  answer = randInt(1, max);
-  thing = shuffle(THINGS.filter((t) => t !== lastThing))[0];
-  lastThing = thing;
+  const t = nextTask(LEVELS[level], THING_IDS);
+  answer = t.count;
+  thing = byId[t.thing];
 
-  // Put the things in random places of the tray.
-  const places = new Set(shuffle([...Array(SLOTS).keys()]).slice(0, answer));
+  // The things in their places of the tray.
+  const places = new Set(t.places);
   const tray = $("tray");
   tray.innerHTML = "";
   for (let i = 0; i < SLOTS; i++) {
@@ -99,17 +103,10 @@ function newRound() {
     tray.append(slot);
   }
 
-  // Three choices: the right one and two others, smallest first.
-  const choices = new Set([answer]);
-  const top = Math.max(max, 3);
-  while (choices.size < 3) {
-    const near = answer + randInt(-2, 2);
-    const n = near >= 1 && near <= top ? near : randInt(1, top);
-    choices.add(n);
-  }
+  // Three choices, smallest first.
   const answers = $("answers");
   answers.innerHTML = "";
-  for (const n of [...choices].sort((a, b) => a - b)) {
+  for (const n of t.choices) {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "btn answer";

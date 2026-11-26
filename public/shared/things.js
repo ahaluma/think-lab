@@ -3,6 +3,7 @@
 //
 //   import { things } from "../../shared/things.js";
 //   const THINGS = things(T);   → [{ id: "elephant", icon: "🐘", one: "ein Elefant", many: "Elefanten" }, …]
+//   THING_IDS                   → ["apple", "fish", …] (no texts needed, e.g. for tasks.js)
 
 const ALL = [
   { id: "apple", icon: "🍎" },
@@ -40,6 +41,8 @@ const ALL = [
   { id: "shark", icon: "🦈" },
   { id: "panda", icon: "🐼" },
 ];
+
+export const THING_IDS = ALL.map((t) => t.id);
 
 /** All things that have a name in the loaded texts T, with their names added. */
 export function things(T) {
