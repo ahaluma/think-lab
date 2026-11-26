@@ -2359,3 +2359,17 @@ body[data-world="berg"] .caption.quiet {
 .scale-status.ok {
   color: var(--ok);
 }
+
+/* Camp 8: the chessboard, dancers in groups */
+.board-svg .cell.dark { fill: #6b4f3a; }
+.board-svg .cell.light { fill: #f3e3c3; }
+.board-svg .cell.gone { fill: #fff; stroke: #c9ced8; stroke-dasharray: 3 3; }
+.board-svg .cell-x { fill: #e8488a; font-weight: 800; }
+
+.dancer.picked { background: var(--sun); }
+.dancer.grouped[data-g="0"] { background: #ffd6e7; }
+.dancer.grouped[data-g="1"] { background: #cfeaff; }
+.dancer.grouped[data-g="2"] { background: #d8f5c8; }
+.dancer.grouped[data-g="3"] { background: #ffe8c2; }
+.dancer.grouped[data-g="4"] { background: #e6dcff; }
+.dancer.grouped[data-g="5"] { background: #c9f2ee; }
