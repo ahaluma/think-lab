@@ -100,7 +100,8 @@ export function campBoards(camp, { TOOLS = {}, DIGITS = 3, machen, picture: draw
     const W = ctx.T.berg.table;
     const win = solvedBy(ctx, camp, TOOLS);
     if (t.pic) host.append(draw(ctx, t.pic, t));
-    const [left, right] = C.tables[t.table.id];
+    const heads = C.tables[t.table.id];
+    const [left, right] = typeof heads === "function" ? heads(args(ctx, t)) : heads;
     const grid = el("table", "camp-table card");
     const head = el("tr");
     head.append(el("th", "", left), el("th", "", right));

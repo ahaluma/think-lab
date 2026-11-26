@@ -59,7 +59,7 @@ export const MOUNTAIN = [
   { id: "huetten", height: 1, needs: ["haken"], ideas: ["huetten"] },
   { id: "vorrat", height: 2, needs: ["huetten"], ideas: ["vorrat"] },
   { id: "ameisen", height: 2, needs: ["zaun"], ideas: ["ameisen"] },
-  { id: "waage", height: 2, needs: ["vorrat"] },
+  { id: "waage", height: 2, needs: ["vorrat"], ideas: ["waage"] },
   { id: "stall", height: 3, needs: ["huetten", "waage"] },
   { id: "tanz", height: 3, needs: ["ameisen"] },
   { id: "fels", height: 3, needs: ["haken"] },
@@ -99,6 +99,8 @@ export const IDEAS = {
   vorrat: { place: "vorrat", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
   // Camp 5: find the rule of a row and jump far ahead (sequences, matches, days of the week, sums).
   ameisen: { place: "ameisen", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 6: what weighs the same can take the other's place (scales, sums and differences, weights).
+  waage: { place: "waage", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */
