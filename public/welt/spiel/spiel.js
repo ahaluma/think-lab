@@ -1,8 +1,9 @@
 // One round in the new world: a few tasks of one idea in one perspective, then one surprise task
 // from another perspective of the same idea (the transfer step), then the thinking card.
 //
-//   /welt/spiel/?p=sehen        the perspective (see welt/frame/ideas.js); without p: the suggested one
-//   /welt/spiel/?p=sehen&seed=7 the same tasks every time (shared/gen.js)
+//   /welt/spiel/?i=zahl&p=sehen   the idea and the perspective (see welt/frame/ideas.js);
+//                                 without i: "teile", without p: the suggested perspective
+//   /welt/spiel/?p=sehen&seed=7   the same tasks every time (shared/gen.js)
 //
 // This file is the frame every idea shares: steps, voice and caption, hint button, counting what was
 // right the first time, saving (frame/record.js). The idea itself is in welt/ideas/<idea>/:
@@ -15,16 +16,20 @@ import * as gen from "../../shared/gen.js";
 import * as profiles from "../../shared/profiles.js";
 import * as record from "../frame/record.js";
 import { mount, tell, again } from "../frame/voice.js";
-import { IDEAS, PERSPECTIVES, CARDS, ROUND_TASKS, perspective } from "../frame/ideas.js";
-import { task } from "../ideas/teile/tasks.js";
-import { BOARDS } from "../ideas/teile/boards.js";
+import { IDEAS, CARDS, ROUND_TASKS, perspective, cardOf } from "../frame/ideas.js";
 
-const IDEA = "teile";
+const params = new URLSearchParams(location.search);
+const IDEA = params.get("i") in IDEAS ? params.get("i") : "teile";
+const { task } = await import(`../ideas/${IDEA}/tasks.js`);
+const { BOARDS } = await import(`../ideas/${IDEA}/boards.js`);
 const T = await texts(new URL("../map.js", import.meta.url).href); // welt/lang/<language>.js
 const $ = (id) => document.getElementById(id);
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const params = new URLSearchParams(location.search);
+/** The texts of the idea: "teile" has them at the top of the language file, later ideas under their id. */
+const INTRO = (T[IDEA] ?? T).intro;
 const P = perspective(params.get("p")) || perspective(record.suggest(IDEA));
+
+const CARD = cardOf(IDEA, P.id);
 
 /** After this many wrong answers in a task the hint shows by itself. */
 const HINT_AFTER = 2;
@@ -152,15 +157,15 @@ function startRound() {
 
 async function finish() {
   const tasks = steps.filter((s) => !s.transfer).length;
-  const moved = record.round(IDEA, P.id, range, { first: firstTries, tasks, card: P.card });
-  $("cardIcon").textContent = CARDS[P.card];
-  $("cardName").textContent = T.cards[P.card].name;
-  $("cardText").textContent = T.cards[P.card].text;
+  const moved = record.round(IDEA, P.id, range, { first: firstTries, tasks, card: CARD });
+  $("cardIcon").textContent = CARDS[CARD];
+  $("cardName").textContent = T.cards[CARD].name;
+  $("cardText").textContent = T.cards[CARD].text;
   for (const b of $("feel").children) b.classList.remove("on");
   show("done");
   sound.win();
   celebrate();
-  await tell(`${T.done} ${T.cardGot(T.cards[P.card].name)} ${T.cards[P.card].text}`);
+  await tell(`${T.done} ${T.cardGot(T.cards[CARD].name)} ${T.cards[CARD].text}`);
   await tell(moved > 0 ? T.bigger : T.grew);
   tell(T.feelQuestion);
 }
@@ -176,6 +181,7 @@ $("play").innerHTML = icons.play;
 $("startArt").textContent = P.icon;
 $("again").textContent = T.again;
 $("other").textContent = T.other;
+$("other").href = `/welt/?o=${IDEAS[IDEA].place}`;
 $("feel").setAttribute("aria-label", T.feelQuestion);
 for (const b of $("feel").children) {
   b.querySelector("small").textContent = T.feel[b.dataset.feel];
@@ -188,7 +194,7 @@ for (const b of $("feel").children) {
 
 $("play").addEventListener("click", async () => {
   $("play").disabled = true;
-  await tell(T.intro[P.id]);
+  await tell(INTRO[P.id]);
   startRound();
 });
 $("again").addEventListener("click", startRound);
@@ -198,4 +204,4 @@ $("hint").addEventListener("click", () => {
 });
 
 show("start");
-$("caption").textContent = T.intro[P.id];
+$("caption").textContent = INTRO[P.id];

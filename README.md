@@ -61,7 +61,7 @@ think-lab/
 
 Rule of thumb: a game only uses its own folder plus `shared/`. Games never import from each other, so you can change or delete one without breaking the others. Games sit flat in `games/` (not `games/rechnen/plus/`), so a game keeps its address even if you move it to another category.
 
-## The new world (`public/welt/`), stage 1 of the redesign
+## The new world (`public/welt/`)
 
 A second way into AnkaPlay is growing next to the games: `/welt/`. The start page has a door to it
 ("Neu: die Welt entdecken"), the games stay as they are.
@@ -69,7 +69,15 @@ A second way into AnkaPlay is growing next to the games: `/welt/`. The start pag
 The idea: a **grid of ideas and perspectives**. Every mathematical idea can be played in five
 perspectives, each with a fixed symbol: see 👁️, make ✋, explore 🔍, use 🔑, check ✅. The map is a
 piece of nature with six places. A place with something to play is awake, the others sleep.
-Stage 1 has one idea, "numbers are made of numbers", at the burrow and the pond.
+Two places are awake:
+
+| Place | Idea | See 👁️ | Make ✋ | Explore 🔍 | Use 🔑 | Check ✅ |
+| --- | --- | --- | --- | --- | --- | --- |
+| Meadow and stream | `zahl`: a number says how many | flowers at a glance | pick n flowers | the missing stepping stone | where are more? | the owl has counted |
+| Burrow and pond | `teile`: numbers are made of numbers | animals hide in the burrow | split on two leaves | the hollow tree | a hidden part | the owl adds |
+
+The meadow holds the ideas of the old games "Blitzblick", "Wie viele?", "Zahlenzug" and "Wo sind
+mehr?". Those games stay on the start page until the parents' report can show the world's progress.
 
 ```
 public/welt/
@@ -78,8 +86,9 @@ public/welt/
 ├── frame/                 ← the same for every idea
 │   ├── ideas.js           ← the grid: perspectives, thinking cards, places, ideas
 │   ├── record.js          ← what the child can do, per idea, perspective and number range
-│   └── voice.js           ← every sentence is spoken (if on) and always shown as text
-├── ideas/teile/           ← one idea
+│   ├── voice.js           ← every sentence is spoken (if on) and always shown as text
+│   └── parts.js           ← building blocks of the boards: pictures, the number sign, number buttons
+├── ideas/<idea>/          ← one idea: zahl (the meadow), teile (the burrow)
 │   ├── tasks.js           ← the tasks of the five perspectives (data only)
 │   └── boards.js          ← how each perspective looks and reacts
 ├── spiel/                 ← one round: tasks, one surprise from another perspective, a thinking card
@@ -87,6 +96,11 @@ public/welt/
 └── lang/                  ← de, en, ne
 public/sw.js               ← keeps copies of the files, so the app works without a connection
 ```
+
+**To add an idea:** add it to `IDEAS` and wake its place in `frame/ideas.js`, write
+`ideas/<id>/tasks.js` (`task`, `check`) and `ideas/<id>/boards.js` (`BOARDS` with the five
+perspectives), put its texts under its id in the three files of `lang/`, give the place its flower
+spots in `map.js`, and list the two new files in `public/sw.js`. A round is `/welt/spiel/?i=<id>&p=sehen`.
 
 **How children learn, and what follows for every board** (keep to this when you add an idea):
 

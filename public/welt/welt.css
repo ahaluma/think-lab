@@ -830,3 +830,174 @@
   outline-offset: -8px;
   animation: nudge 1.2s ease-in-out infinite;
 }
+
+/* ====================== Idea "Zahl": the meadow ====================== */
+
+/* Sehen: flowers on the meadow; later they hide behind a bush after a short look. */
+.flower-scene {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+}
+
+.flower-scene .pic {
+  font-size: clamp(28px, 8.6vw, 38px);
+}
+
+.bush {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 64px;
+  line-height: 1;
+}
+
+.bush[hidden],
+.pics[hidden] {
+  display: none;
+}
+
+/* Machen: pick flowers into the basket. */
+.pick-scene {
+  min-height: 130px;
+  display: grid;
+  place-items: center;
+  padding: 14px 70px 14px 10px; /* room for the sign */
+}
+
+button.pic {
+  padding: 2px;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  line-height: 1.1;
+  cursor: pointer;
+}
+
+.field .pic,
+.basket button.pic {
+  font-size: clamp(28px, 8.6vw, 38px);
+}
+
+/* Forschen: stepping stones over the stream. */
+.stones-scene {
+  position: relative;
+  padding: 44px 8px 14px;
+  background: var(--water);
+}
+
+.stones {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.stone {
+  min-height: 66px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 3px solid var(--ink);
+  border-radius: 46% 54% 48% 52% / 56% 52% 48% 44%;
+  background: #d9dde6;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stone.gap {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.frog {
+  position: absolute;
+  top: 4px;
+  left: 14px;
+  font-size: 34px;
+  line-height: 1;
+}
+
+/* Anwenden: two groups, tap the side with more (or fewer). */
+.cmp-scene {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+}
+
+.side {
+  position: relative;
+  flex: 1;
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  padding: 10px 4px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.side .pics {
+  grid-template-columns: repeat(5, auto);
+  gap: 2px;
+}
+
+.side .pic {
+  font-size: clamp(20px, 6vw, 28px);
+}
+
+.side.right {
+  background: #c9efb4;
+}
+
+.side .count {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  min-width: 34px;
+  margin-left: -17px;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  background: var(--sun);
+  font-size: 20px;
+  text-align: center;
+}
+
+.board.nudge .side,
+.board.nudge .field .pic {
+  animation: nudge 1.2s ease-in-out infinite;
+}
+
+.board.nudge .side:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+/* Prüfen hint: every thing gets its number, like counting with a finger. */
+.pic.numbered {
+  position: relative;
+}
+
+.pic.numbered::after {
+  content: attr(data-n);
+  position: absolute;
+  left: 50%;
+  bottom: -12px;
+  min-width: 18px;
+  transform: translateX(-50%);
+  border-radius: 9px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* Hidden means hidden, also for elements with their own display (number buttons, groups). */
+[hidden] {
+  display: none !important;
+}

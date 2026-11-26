@@ -103,6 +103,8 @@ export function round(idea, p, r, { first, tasks, card = null }) {
   let moved = 0;
   update((rec) => {
     rec.rounds++;
+    rec.by ??= {};
+    rec.by[idea] = (rec.by[idea] || 0) + 1;
     if (card) rec.cards[card] = (rec.cards[card] || 0) + 1;
     const c = (rec.cells[cellKey(idea, p, r)] ??= { n: 0, first: 0, recent: [], days: [], last: today() });
     c.share = tasks ? first / tasks : 0;
@@ -146,9 +148,13 @@ export function suggest(idea) {
   return (byAge.find(({ c }) => !understood(c)) || byAge[0]).id;
 }
 
-/** How much has grown at a place: finished rounds there (the map draws flowers for them). */
-export function grown() {
-  return all().rounds;
+/** How much has grown for an idea: finished rounds (the map draws flowers for them at its place).
+ *  Rounds from before rounds were counted per idea (rec.by) belong to "teile", the only idea then. */
+export function grown(idea) {
+  const rec = all();
+  const by = rec.by || {};
+  if (idea in by || idea !== "teile") return by[idea] || 0;
+  return Math.max(0, rec.rounds - Object.values(by).reduce((a, b) => a + b, 0));
 }
 
 export function reset(kidId) {
