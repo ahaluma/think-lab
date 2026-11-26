@@ -1,22 +1,29 @@
 // "Wo sind mehr?" – comparing amounts, for about 4 to 6 years.
 // Two groups of the same thing appear. The child taps the group with more.
 // Higher levels bring closer amounts, then "the same" as a third answer, then "where are fewer?".
+// Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
+import * as gen from "../../shared/gen.js";
+import { task, SLOTS } from "./tasks.js";
 
 const ID = "wo-sind-mehr";
 const T = await texts(import.meta.url);
 const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Drei Äpfel." – a different praise each time
 const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal!"
 const THINGS = things(T);
+const THING_IDS = THINGS.map((t) => t.id); // only things with a name in this language
+const byId = Object.fromEntries(THINGS.map((t) => [t.id, t]));
+
+// A new thing for the last 3 tasks, and not the same two amounts as in the last 2.
+const nextTask = gen.generator(task, { avoid: { thing: 3, counts: 2 } });
 
 const STARS_PER_GAME = 5;
-const SLOTS = 10; // 5 x 2 places per group
 
 // Levels: see levels.js (easy to hard).
 
@@ -29,9 +36,10 @@ const play = adapt.player(ID, LEVELS); // the level follows the child (shared/ad
 let level = play.level;
 let stars = 0;
 let thing = null;
-let lastThing = null;
 let counts = [0, 0];
 let askFewer = false;
+let answerRight = 0; // 0 or 1 (a group) or "same"
+let places = [[], []];
 let locked = false;
 
 // ---------- Screens
@@ -60,25 +68,12 @@ function amount(n) {
   return T.amount(n, thing, T.numbers[n]);
 }
 
-/** Two amounts for this level. */
-function pickCounts(l) {
-  if (l.same && Math.random() < 0.25) {
-    const n = randInt(1, l.max);
-    return [n, n];
-  }
-  for (;;) {
-    const a = randInt(1, l.max);
-    const b = randInt(1, l.max);
-    if (Math.abs(a - b) >= l.minDiff) return [a, b];
-  }
-}
-
-function fillGroup(el, n) {
+function fillGroup(el, n, where) {
   el.innerHTML = "";
   el.className = "group card";
   el.disabled = false;
   el.setAttribute("aria-label", amount(n));
-  const places = new Set(shuffle([...Array(SLOTS).keys()]).slice(0, n));
+  const places = new Set(where);
   for (let i = 0; i < SLOTS; i++) {
     const slot = document.createElement("span");
     slot.className = "slot";
@@ -95,12 +90,14 @@ function newRound() {
   level = play.level;
   const l = LEVELS[level];
   locked = false;
-  thing = shuffle(THINGS.filter((t) => t !== lastThing))[0];
-  lastThing = thing;
-  counts = pickCounts(l);
-  askFewer = l.fewer && Math.random() < 0.5;
+  const t = nextTask(l, THING_IDS);
+  thing = byId[t.thing];
+  counts = t.counts;
+  places = t.places;
+  askFewer = t.ask === "fewer";
+  answerRight = t.answer;
 
-  groups.forEach((g, i) => fillGroup(g, counts[i]));
+  groups.forEach((g, i) => fillGroup(g, counts[i], places[i]));
   const same = $("same");
   same.hidden = !l.same;
   same.disabled = false;
@@ -108,14 +105,6 @@ function newRound() {
 
   show("round");
   say(question());
-}
-
-/** Which answer is right: 0 or 1 (a group), or "same". */
-function rightAnswer() {
-  const [a, b] = counts;
-  if (a === b) return "same";
-  const more = a > b ? 0 : 1;
-  return askFewer ? 1 - more : more;
 }
 
 function showCounts() {
@@ -138,7 +127,7 @@ function praise(answer) {
 function choose(answer, el) {
   if (locked) return;
 
-  if (answer !== rightAnswer()) {
+  if (answer !== answerRight) {
     play.answer(false);
     sound.wrong();
     say(oops(T.lookAgain));
