@@ -3,33 +3,31 @@
 // There is no time to count: the eyes learn to "see" 3 or 5 at once.
 // Levels go from dice patterns to scattered things to 5 + x in a frame (see LEVELS).
 // Every round shows other animals, fruit or things, like in "Wie viele?".
+// Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
+import * as gen from "../../shared/gen.js";
+import { task } from "./tasks.js";
 
 const ID = "blitzblick";
 const T = await texts(import.meta.url);
 const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Drei Äpfel." – a different praise each time
 const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal!"
 const THINGS = things(T);
+const THING_IDS = THINGS.map((t) => t.id); // only things with a name in this language
+const byId = Object.fromEntries(THINGS.map((t) => [t.id, t]));
+
+// A new thing for the last 3 tasks, and never the same number twice in a row.
+const nextTask = gen.generator(task, { avoid: { thing: 3, count: 1 } });
 
 const STARS_PER_GAME = 5;
 
 // Levels: see levels.js (easy to hard).
-
-// Dice patterns on a 3 x 3 grid: [column, row], 0..2.
-const DICE = {
-  1: [[1, 1]],
-  2: [[0, 0], [2, 2]],
-  3: [[0, 0], [1, 1], [2, 2]],
-  4: [[0, 0], [2, 0], [0, 2], [2, 2]],
-  5: [[0, 0], [2, 0], [1, 1], [0, 2], [2, 2]],
-  6: [[0, 0], [0, 1], [0, 2], [2, 0], [2, 1], [2, 2]],
-};
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const $ = (id) => document.getElementById(id);
@@ -40,7 +38,6 @@ let level = play.level;
 let stars = 0;
 let answer = 0;
 let thing = null;
-let lastThing = null;
 let showing = false;
 let locked = false;
 
@@ -71,30 +68,11 @@ function mark(className, x, y, text) {
   return m;
 }
 
-function drawPicture(kind, n) {
+function drawPicture(t) {
   const field = $("field");
   field.innerHTML = "";
-  field.className = "field " + kind;
-
-  if (kind === "dice") {
-    const flip = Math.random() < 0.5; // mirror sometimes, so 2, 3 and 6 are not always the same way round
-    for (const [c, r] of DICE[n]) field.append(mark("thing", 30 + (flip ? 2 - c : c) * 20, 22 + r * 28, thing.icon));
-  } else if (kind === "scatter") {
-    // Random places on a 4 x 3 grid, a little shaken so it does not look like a grid.
-    const cells = shuffle([...Array(12).keys()]).slice(0, n);
-    for (const i of cells) {
-      const x = 14 + (i % 4) * 24 + randInt(-4, 4);
-      const y = 20 + Math.floor(i / 4) * 30 + randInt(-4, 4);
-      field.append(mark("thing", x, y, thing.icon));
-    }
-  } else {
-    // 2 x 5 frame: first row full (5), second row the rest. Empty places are dashed.
-    for (let i = 0; i < 10; i++) {
-      const x = 14 + (i % 5) * 18;
-      const y = i < 5 ? 34 : 66;
-      field.append(i < n ? mark("thing", x, y, thing.icon) : mark("empty", x, y));
-    }
-  }
+  field.className = "field " + t.kind;
+  for (const m of t.marks) field.append(m.empty ? mark("empty", m.x, m.y) : mark("thing", m.x, m.y, thing.icon));
 }
 
 async function flash() {
@@ -120,13 +98,13 @@ async function newRound() {
   level = play.level;
   const l = LEVELS[level];
   locked = true;
-  answer = randInt(l.min, l.max);
-  thing = shuffle(THINGS.filter((t) => t !== lastThing))[0];
-  lastThing = thing;
+  const t = nextTask(l, THING_IDS);
+  answer = t.count;
+  thing = byId[t.thing];
 
-  drawPicture(l.kind, answer);
+  drawPicture(t);
   $("cover").hidden = false;
-  drawAnswers(l);
+  drawAnswers(t.choices);
   $("answers").classList.add("waiting");
   show("round");
 
@@ -138,18 +116,11 @@ async function newRound() {
   say(question());
 }
 
-// Three choices: the right one and two neighbours, smallest first.
-function drawAnswers(l) {
-  const low = Math.max(1, l.min - 1);
-  const high = l.max + 1;
-  const choices = new Set([answer]);
-  while (choices.size < 3) {
-    const near = answer + randInt(-2, 2);
-    choices.add(near >= low && near <= high ? near : randInt(low, high));
-  }
+// Three choices, smallest first.
+function drawAnswers(choices) {
   const answers = $("answers");
   answers.innerHTML = "";
-  for (const n of [...choices].sort((a, b) => a - b)) {
+  for (const n of choices) {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "btn answer";
