@@ -55,7 +55,7 @@ export const PLACES = [
  *  and its rounds mix in tasks from the camps the child already has (the backpack, spiel/spiel.js). */
 export const MOUNTAIN = [
   { id: "zaun", height: 1, ideas: ["zaun"] },
-  { id: "haken", height: 1, needs: ["zaun"] },
+  { id: "haken", height: 1, needs: ["zaun"], ideas: ["haken"] },
   { id: "huetten", height: 1, needs: ["haken"] },
   { id: "vorrat", height: 2, needs: ["huetten"] },
   { id: "ameisen", height: 2, needs: ["zaun"] },
@@ -91,6 +91,8 @@ export const IDEAS = {
   // with corners, time backwards). Level 4 is the hardest this family gets for 12-year-olds.
   // startAt: every child starts at this level, whatever the age (the mountain is climbed from below).
   zaun: { place: "zaun", world: "berg", ranges: [1, 2, 3, 4], startAt: 0, cards: { sehen: "luecken", anwenden: "luecken" } },
+  // Camp 2: count every possibility, in order (combinations, tournaments, ways in a grid).
+  haken: { place: "haken", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */
