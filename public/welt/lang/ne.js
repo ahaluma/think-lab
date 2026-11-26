@@ -14,6 +14,7 @@ export default {
   ideas: { zahl: "सङ्ख्याले कतिवटा भनेर बताउँछ", teile: "सङ्ख्या सङ्ख्याबाटै बन्छ", muster: "लहर सधैँ यसरी नै अगाडि बढ्छ", gruppen: "बराबर बाँड्ने: सबैले उत्तिकै पाउँछन्" },
   perspectives: { sehen: "हेर", machen: "बनाऊ", forschen: "खोज", anwenden: "प्रयोग गर", pruefen: "जाँच" },
   states: { new: "नयाँ", played: "खेलेको", understood: "बुझेको" },
+  together2: "दुई जना मिलेर खेल",
   yourCards: "तिम्रा सोच्ने तरिका",
 
   toMap: "नक्सामा फर्क",

@@ -1,7 +1,8 @@
 // "Zahlen-Memory" – numbers and amounts, for about 4 to 6 years.
 // Cards with a number (4) and cards with that many things (4 apples). The child finds the pairs.
 // First all cards lie open, so the child only has to match. Later they lie face down: a real memory game.
-// Every card is read out when tapped ("vier" / "vier Äpfel"). Levels go up to 6 pairs and 10 (see LEVELS).
+// Every card is read out when tapped ("vier" / "vier Äpfel"). Levels go up to 6 pairs and 20 (see LEVELS).
+// The game is also a place to play in the new world: the meadow on the map links here with ?welt.
 // Every board comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // All texts are in lang/<language>.js; names of the things are shared (shared/lang).
 
@@ -64,7 +65,7 @@ function makeCard(n, kind, thing) {
   el.className = "btn card-face " + kind;
   const front = kind === "number"
     ? `<span class="big">${num(n)}</span>`
-    : `<span class="pics ${n <= 3 ? "few" : n <= 6 ? "some" : "lots"}">${`<i>${thing.icon}</i>`.repeat(n)}</span>`;
+    : `<span class="pics ${n <= 3 ? "few" : n <= 6 ? "some" : n <= 10 ? "lots" : "heaps"}">${`<i>${thing.icon}</i>`.repeat(n)}</span>`;
   el.innerHTML = `<span class="front">${front}</span><span class="back" aria-hidden="true">?</span>`;
   const card = { n, kind, thing, el };
   el.addEventListener("click", () => tap(card));
@@ -164,6 +165,13 @@ function startGame() {
 fill(T);
 document.title = `${T.title} · AnkaPlay`;
 homeButton($("home"));
+// Opened from the new world (/games/zahlen-memory/?welt): the way back leads to the meadow on the map.
+if (new URLSearchParams(location.search).has("welt")) {
+  $("home").href = "/welt/?o=zahlen";
+  $("home").classList.remove("who");
+  $("home").innerHTML = icons.home;
+  $("home").setAttribute("aria-label", T.toWorld);
+}
 $("speak").innerHTML = icons.speaker;
 $("play").innerHTML = icons.play;
 $("again").innerHTML = icons.again;

@@ -1449,3 +1449,46 @@ button.pic {
 .board.nudge .eater:nth-child(2n) {
   animation-delay: 0.3s;
 }
+
+/* ====================== Games that live at a place as they are (the memory game) ====================== */
+.place-games {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.place-game {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #c9e7ff;
+  box-shadow: 0 4px 0 var(--ink);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.place-game:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.place-game .p-icon {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.place-game .g-name {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.place-game .g-two {
+  font-size: 22px;
+}

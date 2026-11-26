@@ -16,6 +16,7 @@ export default {
   ideas: { zahl: "Eine Zahl sagt, wie viele", teile: "Zahlen bestehen aus Zahlen", muster: "Eine Reihe geht immer so weiter", gruppen: "Gerecht teilen: Jeder bekommt gleich viele" },
   perspectives: { sehen: "Sehen", machen: "Machen", forschen: "Forschen", anwenden: "Anwenden", pruefen: "Prüfen" },
   states: { new: "neu", played: "gespielt", understood: "verstanden" },
+  together2: "Zu zweit spielen",
   yourCards: "Deine Denk-Tricks",
 
   // Die Runde
