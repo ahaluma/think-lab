@@ -100,6 +100,26 @@ export function state(idea, p) {
   return !c || !c.n ? "new" : understood(c) ? "understood" : "played";
 }
 
+/** A camp of the mountain is mastered when this many of its five perspectives are understood. */
+export const MASTERED = 3;
+
+/** Mastered: at least MASTERED perspectives understood, each in any range (a child who has moved on to
+ *  a higher level keeps what it understood below). */
+export function mastered(idea, kidId) {
+  const cells = all(kidId).cells;
+  return PERSPECTIVES.filter(({ id }) => Object.entries(cells).some(([k, c]) => k.startsWith(`${idea}/${id}/`) && understood(c))).length >= MASTERED;
+}
+
+/** The perspectives of an idea the child has played in the range it plays now. */
+export function played(idea) {
+  return PERSPECTIVES.filter(({ id }) => state(idea, id) !== "new").map(({ id }) => id);
+}
+
+/** The last day the child played this idea ("2026-11-26"), or "" if never. */
+export function lastDay(idea) {
+  return Object.entries(all().cells).filter(([k, c]) => k.startsWith(idea + "/") && c.last).map(([, c]) => c.last).sort().at(-1) || "";
+}
+
 /** Counts one task or round for today (rec.daily), for the parents' report. Old days are dropped. */
 function count(rec, what) {
   const daily = (rec.daily ??= {});

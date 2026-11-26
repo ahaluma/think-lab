@@ -298,7 +298,17 @@ export default {
     perspectives: { sehen: "Understand", machen: "Try out", forschen: "Find the rule", anwenden: "Transfer", pruefen: "Explain why" },
     mapLabel: "The thinking mountain: pick a camp",
     whereTo: "Expedition Thinking Mountain. Equipment: your head. Goal: the very top.",
-    asleep: "This camp is still asleep. First comes the camp below.",
+    building: "Still being built here. Coming soon.",
+    // names: the camps that must be mastered first (three of the five ways understood)
+    opensAfter: (names) => `This camp opens after ${names.map((n) => `“${n}”`).join(" and ")}. There you need three ways understood.`,
+    summitAfter: (got, of) => `The summit opens when all ${of} camps are mastered. Done so far: ${got}.`,
+    // The backpack: a task from an earlier camp in the middle of a round
+    pack: (name) => `Backpack! A task from “${name}”.`,
+    pad: { answer: "Your answer", erase: "Delete", check: "Check" },
+    solved: {
+      title: "Solved! And this works too:",
+      next: "Next",
+    },
     pickWay: "How do you want to play?",
     toWorld: "To the world",
     door: "To the thinking mountain",
@@ -337,7 +347,6 @@ export default {
     metres: (x) => `${x} m`,
     around: (x) => `all round ${x}`,
     everyLabel: (x) => `every ${x}`,
-    pad: { answer: "Your answer", erase: "Delete", check: "Check" },
     // The same problem in different clothes. thing: what stands, gap: what is in between.
     looks: {
       zaun: {
@@ -650,8 +659,6 @@ export default {
     },
     // Many ways to one answer: after each task, the tools that solve it too.
     ways: {
-      title: "Solved! And this works too:",
-      next: "Next",
       tools: {
         luecken: "Count the gaps", klein: "Start small", zuordnen: "Match up", aufschneiden: "Cut it open",
         umbauen: "Turn it into a known problem", zerlegen: "Split it", tabelle: "Table", lineal: "On the ruler", teil: "Whole minus part",

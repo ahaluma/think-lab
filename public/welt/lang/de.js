@@ -298,7 +298,17 @@ export default {
     perspectives: { sehen: "Verstehen", machen: "Ausprobieren", forschen: "Regel finden", anwenden: "Übertragen", pruefen: "Begründen" },
     mapLabel: "Der Denk-Berg: such dir ein Lager aus",
     whereTo: "Expedition Denk-Berg. Ausrüstung: Kopf. Ziel: ganz oben.",
-    asleep: "Dieses Lager schläft noch. Erst kommt das Lager darunter.",
+    building: "Hier wird noch gebaut. Bald geht es weiter.",
+    // names: die Lager, die vorher gemeistert sein müssen (drei der fünf Wege verstanden)
+    opensAfter: (names) => `Dieses Lager öffnet sich nach ${names.map((n) => `„${n}“`).join(" und ")}. Dort musst du drei Wege verstanden haben.`,
+    summitAfter: (got, of) => `Der Gipfel öffnet sich, wenn alle ${of} Lager gemeistert sind. Geschafft: ${got}.`,
+    // Der Rucksack: eine Aufgabe aus einem früheren Lager mitten in der Runde
+    pack: (name) => `Rucksack! Eine Aufgabe aus „${name}“.`,
+    pad: { answer: "Deine Antwort", erase: "Löschen", check: "Prüfen" },
+    solved: {
+      title: "Gelöst! Und so geht es auch:",
+      next: "Weiter",
+    },
     pickWay: "Wie möchtest du spielen?",
     toWorld: "Zur Welt",
     door: "Zum Denk-Berg",
@@ -337,7 +347,6 @@ export default {
     metres: (x) => `${x} m`,
     around: (x) => `rundherum ${x}`,
     everyLabel: (x) => `alle ${x}`,
-    pad: { answer: "Deine Antwort", erase: "Löschen", check: "Prüfen" },
     // Dasselbe Problem in anderen Kleidern. thing: was steht, gap: was dazwischen ist.
     looks: {
       zaun: {
@@ -650,8 +659,6 @@ export default {
     },
     // Viele Wege zu einer Antwort: nach jeder Aufgabe die Werkzeuge, die sie auch lösen.
     ways: {
-      title: "Gelöst! Und so geht es auch:",
-      next: "Weiter",
       tools: {
         luecken: "Lücken zählen", klein: "Klein anfangen", zuordnen: "Zuordnen", aufschneiden: "Aufschneiden",
         umbauen: "Auf Bekanntes zurückführen", zerlegen: "Zerlegen", tabelle: "Tabelle", lineal: "Am Lineal", teil: "Ganzes minus Teil",

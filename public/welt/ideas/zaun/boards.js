@@ -8,7 +8,7 @@
 // competition problem: the child has to think, not count.
 
 import { el, button, shake, wait } from "../../frame/parts.js";
-import { numpad } from "../../../shared/numpad.js";
+import * as kit from "../../berg/kit.js";
 import { DIGITS, DRAWN, REASONS } from "./tasks.js";
 import { waysFor } from "./ways.js";
 
@@ -285,106 +285,14 @@ function fence(ctx, kind, boards, { look = "zaun", boardsAs = "up", postsAs = "u
   };
 }
 
-// ---------- Answers: typed on the number pad (only one pad listens to the keyboard at a time)
+// ---------- Question, number pad and the "So geht es auch" card: shared by every camp (berg/kit.js)
 
-let livePad = null;
-
-function typed(ctx, host, right, { onWrong, onRight }) {
-  livePad?.remove();
-  const box = el("div");
-  host.append(box);
-  const words = { yourAnswer: ctx.T.zaun.pad.answer, erase: ctx.T.zaun.pad.erase, check: ctx.T.zaun.pad.check };
-  let done = false;
-  const pad = numpad(box, words, {
-    digits: DIGITS,
-    onCheck(n) {
-      if (done) return true;
-      if (n !== right) {
-        onWrong(n);
-        pad.clear();
-        return false;
-      }
-      done = true;
-      pad.show(n);
-      pad.lock(true);
-      livePad?.remove();
-      onRight(n);
-      return true;
-    },
-  });
-  livePad = pad;
-  pad.lock(true);
-  return {
-    box,
-    open() {
-      pad.lock(false);
-      ctx.ready();
-    },
-  };
-}
-
-/** The whole question, always in sight: a box at the top of the board that stays on screen when the
- *  page scrolls (numpad, owl, other ways). The caption above keeps only what is new: a miss, a hint,
- *  praise. Everything else on the board is pushed down (welt.css, .zaun-board).
- *  Returns { ask(text) } to change the asking line (Prüfen: "Stimmt das?" → "Was ist richtig?"). */
-function question(host, text, ask = "") {
-  host.classList.add("zaun-board");
-  const box = el("div", "task-text card");
-  const said = el("p", "task-story", text);
-  const asked = el("p", "task-ask", ask);
-  said.hidden = !text;
-  asked.hidden = !ask;
-  box.append(said, asked);
-  host.prepend(box);
-  // What scrolls into view must not hide behind the box.
-  const fit = () => host.style.setProperty("--task-h", `${box.offsetHeight + 12}px`);
-  if (typeof ResizeObserver === "function") new ResizeObserver(fit).observe(box);
-  return {
-    ask(next) {
-      asked.textContent = next;
-      asked.hidden = !next;
-    },
-  };
-}
-
-/** Shows the whole question, opens the pad and reads the question aloud. */
-function story(host, ctx, first, ask, pad) {
-  question(host, first, ask);
-  pad.open();
-  ctx.tell(first ? `${first} ${ask}` : ask, "");
-}
+const typed = (ctx, host, right, on) => kit.typed(ctx, host, right, { ...on, digits: DIGITS });
+const { question, story } = kit;
+/** Solved: the other tools that crack this task (ways.js), then on. */
+const win = (host, ctx, t, text) => kit.win(host, ctx, waysFor(ctx, t), text);
 
 const n = (ctx, fn, k) => fn(k, ctx.word(k), ctx.num(k));
-
-// ---------- Solved: first the other tools that crack the same task (一题多解), then on.
-
-/** Shows the card "Solved! And this works too:" with every tool that solves this task, then waits
- *  for "Next". Without at least two ways the round simply goes on. */
-async function win(host, ctx, t, text) {
-  const ways = waysFor(ctx, t);
-  if (!ways.length) return ctx.solved(text);
-  const W = ctx.T.zaun.ways;
-  ctx.tap();
-  const card = el("div", "ways-card card pop");
-  card.append(el("strong", "ways-title", W.title));
-  const list = el("ul", "ways-list");
-  for (const w of ways) {
-    const li = el("li");
-    li.append(el("span", "ways-icon", w.icon));
-    const body = el("span", "ways-body");
-    body.append(el("b", "", w.name), el("span", "", w.text));
-    li.append(body);
-    list.append(li);
-  }
-  const next = button("btn go ways-next", W.next, W.next);
-  card.append(list, next);
-  for (const old of host.querySelectorAll(".numpad-box, .judge, .reasons, .fence-tools")) old.hidden = true;
-  host.append(card);
-  card.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  ctx.ready();
-  await ctx.tell(text);
-  next.addEventListener("click", () => ctx.solved(""), { once: true });
-}
 
 // ---------- Sehen: numbered posts stand (1 … n). How many boards go in between?
 

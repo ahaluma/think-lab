@@ -1,13 +1,14 @@
 // The map of the thinking mountain (Denk-Berg): a path from the foot to the top with twelve camps
 // (MOUNTAIN in frame/ideas.js). Each camp carries one thinking tool for Mathe-Olympiade problems.
-// An awake camp opens its five perspectives; a camp that is still asleep says so. The rounds are the
+// A camp opens when the camps it needs are mastered (record.mastered); a closed camp names them.
+// A mastered camp gets a lantern. The summit opens when every camp is mastered. The rounds are the
 // same as in the nature world (welt/spiel/), so record.js, the cards and the parents' report work as there.
 //
 //   /welt/berg/          the mountain
 //   /welt/berg/?o=zaun   the mountain with this camp open
 
 import { sound, icons } from "../../shared/kit.js";
-import { texts, fill } from "../../shared/i18n.js";
+import { texts, fill, num } from "../../shared/i18n.js";
 import * as profiles from "../../shared/profiles.js";
 import * as record from "../frame/record.js";
 import { mount, tell, again } from "../frame/voice.js";
@@ -37,11 +38,22 @@ const AT = {
   socken: [206, 172], steine: [214, 138], mauer: [166, 116],
 };
 /** Flowers at the foot, one for every finished round of the first camp (up to 10). Higher up nothing
- *  grows on rock and snow; those camps will get lanterns. */
+ *  grows on rock and snow; there a mastered camp gets a lantern (every mastered camp does). */
 const FLOWER_SPOTS = { zaun: [[62, 420], [140, 420], [48, 434], [156, 436], [120, 432], [84, 438], [176, 424], [34, 420], [196, 436], [104, 444]] };
 const FLOWER_COLORS = ["#e8488a", "#ffc83a", "#fff", "#ff5a36"];
 
 const kid = profiles.current();
+/** "Lager 3: Wer wohnt wo?" and a sentence: no full stop after a question mark. */
+const named = (name, text) => `${name}${/[?!.।]$/.test(name) ? "" : "."} ${text}`;
+const byId = Object.fromEntries(MOUNTAIN.map((c) => [c.id, c]));
+/** Built: the camp has its idea. Mastered: three perspectives understood (record.mastered). */
+const built = (c) => Boolean(c.ideas?.length);
+const isMastered = (c) => built(c) && c.ideas.every((idea) => record.mastered(idea));
+/** The camps still missing before this one opens (empty: open). */
+const missing = (c) => (c.needs ?? []).map((id) => byId[id]).filter((n) => !isMastered(n));
+const isOpen = (c) => built(c) && !missing(c).length;
+/** What a closed camp says: still being built, or which camps come first. */
+const closedText = (c) => (built(c) ? B.opensAfter(missing(c).map((n) => B.camps[n.id])) : B.building);
 const node = (tag, attrs = {}, parent) => {
   const e = document.createElementNS(SVG, tag);
   for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
@@ -53,9 +65,10 @@ const node = (tag, attrs = {}, parent) => {
 function camp(c) {
   const [x, y] = AT[c.id];
   const g = node("g", { class: "place camp", tabindex: 0, role: "button", "aria-label": B.camps[c.id] });
-  g.classList.toggle("asleep", !c.awake);
+  const open = isOpen(c);
+  g.classList.toggle("asleep", !open);
   node("rect", { x: x - 22, y: y - 30, width: 44, height: 40, fill: "transparent" }, g);
-  node("path", { d: `M${x - 13} ${y + 2} L${x} ${y - 20} L${x + 13} ${y + 2}Z`, fill: c.awake ? "#ff5a36" : "#d9dde6", stroke: "#1b2140", "stroke-width": 3, "stroke-linejoin": "round" }, g);
+  node("path", { d: `M${x - 13} ${y + 2} L${x} ${y - 20} L${x + 13} ${y + 2}Z`, fill: open ? "#ff5a36" : "#d9dde6", stroke: "#1b2140", "stroke-width": 3, "stroke-linejoin": "round" }, g);
   node("path", { d: `M${x} ${y - 20} L${x - 4} ${y + 2} L${x + 4} ${y + 2}Z`, fill: "#1b2140" }, g);
   if (c.id === "zaun") {
     const fence = node("g", { stroke: "#1b2140", "stroke-width": 2 }, g);
@@ -65,7 +78,11 @@ function camp(c) {
     const hen = node("text", { x: x - 36, y: y + 4, "font-size": 16 }, g);
     hen.textContent = "🐔";
   }
-  if (c.awake) {
+  if (isMastered(c)) {
+    const light = node("text", { x: x + 16, y: y - 15, "font-size": 15, class: "lantern" }, g);
+    light.textContent = "🏮";
+  }
+  if (open) {
     const sign = node("g", { class: "play-sign", transform: `translate(${x} ${y - 34})` }, g);
     const inner = node("g", {}, sign);
     node("circle", { r: 12, fill: "#ffc83a", stroke: "#1b2140", "stroke-width": 3 }, inner);
@@ -73,9 +90,9 @@ function camp(c) {
   }
   const go = () => {
     sound.tap();
-    if (!c.awake) {
+    if (!open) {
       $("ways").hidden = true;
-      tell(`${B.camps[c.id]}. ${B.asleep}`);
+      tell(named(B.camps[c.id], closedText(c)));
       return;
     }
     openCamp(c);
@@ -92,7 +109,9 @@ for (const c of MOUNTAIN) $("camps").append(camp(c));
   const go = () => {
     sound.tap();
     $("ways").hidden = true;
-    tell(`${B.camps.gipfel}. ${B.asleep}`);
+    // The summit: competition rounds with every tool. It opens when every camp is mastered.
+    const before = MOUNTAIN.filter((c) => !isMastered(c));
+    tell(named(B.camps.gipfel, before.length ? B.summitAfter(num(MOUNTAIN.length - before.length), num(MOUNTAIN.length)) : B.building));
   };
   summit.addEventListener("click", go);
   summit.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && go());
@@ -141,9 +160,9 @@ function openCamp(c) {
   tell(B.pickWay);
 }
 
-// ---------- The animal waits at the highest awake camp. Tap = play there.
+// ---------- The animal waits at the highest open camp. Tap = play there.
 
-const awake = MOUNTAIN.filter((c) => c.awake);
+const awake = MOUNTAIN.filter(isOpen);
 const here = awake.at(-1);
 const walker = $("walker");
 walker.textContent = kid?.animal || "🐰";
