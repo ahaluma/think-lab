@@ -76,6 +76,13 @@ Two places are awake:
 | Meadow and stream | `zahl`: a number says how many | flowers at a glance | pick n flowers | the missing stepping stone | where are more? | the owl has counted |
 | Burrow and pond | `teile`: numbers are made of numbers | animals hide in the burrow | split on two leaves | the hollow tree | a hidden part | the owl adds |
 
+**Three number ranges: up to 5, 10 and 20** (`ranges` in `frame/ideas.js`). A child starts by age
+(`frame/record.js`): under 6 up to 5, at 6 up to 10, from 7 up to 20. After a round the three faces
+move the range up or down; a range the child chose to go down to stays. Up to 10 the answer buttons
+show the digit and that many dots. Up to 20 they show only the digit, the dots stay on the sign of the
+whole and in the hint. More than ten pictures are drawn smaller, still five in a row. In the range up
+to 20 the stepping stones also go in steps of two.
+
 The meadow holds the ideas of the old games "Blitzblick", "Wie viele?", "Zahlenzug" and "Wo sind
 mehr?". Those games stay on the start page until the parents' report can show the world's progress.
 

@@ -29,7 +29,7 @@ export function sehen(host, t, ctx) {
     flowers.hidden = !on;
     bush.hidden = on;
   };
-  const lookTime = () => 1200 + t.n * 250;
+  const lookTime = () => Math.min(4500, 1200 + t.n * 250); // many flowers stand in rows of five: no time to count one by one
 
   const answers = strip(ctx, 1, Math.max(5, t.range), async (n, b) => {
     if (locked) return;
@@ -144,28 +144,31 @@ export function forschen(host, t, ctx) {
   row.setAttribute("aria-label", Z.stones);
   const stones = [];
   for (let i = 0; i < t.len; i++) {
-    const n = t.from + i;
     const stone = el("div", i === t.gap ? "stone gap" : "stone");
     if (i === t.gap) stone.append(el("b", "", "?"));
-    else {
-      const dots = el("span", "num-dots");
-      for (let d = 0; d < n; d++) dots.append(el("i"));
-      stone.append(el("b", "", ctx.num(n)), dots);
-    }
+    else fill(stone, t.from + i * t.step);
     stones.push(stone);
     row.append(stone);
+  }
+  /** A stone shows its number; up to 10 also that many dots. */
+  function fill(stone, n) {
+    stone.append(el("b", "", ctx.num(n)));
+    if (t.range > 10) return;
+    const dots = el("span", "num-dots");
+    for (let d = 0; d < n; d++) dots.append(el("i"));
+    stone.append(dots);
   }
   const frog = el("span", "frog", "🐸");
   scene.append(frog, row);
   let locked = false;
-  const before = ctx.word(t.answer - 1);
+  const before = ctx.word(t.answer - t.step);
 
   const answers = strip(ctx, 1, Math.max(5, t.range), (n, b) => {
     if (locked) return;
     if (n !== t.answer) {
       shake(b);
       b.disabled = true;
-      ctx.miss(Z.miss(before, ctx.word(n)));
+      ctx.miss(t.step === 1 ? Z.miss(before, ctx.word(n)) : Z.missStep);
       return;
     }
     locked = true;
@@ -174,10 +177,8 @@ export function forschen(host, t, ctx) {
     stone.classList.remove("gap");
     stone.classList.add("pop");
     stone.innerHTML = "";
-    const dots = el("span", "num-dots");
-    for (let d = 0; d < n; d++) dots.append(el("i"));
-    stone.append(el("b", "", ctx.num(n)), dots);
-    ctx.solved(Z.done(before, ctx.word(n)));
+    fill(stone, n);
+    ctx.solved((t.step === 1 ? Z.done : Z.doneStep)(before, ctx.word(n)));
   });
 
   host.append(scene, answers);
@@ -186,7 +187,7 @@ export function forschen(host, t, ctx) {
   return {
     hint() {
       for (const stone of stones) shake(stone);
-      return Z.hint;
+      return t.step === 1 ? (t.range > 10 ? Z.hintPlain : Z.hint) : Z.hintStep;
     },
   };
 }

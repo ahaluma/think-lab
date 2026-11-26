@@ -1,7 +1,7 @@
 // The tasks of the idea "Teile": numbers are made of numbers (a whole and its two parts).
 // One function per perspective makes one task as plain data (see shared/gen.js): no DOM, no texts.
 //
-//   task({ p, range }, r) → one task. p = perspective id, range = 5 or 10 (the biggest whole).
+//   task({ p, range }, r) → one task. p = perspective id, range = 5, 10 or 20 (the biggest whole).
 //
 //   sehen     { total, inside, outside, animal }   animals live in the burrow; `outside` are seen,
 //                                                   `inside` are hiding: how many?
@@ -11,7 +11,8 @@
 //   pruefen   { a, b, said, right, thing }          the owl says "a and b are `said`": is that right?
 //   key – short text that tells tasks apart, for "not the same task again".
 
-export const WHOLES = { 5: [3, 5], 10: [6, 10] }; // the wholes of each range
+export const WHOLES = { 5: [3, 5], 10: [6, 10], 20: [11, 20] }; // the wholes of each range
+const TO_LAY_OUT = 15; // "make": the child moves every thing by hand, so not more than this
 export const BURROW = ["rabbit", "fox", "ant", "ladybird", "snail", "turtle"]; // animals that hide in a burrow
 export const TO_SHARE = ["apple", "strawberry", "flower", "carrot", "banana", "star"]; // things to lay out
 export const SCENES = ["frogs", "eggs", "apples"];
@@ -28,7 +29,7 @@ const makers = {
     return { total, inside, outside: total - inside, animal: r.pick(BURROW), key: `${total}:${inside}` };
   },
   machen(range, r) {
-    const total = whole(range, r);
+    const total = Math.min(whole(range, r), TO_LAY_OUT);
     return { total, thing: r.pick(TO_SHARE), key: `${total}` };
   },
   forschen(range, r) {

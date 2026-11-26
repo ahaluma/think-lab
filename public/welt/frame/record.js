@@ -33,8 +33,10 @@ export const RECENT = 10;
 export const UNDERSTOOD = 8;
 /** Perspectives with a good last round before the next number range opens. */
 export const OPEN_AFTER = 3;
-/** Children below this age start in the smallest range. */
+/** Children below this age start in the smallest range (up to 5). */
 export const SMALL_UNTIL = 6;
+/** Children from this age start in the third range (up to 20), so they are not under-challenged. */
+export const BIG_FROM = 7;
 
 const key = (kidId = profiles.current()?.id) => `welt:${kidId || "guest"}`;
 const cellKey = (idea, p, range) => `${idea}/${p}/${range}`;
@@ -56,16 +58,27 @@ function update(change) {
   return rec;
 }
 
-/** The range a child starts an idea in: the smallest below SMALL_UNTIL years, otherwise the second. */
+/** The range a child starts an idea in, by age: below SMALL_UNTIL the first, from BIG_FROM the third,
+ *  in between the second. Without an age (no child chosen) the first. */
 function startRange(idea) {
   const ranges = IDEAS[idea].ranges;
   const age = profiles.age(profiles.current());
-  return age !== null && age >= SMALL_UNTIL ? ranges[Math.min(1, ranges.length - 1)] : ranges[0];
+  const at = age === null || age < SMALL_UNTIL ? 0 : age >= BIG_FROM ? 2 : 1;
+  return ranges[Math.min(at, ranges.length - 1)];
 }
 
+/**
+ * The range to play now. Usually the saved one. A child whose age starts higher than the saved range
+ * (the range did not exist yet, or the child had a birthday) moves up to the start range of the age,
+ * unless the child itself said "hard" and went down (rec.lowered).
+ */
 export function range(idea) {
-  const saved = all().ranges[idea];
-  return IDEAS[idea].ranges.includes(saved) ? saved : startRange(idea);
+  const rec = all();
+  const ranges = IDEAS[idea].ranges;
+  const saved = rec.ranges[idea];
+  const start = startRange(idea);
+  if (!ranges.includes(saved)) return start;
+  return saved < start && !rec.lowered?.[idea] ? start : saved;
 }
 
 export function cell(idea, p, r = range(idea)) {
@@ -113,6 +126,7 @@ export function round(idea, p, r, { first, tasks, card = null }) {
     const good = PERSPECTIVES.filter(({ id }) => (rec.cells[cellKey(idea, id, r)]?.share ?? 0) >= GOOD).length;
     if (good >= OPEN_AFTER && at < ranges.length - 1) moved = 1;
     rec.ranges[idea] = ranges[at + moved];
+    if (moved && rec.lowered) delete rec.lowered[idea];
   });
   return moved;
 }
@@ -130,6 +144,7 @@ export function feel(idea, p, r, said) {
     if (said === "hard" && (c.share ?? 1) <= WEAK && at > 0 && ranges[at] === r) {
       moved = -1;
       rec.ranges[idea] = ranges[at - 1];
+      (rec.lowered ??= {})[idea] = true;
     }
   });
   return moved;

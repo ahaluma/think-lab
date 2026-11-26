@@ -140,6 +140,10 @@ export default {
       miss: (before, chosen) => `After ${before} it is not ${chosen}.`,
       done: (before, n) => `After ${before} comes ${n}.`,
       hint: "Count the dots. It is always one more.",
+      missStep: "Look: how big are the steps?",
+      doneStep: (before, n) => `Always two more: after ${before} comes ${n}.`,
+      hintPlain: "It is always one more.",
+      hintStep: "The frog takes big jumps. It is always two more.",
       stones: "Stones in the stream",
     },
     anwenden: {

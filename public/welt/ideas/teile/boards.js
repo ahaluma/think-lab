@@ -213,10 +213,8 @@ export function machen(host, t, ctx) {
       ctx.solved(T.machen.done(a, b, c, d, ctx.word(t.total)));
       return;
     }
+    // The things stay where they are: the second way is found by moving some of them over.
     ctx.tap();
-    sides[0] = sides[1] = 0;
-    basket = t.total;
-    draw();
     ctx.tell(T.machen.another);
   });
 
@@ -432,7 +430,7 @@ export function pruefen(host, t, ctx) {
   drawSaid();
   bubble.append(saidBox, saidDots);
   talk.append(el("span", "owl", "🦉"), bubble);
-  const groups = el("div", "groups");
+  const groups = el("div", "groups" + (t.a + t.b > 10 ? " big" : ""));
   const parts = [t.a, t.b].map((n) => {
     const box = el("div", "part");
     box.append(group(n, thing.icon));

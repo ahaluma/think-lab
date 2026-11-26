@@ -3,7 +3,8 @@
 //   Place       – one piece of the nature world on the map (welt/index.html).
 //   Idea        – one core mathematical idea. It lives in welt/ideas/<id>/ (tasks.js, boards.js).
 //   Perspective – one of five ways to play an idea. The same five everywhere, with a fixed symbol.
-//   Range       – how big the numbers are. The same idea comes back with bigger numbers.
+//   Range       – how big the numbers are: up to 5, 10 or 20. The same idea comes back with bigger
+//                 numbers. Up to 10 the number buttons carry dots; up to 20 they show digits only.
 //
 // Two places are awake: the meadow with the idea "zahl" (a number says how many) and the burrow with
 // "teile" (numbers are made of numbers). The other places are on the map, asleep.
@@ -41,8 +42,8 @@ export const PLACES = [
  * cards: the thinking card of a perspective, where the usual one (PERSPECTIVES) does not fit the idea.
  */
 export const IDEAS = {
-  zahl: { place: "zahlen", ranges: [5, 10], cards: { machen: "nachpruefen", anwenden: "vergleichen" } },
-  teile: { place: "teile", ranges: [5, 10], tasks: { forschen: 3 } },
+  zahl: { place: "zahlen", ranges: [5, 10, 20], cards: { machen: "nachpruefen", anwenden: "vergleichen" } },
+  teile: { place: "teile", ranges: [5, 10, 20], tasks: { forschen: 3 } },
 };
 
 /** The thinking card a round of this idea in this perspective gives. */
