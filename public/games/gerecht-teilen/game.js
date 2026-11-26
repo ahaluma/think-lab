@@ -6,32 +6,28 @@
 // the last one is cut in half (5 for 2: two and a half each), then the child says how many each
 // friend gets (one of three, or the number pad from 8), then numbers only, up to 50.
 // After two wrong answers the plates show how many each friend has, or the things are dealt out
-// one by one. See levels.js. All texts are in lang/<language>.js.
+// one by one. Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
+// See levels.js. All texts are in lang/<language>.js.
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { numpad } from "../../shared/numpad.js";
 import * as profiles from "../../shared/profiles.js";
 import { LEVELS } from "./levels.js";
+import * as gen from "../../shared/gen.js";
+import { task, TREATS as TREAT_LIST } from "./tasks.js";
 
 const ID = "gerecht-teilen";
 const T = await texts(import.meta.url);
 const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Jeder bekommt drei Kekse."
 const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau nochmal genau!"
 
-// What is shared. cut: can be cut in half (for the halving level). Names are in lang/<language>.js.
-const TREATS = [
-  { id: "cookie", icon: "🍪", cut: true },
-  { id: "apple", icon: "🍎", cut: true },
-  { id: "strawberry", icon: "🍓", cut: false },
-  { id: "candy", icon: "🍬", cut: false },
-  { id: "carrot", icon: "🥕", cut: true },
-  { id: "banana", icon: "🍌", cut: true },
-  { id: "donut", icon: "🍩", cut: true },
-].map((t) => ({ ...t, ...T.treats[t.id] }));
-// The friends who share. Only faces, so they never look like something to count.
-const FRIENDS = ["🐻", "🐰", "🐼", "🦊", "🐸", "🐯", "🐨", "🐷", "🐵", "🦁", "🐶", "🐱"];
+// What is shared (TREATS in tasks.js), with its names from lang/<language>.js.
+const TREATS = Object.fromEntries(TREAT_LIST.map((t) => [t.id, { ...t, ...T.treats[t.id] }]));
+
+// A new treat for the last 2 tasks (only 5 can be cut in half), and not the same task as in the last 2.
+const nextTask = gen.generator(task, { avoid: { treat: 2, key: 2 } });
 
 const STARS_PER_GAME = 5;
 const FLY_MS = 260;
@@ -51,8 +47,7 @@ let basket = []; // [{ key, half }]
 let plates = []; // one list per friend: [{ key, half }]
 let faces = [];
 let thing = null;
-let lastThing = null;
-let lastTask = "";
+let answerChoices = []; // the three number buttons of this task
 let misses = 0;
 let pictures = true; // the things in the basket (false: only a number sign)
 let counts = false; // the help: every plate shows how many are on it
@@ -228,20 +223,12 @@ function question() {
 }
 
 function newTask() {
-  const l = current;
-  for (let i = 0; i < 8; i++) {
-    kids = randInt(l.kids[0], l.kids[1]);
-    const most = Math.min(l.each[1], Math.floor((l.max - (l.half ? 1 : 0)) / kids));
-    each = randInt(Math.min(l.each[0], most), most);
-    rest = 0;
-    if (l.rest && Math.random() < 0.7 && l.max - each * kids >= 1) rest = randInt(1, Math.min(kids - 1, l.max - each * kids));
-    total = each * kids + rest + (l.half ? 1 : 0); // halving: one more, it is cut in half
-    if (`${kids}-${total}` !== lastTask) break; // never the same task twice in a row
-  }
-  lastTask = `${kids}-${total}`;
+  const t = nextTask(current);
+  ({ kids, each, rest, total, faces } = t);
+  thing = TREATS[t.treat];
+  answerChoices = t.choices;
   basket = Array.from({ length: total }, () => item());
   plates = Array.from({ length: kids }, () => []);
-  faces = shuffle(FRIENDS).slice(0, kids);
 }
 
 async function newRound() {
@@ -251,9 +238,6 @@ async function newRound() {
   counts = false;
   dealt = false;
   pictures = current.show !== "numbers";
-  const choice = current.half ? TREATS.filter((t) => t.cut) : TREATS;
-  thing = shuffle(choice.filter((t) => t !== lastThing))[0];
-  lastThing = thing;
   newTask();
   drawEq();
   drawAnswers();
@@ -355,7 +339,7 @@ function drawAnswers() {
     pad = numpad(answers, T, { digits: 2, onCheck: (n) => choose(null, n), display: $("eq").querySelector(".gap") });
     return;
   }
-  for (const n of choices()) {
+  for (const n of answerChoices) {
     const btn = el("button", "btn answer");
     btn.type = "button";
     btn.setAttribute("aria-label", word(n));
@@ -363,15 +347,6 @@ function drawAnswers() {
     btn.addEventListener("click", () => choose(btn, n));
     answers.append(btn);
   }
-}
-
-/** The answer and two typical mistakes (one more, one less, the number of friends), smallest first. */
-function choices() {
-  const ok = (n) => n >= 1 && n <= 10 && n !== each;
-  const likely = shuffle([each + 1, each - 1, kids].filter(ok));
-  const more = [each + 2, each - 2, each + 3].filter(ok);
-  const picked = [...new Set([...likely, ...more])].slice(0, 2);
-  return [each, ...picked].sort((x, y) => x - y);
 }
 
 /** btn: the answer button tapped, or null when typed on the number pad. Returns whether n was right. */
