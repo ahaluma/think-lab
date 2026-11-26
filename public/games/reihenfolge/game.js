@@ -8,12 +8,15 @@
 //   around  – one picture of a story: what came just before? what comes just after? (one of three)
 //   week    – "Today is Tuesday. Which day is tomorrow?" (later also yesterday, without the week strip)
 // Hints (the same rule as the other pick-one games): after two wrong answers the right picture glows.
-// All texts are in lang/<language>.js; here are only the pictures.
+// Every task comes from task() in tasks.js (shared/gen.js), the pictures are there too; this file only
+// draws the task. All texts are in lang/<language>.js.
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, pick, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
+import * as gen from "../../shared/gen.js";
+import { task as makeTask, STORIES, DAY, SEASONS, TIME_ICON, ACTS, ACT_ICON, timesOf } from "./tasks.js";
 
 const ID = "reihenfolge";
 const T = await texts(import.meta.url);
@@ -24,39 +27,9 @@ const STARS_PER_GAME = 5;
 /** Picking one of several: the right picture glows after this many wrong answers. */
 const HELP_AFTER = 2;
 
-// ---------- The pictures (the sentences are in lang/<language>.js under the same keys)
+// Not the same story, picture or day again within the next two tasks.
+const nextTask = gen.generator(makeTask, { avoid: { item: 2 } });
 
-/** Little stories, in order. Each picture is one step; the sentences are T.stories[id], T.storyEnd[id]. */
-const STORIES = {
-  flower: ["🫘", "🌱", "🌻"],
-  chick: ["🥚", "🐣", "🐥"],
-  rain: ["☁️", "🌧️", "🌈"],
-  apple: ["🌸", "🍏", "🍎"],
-  letter: ["✏️", "✉️", "📬"],
-  growup: ["👶", "🧒", "🧑", "🧓"],
-  hen: ["🥚", "🐣", "🐥", "🐔"],
-  tree: ["🫘", "🌱", "🪴", "🌳"],
-  bread: ["🌾", "🥣", "🍞", "🥪"],
-  cake: ["🥚", "🥣", "🎂", "🍰"],
-  snowman: ["❄️", "⛄", "☀️", "💧"],
-  sandcastle: ["🪣", "🏰", "🌊", "🏖️"],
-};
-
-/** Times of day and seasons: the picture on the answer button, and things that happen then (T.acts). */
-const DAY = ["morning", "midday", "evening", "night"];
-const SEASONS = ["spring", "summer", "autumn", "winter"];
-const TIME_ICON = { morning: "🌅", midday: "☀️", evening: "🌇", night: "🌙", day: "☀️",
-  spring: "🌷", summer: "🌞", autumn: "🍂", winter: "⛄" };
-const ACTS = {
-  morning: { rooster: "🐓", breakfast: "🥣", kindergarten: "🎒", sunrise: "🌅" },
-  midday: { lunch: "🍝", noon: "🕛", sunhigh: "☀️" },
-  evening: { dinner: "🍲", bedtime: "📖", sunset: "🌇" },
-  night: { sleep: "😴", owl: "🦉", stars: "✨", moon: "🌙" },
-  spring: { blossom: "🌸", bee: "🐝", green: "🌱" },
-  summer: { swim: "🏊", icecream: "🍦", melon: "🍉" },
-  autumn: { leaves: "🍁", kite: "🪁", chestnuts: "🌰" },
-  winter: { sled: "🛷", snow: "❄️", gloves: "🧤" },
-};
 /** Colours of the days of the week (Monday first), so a child can find a day again without reading. */
 const WEEK_COLORS = ["#ff8a80", "#ffb74d", "#ffe066", "#8fdc8a", "#7cc8ff", "#b39ddb", "#f8a5d1"];
 
@@ -73,16 +46,6 @@ let task = null; // what the child sees and must do, made by one of the MAKERS b
 let step = 0; // ordering: the next place to fill
 let misses = 0; // wrong answers for this step (ordering) or this task (picking)
 let locked = false;
-const lastPicked = {}; // per kind: the last story / thing, so the same one never comes twice in a row
-
-/** A random item, but not the same as last time for this key. */
-function fresh(key, list) {
-  let item;
-  do item = pick(list);
-  while (list.length > 1 && item === lastPicked[key]);
-  lastPicked[key] = item;
-  return item;
-}
 
 // ---------- Screens
 
@@ -106,109 +69,85 @@ function drawStars() {
 // Picking tasks: { mode: "pick", prompt (what is shown), choices: [{ key, icon, label, tint }], answer (key),
 //   ask, think (said after the first wrong answer), right (said when right) }.
 
-function storyTask(l) {
-  const ids = Object.keys(STORIES).filter((id) => STORIES[id].length === l.steps);
-  const id = fresh("story", ids);
+// The order of the pictures to tap comes from tasks.js (t.mixed: indexes, never already right).
+
+function storyTask(l, t) {
+  const id = t.story;
   return {
     mode: "order",
     cards: STORIES[id].map((icon, i) => ({ key: `${id}${i}`, icon, say: T.stories[id][i] })),
     given: 0,
+    mixed: t.mixed,
     ask: T.orderStory,
     end: T.storyEnd[id],
   };
 }
 
-function dayTask() {
+function dayTask(l, t) {
   return {
     mode: "order",
-    cards: DAY.map((time) => {
-      const [act, icon] = pick(Object.entries(ACTS[time]));
-      return { key: time, icon, tint: time, say: `${T.atTime[time]}: ${T.acts[act]}` };
+    cards: DAY.map((time, i) => {
+      const act = t.acts[i];
+      return { key: time, icon: ACTS[time][act], tint: time, say: `${T.atTime[time]}: ${T.acts[act]}` };
     }),
     given: 0,
+    mixed: t.mixed,
     ask: T.orderDay,
     end: T.dayDone,
   };
 }
 
-function seasonsTask() {
-  const start = fresh("seasons", [0, 1, 2, 3]);
-  const order = [0, 1, 2, 3].map((i) => SEASONS[(start + i) % 4]);
+function seasonsTask(l, t) {
+  const order = [0, 1, 2, 3].map((i) => SEASONS[(t.start + i) % 4]);
   return {
     mode: "order",
     cards: order.map((s) => ({ key: s, icon: TIME_ICON[s], tint: s, say: T.seasons[s] })),
     given: 1,
+    mixed: t.mixed,
     ask: T.orderSeasons(T.seasons[order[0]]),
     end: T.yearDone,
   };
 }
 
-function whenTask(l) {
-  const times = l.times === "daynight" ? ["day", "night"] : l.times === "day" ? DAY : SEASONS;
-  // Day or night: the things of the morning and midday are "day".
-  const groups = l.times === "daynight"
-    ? { day: { ...ACTS.morning, ...ACTS.midday }, night: ACTS.night }
-    : Object.fromEntries(times.map((t) => [t, ACTS[t]]));
-  // Never a picture that is also on an answer button (🌙 → night would be too easy).
-  const all = Object.entries(groups).flatMap(([time, acts]) =>
-    Object.entries(acts).filter(([, icon]) => !times.some((t) => TIME_ICON[t] === icon)).map(([act, icon]) => ({ time, act, icon })));
-  const it = fresh("when" + l.times, all);
+function whenTask(l, t) {
   const names = l.times === "seasons" ? T.seasons : T.times;
   const at = l.times === "seasons" ? T.inSeason : T.atTime;
   return {
     mode: "pick",
-    prompt: [{ icon: it.icon }],
-    choices: times.map((t) => ({ key: t, icon: TIME_ICON[t], label: names[t], tint: t })),
-    answer: it.time,
-    ask: T.whenAsk(T.acts[it.act]),
+    prompt: [{ icon: ACT_ICON[t.act] }],
+    choices: timesOf(l.times).map((x) => ({ key: x, icon: TIME_ICON[x], label: names[x], tint: x })),
+    answer: t.answer,
+    ask: T.whenAsk(T.acts[t.act]),
     think: T.whenThink,
-    right: `${at[it.time]}!`,
+    right: `${at[t.answer]}!`,
   };
 }
 
-function aroundTask() {
-  const id = fresh("around", Object.keys(STORIES));
-  const steps = STORIES[id];
-  const i = randInt(0, steps.length - 1);
-  const back = i === steps.length - 1 ? true : i === 0 ? false : Math.random() < 0.5;
-  const a = back ? i - 1 : i + 1;
-  const card = (sid, k) => ({ key: `${sid}${k}`, icon: STORIES[sid][k], label: T.stories[sid][k] });
-  // Wrong on purpose: the neighbour on the other side, and pictures of stories that share no picture
-  // with this one (a 🌱 from another story could be right, too).
-  const others = [];
-  const other = back ? i + 1 : i - 1;
-  if (other >= 0 && other < steps.length) others.push(card(id, other));
-  const strangers = shuffle(Object.keys(STORIES).filter((s) => !STORIES[s].some((ic) => steps.includes(ic))));
-  for (const s of strangers) {
-    if (others.length >= 2) break;
-    others.push(card(s, randInt(0, STORIES[s].length - 1)));
-  }
-  const prompt = [{ icon: steps[i] }];
-  if (back) prompt.unshift({ gap: true });
+function aroundTask(l, t) {
+  const card = ({ story, step }) => ({ key: `${story}${step}`, icon: STORIES[story][step], label: T.stories[story][step] });
+  const choices = t.choices.map(card);
+  const prompt = [{ icon: STORIES[t.story][t.at] }];
+  if (t.back) prompt.unshift({ gap: true });
   else prompt.push({ gap: true });
   return {
     mode: "pick",
     prompt,
-    choices: shuffle([card(id, a), ...others]),
-    answer: `${id}${a}`,
-    ask: `${T.stories[id][i]} ${back ? T.before : T.after}`,
-    think: back ? T.justBefore : T.justAfter,
-    right: T.stories[id][a],
+    choices,
+    answer: choices[t.answer].key,
+    ask: `${T.stories[t.story][t.at]} ${t.back ? T.before : T.after}`,
+    think: t.back ? T.justBefore : T.justAfter,
+    right: choices[t.answer].label,
   };
 }
 
-function weekTask(l) {
-  const today = fresh("week", [0, 1, 2, 3, 4, 5, 6]); // 0 = Monday
-  const back = l.back && Math.random() < 0.5;
-  const answer = (today + (back ? 6 : 1)) % 7;
-  const other = (today + (back ? 1 : 6)) % 7; // the day on the other side
-  const third = shuffle([0, 1, 2, 3, 4, 5, 6].filter((d) => ![today, answer, other].includes(d)))[0];
+function weekTask(l, t) {
+  const { today, back, answer } = t;
   const day = (d) => ({ key: `d${d}`, label: T.weekdays[d], text: T.weekdays[d], color: WEEK_COLORS[d] });
   const order = [0, 1, 2, 3, 4, 5, 6].map((k) => (k + (T.weekStart || 0)) % 7);
   return {
     mode: "pick",
     week: { today, target: answer, strip: l.strip, order },
-    choices: shuffle([day(answer), day(other), day(third)]),
+    choices: t.choices.map(day),
     answer: `d${answer}`,
     ask: back ? T.yesterdayQ(T.weekdays[today]) : T.tomorrowQ(T.weekdays[today]),
     think: T.weekSay(order.map((d) => T.weekdays[d]).join(", ")),
@@ -250,10 +189,7 @@ function drawOrder() {
   const left = task.cards.slice(task.given);
   pool.style.setProperty("--n", left.length);
   pool.classList.toggle("two-rows", left.length === 4);
-  // Mixed up, but never already in the right order.
-  let mixed = shuffle(left);
-  while (left.length > 1 && mixed.every((c, i) => c === left[i])) mixed = shuffle(left);
-  for (const c of mixed) {
+  for (const c of task.mixed.map((i) => task.cards[i])) {
     const b = picture(c, "button");
     b.type = "button";
     b.classList.add("btn", "card-btn");
@@ -341,12 +277,9 @@ function drawWeek(el, w) {
 // ---------- One task
 
 async function newTask() {
-  current = LEVELS[play.level];
-  if (current.kind === "mix") {
-    const id = oneOf(current.levels);
-    current = LEVELS.find((l) => l.id === id);
-  }
-  task = MAKERS[current.kind](current);
+  const t = nextTask(LEVELS[play.level]);
+  current = LEVELS.find((l) => l.id === t.level); // in "mix" levels one of the others
+  task = MAKERS[current.kind](current, t);
   step = task.given || 0;
   misses = 0;
   locked = true;
