@@ -12,6 +12,7 @@ import { oneOf, sound, celebrate, icons } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import { things } from "../../shared/things.js";
 import * as gen from "../../shared/gen.js";
+import * as profiles from "../../shared/profiles.js";
 import * as record from "../frame/record.js";
 import { mount, tell, again } from "../frame/voice.js";
 import { IDEAS, PERSPECTIVES, CARDS, ROUND_TASKS, perspective } from "../frame/ideas.js";
@@ -27,8 +28,15 @@ const P = perspective(params.get("p")) || perspective(record.suggest(IDEA));
 
 /** After this many wrong answers in a task the hint shows by itself. */
 const HINT_AFTER = 2;
-/** The surprise task comes from one of these perspectives (short ones), never the one just played. */
+/** The surprise task comes from one of these perspectives (short ones), never the one just played,
+ *  and only from one the child has played before: a surprise must not be a new kind of game. */
 const SURPRISE = ["sehen", "anwenden", "pruefen"];
+/** Children up to this age play shorter rounds. */
+const SHORT_UNTIL = 6;
+const SHORT_TASKS = 3;
+/** After this long without a tap, the things to tap wiggle: "here you can do something". */
+const NUDGE_AFTER = 7000;
+const kidAge = profiles.age(profiles.current());
 
 const THINGS = Object.fromEntries(things(T).map((t) => [t.id, t]));
 const nextTask = gen.generator(task, { avoid: { key: 2 } });
@@ -64,6 +72,7 @@ const ctx = {
   thing: (id) => (id === "nut" ? { icon: "🌰", ...T.nut } : THINGS[id]),
   tell,
   tap: () => sound.tap(),
+  ready: () => restNudge(),
 
   /** A wrong answer. Resolves when the sentence (and the hint after the second miss) was said. */
   async miss(text) {
@@ -91,6 +100,18 @@ const ctx = {
   },
 };
 
+// ---------- The nudge: a waiting child sees where to tap
+
+let nudgeTimer = 0;
+function restNudge() {
+  clearTimeout(nudgeTimer);
+  $("board").classList.remove("nudge");
+  nudgeTimer = setTimeout(() => {
+    if (!busy && !screens.board.hidden) $("board").classList.add("nudge");
+  }, NUDGE_AFTER);
+}
+$("board").addEventListener("pointerdown", restNudge);
+
 async function hint() {
   const text = board?.hint?.();
   if (text) await tell(text);
@@ -108,16 +129,16 @@ async function runStep() {
   }
   const t = nextTask({ p: step.p, range });
   board = BOARDS[step.p]($("board"), t, ctx);
+  restNudge();
 }
 
 function startRound() {
   range = record.range(IDEA);
-  const count = IDEAS[IDEA].tasks?.[P.id] ?? ROUND_TASKS;
-  const others = SURPRISE.filter((id) => id !== P.id);
-  steps = [
-    ...Array.from({ length: count }, () => ({ p: P.id, transfer: false })),
-    { p: nextTask.r.pick(others), transfer: true },
-  ];
+  const full = IDEAS[IDEA].tasks?.[P.id] ?? ROUND_TASKS;
+  const count = kidAge !== null && kidAge <= SHORT_UNTIL ? Math.min(full, SHORT_TASKS) : full;
+  const others = SURPRISE.filter((id) => id !== P.id && record.state(IDEA, id) !== "new");
+  steps = Array.from({ length: count }, () => ({ p: P.id, transfer: false }));
+  if (others.length) steps.push({ p: nextTask.r.pick(others), transfer: true });
   at = 0;
   firstTries = 0;
   busy = false;

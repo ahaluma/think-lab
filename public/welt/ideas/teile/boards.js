@@ -12,6 +12,7 @@
 //   ctx.miss(text)     a wrong answer: soft sound, the sentence; after the second one the hint shows
 //   ctx.solved(text)   the task is done: praise, the sentence, then the next task
 //   ctx.tap()          the small tap sound
+//   ctx.ready()        the story of the task was shown, the child can answer now (optional)
 //
 // A wrong answer first says what the child did ("Fünf und vier sind neun. Es sind aber sieben."),
 // the hint shows the structure, never just the answer.
@@ -51,7 +52,11 @@ function sign(ctx, n) {
 function strip(ctx, from, to, onPick) {
   const box = el("div", "strip");
   for (let n = from; n <= to; n++) {
-    const b = button("btn num-btn", ctx.word(n), ctx.num(n));
+    const b = button("btn num-btn", ctx.word(n));
+    // The digit and that many dots: a child who cannot read digits yet counts the dots.
+    const dots = el("span", "num-dots");
+    for (let i = 0; i < n; i++) dots.append(el("i"));
+    b.append(el("b", "", ctx.num(n)), dots);
     b.addEventListener("click", () => onPick(n, b));
     box.append(b);
   }
@@ -63,6 +68,8 @@ function shake(node) {
   void node.offsetWidth; // restart the animation
   node.classList.add("shake");
 }
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /** The hint of the "missing part" boards: the whole as a row of places, the known part filled in. */
 function partsHint(total, known, icon) {
@@ -78,14 +85,15 @@ export function sehen(host, t, ctx) {
   const animal = ctx.thing(t.animal);
   const scene = el("div", "scene card burrow-scene");
   const meadow = el("div", "meadow");
-  meadow.append(group(t.outside, animal.icon));
+  const all = group(t.total, animal.icon);
+  meadow.append(all);
   const burrow = el("div", "burrow");
-  const den = el("div", "den", "?");
+  const den = el("div", "den");
   den.setAttribute("aria-label", T.sehen.denLabel);
   burrow.append(den);
   scene.append(sign(ctx, t.total), meadow, burrow);
   const hintBox = el("div", "hint-box");
-  let locked = false;
+  let locked = true; // until the story was shown
 
   const answers = strip(ctx, 1, Math.max(5, t.range), (n, b) => {
     if (locked) return;
@@ -104,7 +112,25 @@ export function sehen(host, t, ctx) {
   });
 
   host.append(scene, hintBox, answers);
-  ctx.tell(T.sehen.question(ctx.word(t.total), animal, t.outside, ctx.word(t.outside)));
+  answers.classList.add("waiting");
+
+  // Show the story instead of telling it: all animals are outside, then some walk into the burrow.
+  (async () => {
+    await ctx.tell(T.sehen.all(ctx.word(t.total), animal));
+    if (!host.isConnected) return;
+    const goers = [...all.children].slice(t.outside);
+    for (const pic of goers) pic.classList.add("go-in");
+    den.classList.add("open");
+    await Promise.all([ctx.tell(T.sehen.hide), wait(1100)]);
+    if (!host.isConnected) return;
+    for (const pic of goers) pic.remove();
+    den.classList.remove("open");
+    den.textContent = "?";
+    answers.classList.remove("waiting");
+    locked = false;
+    ctx.ready();
+    ctx.tell(T.sehen.ask);
+  })();
 
   return {
     hint() {
@@ -312,14 +338,14 @@ export function anwenden(host, t, ctx) {
   const art = SCENE_ART[t.scene];
   const scene = el("div", `scene card use-scene use-${t.scene}`);
   const known = el("div", "zone known");
-  known.append(group(t.known, art.known));
   const hidden = el("div", "zone hidden");
+  const whole = group(t.total, art.hidden);
+  hidden.append(whole);
   const cover = el("span", "cover");
   cover.append(el("span", "cover-icon", art.cover), el("b", "unknown", "?"));
-  hidden.append(cover);
   scene.append(sign(ctx, t.total), known, hidden);
   const hintBox = el("div", "hint-box");
-  let locked = false;
+  let locked = true; // until the story was shown
 
   const answers = strip(ctx, 1, Math.max(5, t.range), (n, b) => {
     if (locked) return;
@@ -337,7 +363,27 @@ export function anwenden(host, t, ctx) {
   });
 
   host.append(scene, hintBox, answers);
-  ctx.tell(T.anwenden[t.scene](ctx.word(t.total), t.known, ctx.word(t.known)));
+  answers.classList.add("waiting");
+
+  // Show the story: first the whole is there, then one part moves away, then the rest is covered.
+  const [start, then, ask] = T.anwenden[t.scene](ctx.word(t.total), t.known, ctx.word(t.known));
+  (async () => {
+    await ctx.tell(start);
+    if (!host.isConnected) return;
+    const movers = [...whole.children].slice(0, t.known);
+    for (const pic of movers) pic.classList.add("go-away");
+    await wait(500);
+    for (const pic of movers) pic.remove();
+    known.append(group(t.known, art.known));
+    await Promise.all([ctx.tell(then), wait(900)]);
+    if (!host.isConnected) return;
+    hidden.innerHTML = "";
+    hidden.append(cover);
+    answers.classList.remove("waiting");
+    locked = false;
+    ctx.ready();
+    ctx.tell(ask);
+  })();
 
   return {
     hint() {
@@ -360,7 +406,15 @@ export function pruefen(host, t, ctx) {
   const talk = el("div", "talk");
   const saidBox = el("b", "said", ctx.num(said));
   const bubble = el("div", "bubble");
-  bubble.append(`${ctx.num(t.a)} + ${ctx.num(t.b)} = `, saidBox);
+  // The owl's number with that many dots, so the claim can be checked by counting. No equation:
+  // a child who cannot read "2 + 1 = 4" yet can still compare the dots with the things.
+  const saidDots = el("span", "sign-dots");
+  const drawSaid = () => {
+    saidDots.innerHTML = "";
+    for (let i = 0; i < said; i++) saidDots.append(el("i"));
+  };
+  drawSaid();
+  bubble.append(saidBox, saidDots);
   talk.append(el("span", "owl", "🦉"), bubble);
   const groups = el("div", "groups");
   const parts = [t.a, t.b].map((n) => {
@@ -388,6 +442,7 @@ export function pruefen(host, t, ctx) {
     if (locked) return;
     said = Math.max(1, Math.min(20, said + d));
     fixed.textContent = saidBox.textContent = ctx.num(said);
+    drawSaid();
     ctx.tap();
   };
   less.addEventListener("click", () => change(-1));

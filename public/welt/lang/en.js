@@ -22,7 +22,7 @@ export default {
   hint: "Hint",
   hear: "Read aloud",
   progress: "Tasks",
-  surprise: "Surprise! Here comes a task from another side.",
+  surprise: "Surprise! Now something different.",
   done: "You did it!",
   grew: "Look, a new flower is blooming by your burrow!",
   cardGot: (name) => `Your thinking trick: ${name}.`,
@@ -50,8 +50,10 @@ export default {
   nut: { one: "one nut", many: "nuts" },
 
   sehen: {
-    question: (total, thing, n, outside) =>
-      `${big(total)} ${thing.many} live here. ${n === 1 ? big(thing.one) + " is" : big(outside) + " are"} outside. How many are in the burrow?`,
+    // The story in three steps: all are there, some go in, the question.
+    all: (total, thing) => `${big(total)} ${thing.many} live here.`,
+    hide: "Whoosh! Some go into the burrow.",
+    ask: "How many are in the burrow now?",
     miss: (chosen, outside, sum, total) => `${big(chosen)} and ${outside} make ${sum}. But there are ${total}.`,
     hint: "Look: this is how many there are in all. How many are still missing?",
     denLabel: "The burrow",
@@ -85,11 +87,11 @@ export default {
 
   anwenden: {
     frogs: (total, n, known) =>
-      `${big(total)} frogs want to cross the pond. ${n === 1 ? "One is" : big(known) + " are"} already sitting on the big leaf. How many are still waiting in the reeds?`,
+      [`${big(total)} frogs are sitting in the reeds.`, `${n === 1 ? "One hops" : big(known) + " hop"} onto the big leaf.`, "How many are still in the reeds?"],
     eggs: (total, n, known) =>
-      `There were ${total} eggs in the nest. ${n === 1 ? "One chick has" : big(known) + " chicks have"} already hatched. How many eggs are still closed?`,
+      [`There are ${total} eggs in the nest.`, `${n === 1 ? "One chick hatches" : big(known) + " chicks hatch"}.`, "How many eggs are still closed?"],
     apples: (total, n, known) =>
-      `There were ${total} apples on the tree. ${n === 1 ? "One is" : big(known) + " are"} lying in the grass. How many are still on the tree?`,
+      [`There are ${total} apples on the tree.`, `${n === 1 ? "One falls" : big(known) + " fall"} into the grass.`, "How many are still on the tree?"],
     hint: "Look: this is how many there are in all. How many are still missing?",
   },
 

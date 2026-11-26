@@ -23,7 +23,7 @@ export default {
   hint: "Tipp",
   hear: "Vorlesen",
   progress: "Aufgaben",
-  surprise: "Überraschung! Jetzt kommt eine Aufgabe von einer anderen Seite.",
+  surprise: "Überraschung! Jetzt kommt etwas anderes.",
   done: "Geschafft!",
   grew: "Schau, bei deinem Bau blüht eine neue Blume!",
   cardGot: (name) => `Dein Denk-Trick: ${name}.`,
@@ -41,10 +41,10 @@ export default {
     nachpruefen: { name: "Nachprüfen", text: "Du hast nachgezählt, statt einfach zu glauben." },
   },
   intro: {
-    sehen: "Im Bau wohnen Tiere. Manche verstecken sich. Wie viele sind drinnen?",
+    sehen: "Tiere gehen in den Bau. Wie viele sind drinnen?",
     machen: "Leg alles auf die zwei Blätter. Es gibt viele Wege!",
     forschen: "Der hohle Baum hat ein Geheimnis. Probier aus, was er macht!",
-    anwenden: "Jetzt brauchst du, was du schon weißt. Hör gut zu!",
+    anwenden: "Schau gut hin, was passiert!",
     pruefen: "Die Eule sagt etwas. Stimmt das? Prüf es nach!",
   },
   together: (a, b, c) => `${big(a)} und ${b} sind zusammen ${c}.`,
@@ -52,8 +52,10 @@ export default {
 
   // Sehen: der Bau
   sehen: {
-    question: (total, thing, n, outside) =>
-      `Hier wohnen ${total} ${thing.many}. ${n === 1 ? big(thing.one) + " ist" : big(outside) + " sind"} draußen. Wie viele sind im Bau?`,
+    // Die Geschichte in drei Schritten: alle sind da, manche gehen hinein, die Frage.
+    all: (total, thing) => `Hier wohnen ${total} ${thing.many}.`,
+    hide: "Husch! Manche gehen in den Bau.",
+    ask: "Wie viele sind jetzt im Bau?",
     miss: (chosen, outside, sum, total) => `${big(chosen)} und ${outside} sind ${sum}. Es sind aber ${total}.`,
     hint: "Schau: So viele sind es zusammen. Wie viele fehlen noch?",
     denLabel: "Der Bau",
@@ -90,11 +92,11 @@ export default {
   // Anwenden: kleine Szenen
   anwenden: {
     frogs: (total, n, known) =>
-      `${big(total)} Frösche wollen über den Teich. ${n === 1 ? "Einer sitzt" : big(known) + " sitzen"} schon auf dem großen Blatt. Wie viele warten noch im Schilf?`,
+      [`${big(total)} Frösche sitzen im Schilf.`, `${n === 1 ? "Einer hüpft" : big(known) + " hüpfen"} auf das große Blatt.`, "Wie viele sind noch im Schilf?"],
     eggs: (total, n, known) =>
-      `Im Nest lagen ${total} Eier. ${n === 1 ? "Ein Küken ist" : big(known) + " Küken sind"} schon geschlüpft. Wie viele Eier sind noch zu?`,
+      [`Im Nest liegen ${total} Eier.`, `${n === 1 ? "Ein Küken schlüpft" : big(known) + " Küken schlüpfen"}.`, "Wie viele Eier sind noch zu?"],
     apples: (total, n, known) =>
-      `Am Baum hingen ${total} Äpfel. ${n === 1 ? "Einer liegt" : big(known) + " liegen"} im Gras. Wie viele hängen noch am Baum?`,
+      [`Am Baum hängen ${total} Äpfel.`, `${n === 1 ? "Einer fällt" : big(known) + " fallen"} ins Gras.`, "Wie viele hängen noch am Baum?"],
     hint: "Schau: So viele sind es zusammen. Wie viele fehlen noch?",
   },
 
