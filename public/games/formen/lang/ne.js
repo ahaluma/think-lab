@@ -20,7 +20,7 @@ export default {
   wrongFind: (got, want) => `यो ${got.the} हो। ${want.the} खोज!`,
 
   pictures: {
-    house: "घर", iceCream: "आइसक्रिम", snowman: "हिउँको मान्छे", tree: "रूख", lollipop: "ललिपप",
+    house: "घर", iceCream: "आइसक्रिम", caterpillar: "झुसिलकीरा", tree: "रूख", lollipop: "ललिपप",
     fish: "माछा", boat: "डुङ्गा", car: "गाडी", rocket: "रकेट", robot: "रोबोट",
     train: "रेल", flower: "फूल",
   },

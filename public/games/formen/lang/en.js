@@ -22,7 +22,7 @@ export default {
   wrongFind: (got, want) => `That is ${got.one}. Find ${want.the}!`,
 
   pictures: {
-    house: "a house", iceCream: "an ice cream", snowman: "a snowman", tree: "a tree", lollipop: "a lollipop",
+    house: "a house", iceCream: "an ice cream", caterpillar: "a caterpillar", tree: "a tree", lollipop: "a lollipop",
     fish: "a fish", boat: "a boat", car: "a car", rocket: "a rocket", robot: "a robot",
     train: "a train", flower: "a flower",
   },

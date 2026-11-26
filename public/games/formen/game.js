@@ -10,14 +10,17 @@
 //   mix    – one of the others for every task.
 // After two wrong answers (typing: five) the corners get dots and the game says what makes the shape,
 // or, when counting, only the shapes to count stay bright.
-// All texts are in lang/<language>.js. The shapes are drawn as SVG here, no image files.
+// Every task comes from task() in tasks.js (shared/gen.js), the pictures are there too; this file only
+// draws it. All texts are in lang/<language>.js. The shapes are drawn as SVG here, no image files.
 
-import { say, oneOf, sound, celebrate, shuffle, pick, randInt, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import * as profiles from "../../shared/profiles.js";
 import { numpad } from "../../shared/numpad.js";
 import { LEVELS } from "./levels.js";
+import * as gen from "../../shared/gen.js";
+import { task as makeTask, SHAPES, COLORS, PICTURES, part, lone } from "./tasks.js";
 
 const ID = "formen";
 const T = await texts(import.meta.url);
@@ -25,8 +28,6 @@ const cheer = (text) => `${oneOf(T.praise)} ${text}`;
 const oops = (text) => `${oneOf(T.oops)} ${text}`;
 
 const STARS_PER_GAME = 5;
-const SHAPES = ["circle", "triangle", "square", "rectangle"];
-const COLORS = ["#ff5a36", "#ffc83a", "#12a564", "#2456b8", "#e8488a", "#8a5cd6", "#ff9f1c", "#20b2c9"];
 const INK = "#1b2140";
 
 // Older children type the count on the number pad (profiles.typeAnswers), younger ones pick one of three.
@@ -49,36 +50,8 @@ let want = ""; // the shape the child looks for
 let question = ""; // what the 🔊 button says again
 let pad = null;
 
-// ---------- Pictures made of shapes (viewBox 0 0 100 100)
-// A part: [shape, x, y, w, h, colour, turn (degrees, around its middle), triangle form].
-// Triangles point up; "right": the tip is above the left corner. Circles: w = h. Parts are drawn in this order.
-
-const PICTURES = {
-  house: [["square", 25, 46, 50, 50, "#ffc83a"], ["triangle", 17, 12, 66, 34, "#ff5a36"], ["rectangle", 43, 68, 14, 28, "#9a5b2e"]],
-  iceCream: [["triangle", 33, 44, 34, 52, "#e0a458", 180], ["circle", 29, 8, 42, 42, "#e8488a"]],
-  snowman: [["circle", 30, 58, 40, 40, "#cfe8ff"], ["circle", 35, 30, 30, 30, "#cfe8ff"], ["circle", 40, 8, 22, 22, "#cfe8ff"]],
-  tree: [["rectangle", 43, 64, 14, 32, "#9a5b2e"], ["triangle", 18, 6, 64, 60, "#12a564"]],
-  lollipop: [["rectangle", 47, 54, 6, 42, "#9aa3c7"], ["circle", 25, 6, 50, 50, "#e8488a"]],
-  boat: [["triangle", 30, 16, 40, 50, "#2456b8", 0, "right"], ["rectangle", 12, 68, 76, 18, "#ff5a36"], ["circle", 76, 6, 16, 16, "#ffc83a"]],
-  fish: [["triangle", 62, 32, 30, 36, "#ff9f1c", -90], ["circle", 12, 22, 56, 56, "#ff9f1c"], ["circle", 24, 38, 10, 10, INK]],
-  car: [["square", 32, 26, 28, 28, "#8fd3ff"], ["rectangle", 8, 48, 84, 24, "#ff5a36"], ["circle", 16, 62, 24, 24, INK], ["circle", 60, 62, 24, 24, INK]],
-  rocket: [["triangle", 16, 58, 20, 32, "#ff5a36"], ["triangle", 64, 58, 20, 32, "#ff5a36"], ["rectangle", 34, 30, 32, 52, "#c9b6ff"],
-    ["triangle", 34, 4, 32, 26, "#ff5a36"], ["circle", 41, 40, 18, 18, "#2456b8"]],
-  robot: [["rectangle", 30, 78, 14, 20, "#9aa3c7"], ["rectangle", 56, 78, 14, 20, "#9aa3c7"], ["rectangle", 22, 44, 56, 34, "#20b2c9"],
-    ["square", 32, 6, 36, 36, "#20b2c9"], ["circle", 38, 16, 10, 10, INK], ["circle", 52, 16, 10, 10, INK]],
-  train: [["rectangle", 4, 44, 40, 28, "#2456b8"], ["rectangle", 50, 44, 46, 28, "#ff5a36"], ["square", 68, 18, 26, 26, "#ff5a36"],
-    ["rectangle", 54, 26, 8, 18, INK], ["circle", 8, 64, 16, 16, INK], ["circle", 26, 64, 16, 16, INK],
-    ["circle", 56, 64, 16, 16, INK], ["circle", 76, 64, 16, 16, INK]],
-  flower: [["rectangle", 47, 50, 6, 46, "#12a564"], ["triangle", 53, 62, 22, 18, "#12a564", 90], ["triangle", 25, 70, 22, 18, "#12a564", -90],
-    ["circle", 38, 2, 24, 24, "#e8488a"], ["circle", 22, 16, 24, 24, "#e8488a"], ["circle", 54, 16, 24, 24, "#e8488a"],
-    ["circle", 28, 32, 24, 24, "#e8488a"], ["circle", 48, 32, 24, 24, "#e8488a"], ["circle", 40, 19, 20, 20, "#ffc83a"]],
-};
-const SETS = {
-  small: ["house", "iceCream", "snowman", "tree", "lollipop", "boat", "fish"],
-  big: ["car", "rocket", "robot", "house", "fish", "boat"],
-  count: ["car", "rocket", "robot", "train", "flower", "snowman", "house", "fish", "boat"],
-};
-const part = ([shape, x, y, w, h, color, rot = 0, tri = "iso"]) => ({ shape, x, y, w, h, color, rot, tri });
+// Not the same picture (or the same shape to find) twice in a row, not the same task within three.
+const nextTask = gen.generator(makeTask, { avoid: { pic: 1, key: 3 } });
 
 // ---------- Drawing one shape as SVG
 
@@ -102,35 +75,6 @@ function shapeSvg(s, { cls = "", dot = 5, stroke = 3 } = {}) {
   const dots = corners.map(([cx, cy]) => `<circle class="corner" cx="${cx}" cy="${cy}" r="${dot}"/>`).join("");
   // The turn sits on an outer <g>, so CSS animations on the shape (pop, glow) don't replace it.
   return `<g${turn}><g class="shape ${cls}" fill="${s.color}" stroke="${INK}" stroke-width="${stroke}" stroke-linejoin="round">${el}${dots}</g></g>`;
-}
-
-/** A shape alone in a 100 × 100 box, for buttons. look: "same", "size" or "turn" (see levels.js). */
-function lone(shape, look, color) {
-  let w, h, rot = 0, tri = "iso";
-  if (shape === "circle") w = h = 70;
-  else if (shape === "triangle") [w, h] = [76, 66];
-  else if (shape === "square") w = h = 62;
-  else [w, h] = [84, 46];
-  if (look === "turn") {
-    if (shape === "triangle") {
-      tri = pick(["iso", "right", "lean"]);
-      [w, h] = pick([[76, 66], [80, 50], [56, 76]]);
-      rot = pick([0, 30, 90, 180, -60, 140]);
-    } else if (shape === "square") {
-      rot = pick([0, 15, 30, 45]);
-      w = h = rot ? 56 : 62;
-    } else if (shape === "rectangle") {
-      [w, h] = pick([[84, 40], [86, 30], [76, 42]]);
-      rot = pick([0, 90, 25, -30, 60]);
-      if (rot % 90) [w, h] = [w * 0.92, h * 0.92];
-    }
-  }
-  if (look !== "same") {
-    const k = shape === "circle" || look === "size" ? randInt(65, 100) / 100 : randInt(85, 100) / 100;
-    w *= k;
-    h *= k;
-  }
-  return { shape, x: 50 - w / 2, y: 50 - h / 2, w, h, color, rot, tri };
 }
 
 const svg = (inner, cls = "") => `<svg class="${cls}" viewBox="0 0 100 100" aria-hidden="true">${inner}</svg>`;
@@ -181,21 +125,16 @@ function drawChoices(list, onPick) {
 
 // ---------- The tasks
 
-let build = null; // build: { name, parts, filled: Set, gap }
+let task = null; // this task, from tasks.js
+let build = null; // build: { name, parts, filled: Set, step }
 let found = 0; // all: how many found
 let targets = 0; // all: how many there are
 let answer = 0; // count: the right number
 
 function startFind() {
-  const shapes = shuffle(current.shapes).slice(0, current.choices);
-  want = pick(shapes);
-  const one = pick(COLORS);
-  const colors = shuffle(COLORS);
+  want = task.want;
   $("board").hidden = true;
-  drawChoices(
-    shapes.map((shape, i) => ({ shape, spec: lone(shape, current.look, current.look === "same" ? one : colors[i]) })),
-    pickFind,
-  );
+  drawChoices(task.choices, pickFind);
   question = T.find(T.shapes[want]);
 }
 
@@ -206,10 +145,9 @@ async function pickFind(b, shape) {
 }
 
 function startRiddle() {
-  want = pick(SHAPES);
-  const colors = shuffle(COLORS);
+  want = task.want;
   $("board").hidden = true;
-  drawChoices(shuffle(SHAPES).map((shape, i) => ({ shape, spec: lone(shape, "turn", colors[i]) })), pickRiddle);
+  drawChoices(task.choices, pickRiddle);
   question = T.riddle[want];
 }
 
@@ -219,53 +157,44 @@ function pickRiddle(b, shape) {
   right(b, T.rightRiddle(T.shapes[want]));
 }
 
-// Build: the picture with dashed gaps; the glowing gap is the next one.
+// Build: the picture with dashed gaps; the glowing gap is the next one (task.steps: biggest first).
 function startBuild() {
-  const name = pick(SETS[current.pics].filter((p) => p !== build?.name));
-  build = { name, parts: PICTURES[name].map(part), filled: new Set(), gap: 0 };
-  build.gap = nextGap();
+  build = { name: task.pic, parts: PICTURES[task.pic].map(part), filled: new Set(), step: 0 };
   drawBuild();
   question = T.build;
 }
 
-function nextGap() {
-  const open = build.parts.map((_, i) => i).filter((i) => !build.filled.has(i));
-  // Big ones first, so the picture is recognisable early; the little ones (eyes, windows) at the end.
-  open.sort((a, b) => build.parts[b].w * build.parts[b].h - build.parts[a].w * build.parts[a].h);
-  return open[0] ?? -1;
-}
+const gapOf = () => task.steps[build.step]?.gap ?? -1;
 
 function drawBuild() {
   const board = $("board");
   board.hidden = false;
   board.className = "board card";
+  const gap = gapOf();
   const inner = build.parts
     .map((p, i) =>
       build.filled.has(i)
         ? shapeSvg(p, { cls: "filled", dot: 2.4, stroke: 1.6 })
-        : shapeSvg({ ...p, color: "none" }, { cls: i === build.gap ? "gap" : "ghost", dot: 2.4, stroke: 1.6 }),
+        : shapeSvg({ ...p, color: "none" }, { cls: i === gap ? "gap" : "ghost", dot: 2.4, stroke: 1.6 }),
     )
     .join("");
   board.innerHTML = svg(inner, "picture");
-  const shape = build.gap >= 0 ? build.parts[build.gap].shape : null;
-  if (!shape) return;
-  const others = shuffle(SHAPES.filter((s) => s !== shape)).slice(0, current.choices - 1);
-  const color = pick(COLORS);
-  drawChoices(shuffle([shape, ...others]).map((s) => ({ shape: s, spec: lone(s, "same", color) })), pickBuild);
+  if (gap < 0) return;
+  drawChoices(task.steps[build.step].choices, pickBuild);
 }
 
 async function pickBuild(b, shape) {
   if (locked) return;
-  want = build.parts[build.gap].shape;
+  want = build.parts[gapOf()].shape;
   if (shape !== want) return wrong(b, T.wrongBuild, T.hint[want]);
   play.answer(true);
   sound.right();
   b.classList.add("right");
-  build.filled.add(build.gap);
-  build.gap = nextGap();
+  build.filled.add(gapOf());
+  build.step++;
   misses = 0;
   $("round").classList.remove("show-corners");
-  if (build.gap >= 0) {
+  if (gapOf() >= 0) {
     locked = true;
     drawBuild();
     question = T.buildNext;
@@ -281,19 +210,16 @@ async function pickBuild(b, shape) {
 
 // All: nine shapes in a 3 × 3 grid, 2 to 4 of them are the ones to find.
 function startAll() {
-  want = pick(SHAPES);
-  targets = randInt(2, 4);
+  want = task.want;
+  targets = task.targets;
   found = 0;
-  const others = SHAPES.filter((s) => s !== want);
-  const list = shuffle([...Array(targets).fill(want), ...others, ...Array.from({ length: 6 - targets }, () => pick(others))]);
   const board = $("board");
   board.hidden = false;
   board.className = "board card grid";
   board.innerHTML = "";
-  const colors = shuffle(COLORS);
-  list.forEach((shape, i) => {
-    board.append(button("cell", T.shapes[shape].one, svg(shapeSvg(lone(shape, "turn", colors[i % colors.length]))), (b) => pickAll(b, shape)));
-  });
+  for (const { shape, spec } of task.cells) {
+    board.append(button("cell", T.shapes[shape].one, svg(shapeSvg(spec)), (b) => pickAll(b, shape)));
+  }
   $("choices").innerHTML = "";
   $("choices").className = "choices";
   question = T.all(T.shapes[want]);
@@ -312,16 +238,11 @@ function pickAll(b, shape) {
   right(null, T.allFound(T.shapes[want]));
 }
 
-// Count: a finished picture. Which shape to count: one that is in it, preferably more than once.
+// Count: a finished picture, count one kind of shape in it.
 function startCount() {
-  const name = pick(SETS.count.filter((p) => p !== build?.name));
-  const parts = PICTURES[name].map(part);
-  build = { name, parts, filled: new Set(parts.map((_, i) => i)), gap: -1 };
-  const counts = Object.fromEntries(SHAPES.map((s) => [s, parts.filter((p) => p.shape === s).length]));
-  const present = SHAPES.filter((s) => counts[s] > 0);
-  const several = present.filter((s) => counts[s] > 1);
-  want = pick(several.length && Math.random() < 0.8 ? several : present);
-  answer = counts[want];
+  const parts = PICTURES[task.pic].map(part);
+  want = task.want;
+  answer = task.answer;
   const board = $("board");
   board.hidden = false;
   board.className = "board card";
@@ -343,8 +264,7 @@ function drawNumbers() {
   }
   box.className = "answers";
   box.innerHTML = "";
-  const near = shuffle([answer + 1, answer - 1, answer + 2, answer - 2].filter((n) => n >= 1 && n <= 9));
-  for (const n of [answer, ...near.slice(0, 2)].sort((a, b) => a - b)) {
+  for (const n of task.numbers) {
     box.append(button("btn answer", word(n), `<span class="num">${num(n)}</span><span class="dots">${"<i></i>".repeat(n)}</span>`, (b) => pickCount(b, n)));
   }
 }
@@ -423,11 +343,8 @@ const next = () => (stars >= STARS_PER_GAME ? finish() : newTask());
 const STARTERS = { find: startFind, build: startBuild, all: startAll, count: startCount, riddle: startRiddle };
 
 async function newTask() {
-  current = LEVELS[play.level];
-  if (current.kind === "mix") {
-    const id = oneOf(current.levels);
-    current = LEVELS.find((l) => l.id === id);
-  }
+  task = nextTask(LEVELS[play.level]);
+  current = LEVELS.find((l) => l.id === task.level); // in "mix" levels one of the others
   locked = true;
   misses = 0;
   $("round").classList.remove("show-corners");
@@ -464,7 +381,7 @@ homeButton($("home"));
 $("speak").innerHTML = icons.speaker;
 $("play").innerHTML = icons.play;
 $("again").innerHTML = icons.again;
-$("start-art").innerHTML = SHAPES.map((s, i) => svg(shapeSvg(lone(s, "same", COLORS[i])))).join("");
+$("start-art").innerHTML = SHAPES.map((s, i) => svg(shapeSvg(lone(null, s, "same", COLORS[i])))).join("");
 
 $("play").addEventListener("click", startGame);
 $("again").addEventListener("click", startGame);
