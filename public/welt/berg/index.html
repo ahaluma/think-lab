@@ -22,8 +22,8 @@
       </div>
       <p class="caption" id="caption" aria-live="polite"></p>
 
-      <!-- The mountain: twelve camps on a path from the foot to the top. Only awake camps can be
-           played; the camps are drawn by berg.js from MOUNTAIN in frame/ideas.js.
+      <!-- The mountain: camps on a path from the foot to the top. Only open camps are drawn, the rest
+           is fog (berg.js, from MOUNTAIN in frame/ideas.js). The summit shows at the very end.
            True to the world: trees only at the foot, then grass, rock, and snow only at the top. -->
       <div class="map card" id="map" aria-label="Der Denk-Berg">
         <svg viewBox="0 0 360 450" xmlns="http://www.w3.org/2000/svg" id="mountain">
@@ -69,6 +69,17 @@
           <text class="walker pulse" id="walker" x="72" y="404" tabindex="0" role="button"></text>
         </svg>
       </div>
+
+      <!-- A new camp reached: the surprise and the keepsake picture (berg.js, keepsake.js) -->
+      <section class="reached card pop" id="reached" hidden>
+        <h2 id="reachedTitle"></h2>
+        <p id="reachedText"></p>
+        <img id="reachedImg" class="reached-img" alt="" />
+        <div class="reached-btns">
+          <button class="btn go" id="reachedSave" type="button"></button>
+          <button class="btn" id="reachedClose" type="button"></button>
+        </div>
+      </section>
 
       <section class="ways-panel card" id="ways" hidden>
         <h2 id="waysTitle"></h2>

@@ -13,7 +13,7 @@
 //
 // A second world grows next to it: the thinking mountain (welt/berg/), for Mathe-Olympiade training.
 // Its places are camps on the way up (MOUNTAIN). Each camp gives one thinking tool, and the camps
-// higher up need the tools from below. The first camp is awake: "zaun" (posts and gaps).
+// higher up need the tools from below. A camp opens when the camps it needs are mastered.
 
 /** The five perspectives, in the order a child meets them. card = the thinking card a round gives. */
 export const PERSPECTIVES = [
@@ -49,12 +49,14 @@ export const PLACES = [
 ];
 
 /** The camps of the thinking mountain, from the foot to the top, four heights of three camps each.
- *  needs: the camps that must have been played before this one wakes up (the plan: "Plan: Olympiade-Welt").
- *  Only awake camps have an idea; the others are drawn on the mountain, asleep. */
+ *  ideas: the idea of a camp that is built (a camp without one is drawn, but still being built).
+ *  needs: the camps a child must have mastered before this one opens (record.mastered: three of the
+ *  five perspectives understood). The summit needs every camp. Each camp only needs camps below it,
+ *  and its rounds mix in tasks from the camps the child already has (the backpack, spiel/spiel.js). */
 export const MOUNTAIN = [
-  { id: "zaun", height: 1, awake: true, ideas: ["zaun"] },
-  { id: "haken", height: 1, needs: ["zaun"] },
-  { id: "huetten", height: 1, needs: ["haken"] },
+  { id: "zaun", height: 1, ideas: ["zaun"] },
+  { id: "haken", height: 1, needs: ["zaun"], ideas: ["haken"] },
+  { id: "huetten", height: 1, needs: ["haken"], ideas: ["huetten"] },
   { id: "vorrat", height: 2, needs: ["huetten"] },
   { id: "ameisen", height: 2, needs: ["zaun"] },
   { id: "waage", height: 2, needs: ["vorrat"] },
@@ -65,6 +67,9 @@ export const MOUNTAIN = [
   { id: "steine", height: 4, needs: ["vorrat", "tanz"] },
   { id: "mauer", height: 4, needs: ["vorrat", "waage"] },
 ];
+
+/** The camp an idea belongs to (or undefined for an idea of the nature world). */
+export const campOf = (idea) => MOUNTAIN.find((c) => c.ideas?.includes(idea));
 
 /**
  * Ideas. world: "berg" for an idea of the thinking mountain (its map is welt/berg/, its place is a camp). ranges: smallest first. tasks: how many tasks a round has in each perspective (default 5).
@@ -86,6 +91,10 @@ export const IDEAS = {
   // with corners, time backwards). Level 4 is the hardest this family gets for 12-year-olds.
   // startAt: every child starts at this level, whatever the age (the mountain is climbed from below).
   zaun: { place: "zaun", world: "berg", ranges: [1, 2, 3, 4], startAt: 0, cards: { sehen: "luecken", anwenden: "luecken" } },
+  // Camp 2: count every possibility, in order (combinations, tournaments, ways in a grid).
+  haken: { place: "haken", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 3: logic puzzles, solved by ruling out (each one checked by a solver: exactly one solution).
+  huetten: { place: "huetten", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */

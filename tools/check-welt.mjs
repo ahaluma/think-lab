@@ -7,7 +7,7 @@
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
 import { kit } from "../public/shared/gen.js";
-import { IDEAS, PERSPECTIVES } from "../public/welt/frame/ideas.js";
+import { IDEAS, PERSPECTIVES, MOUNTAIN } from "../public/welt/frame/ideas.js";
 
 const N = 2000;
 const root = join(dirname(fileURLToPath(import.meta.url)), "../public/welt/ideas");
@@ -33,6 +33,20 @@ for (const [id, idea] of Object.entries(IDEAS)) {
     }
   }
 }
+// The mountain: a camp needs only camps below it (so every camp can be reached), and a built camp's
+// idea lives on the mountain.
+console.log("\nberg");
+MOUNTAIN.forEach((c, i) => {
+  const below = MOUNTAIN.slice(0, i).map((b) => b.id);
+  for (const need of c.needs ?? []) {
+    if (!below.includes(need)) console.log(`  ✗ ${c.id} needs ${need}, which is not below it`), failed++;
+  }
+  for (const idea of c.ideas ?? []) {
+    if (IDEAS[idea]?.world !== "berg") console.log(`  ✗ ${c.id}: idea ${idea} is not a mountain idea`), failed++;
+  }
+});
+console.log(`  ${MOUNTAIN.filter((c) => c.ideas?.length).length} of ${MOUNTAIN.length} camps built`);
+
 if (failed) {
   console.log(`\n${failed} problems`);
   process.exit(1);
