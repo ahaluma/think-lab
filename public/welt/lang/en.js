@@ -291,6 +291,14 @@ export default {
     perspectives: { sehen: "Understand", machen: "Try out", forschen: "Find the rule", anwenden: "Transfer", pruefen: "Explain why" },
     mapLabel: "The thinking mountain: pick a camp",
     whereTo: "Expedition Thinking Mountain. Equipment: your head. Goal: the very top.",
+    // Dares: a task one level higher. Solved at the first try without a hint: stay up there.
+    dare: {
+      go: "Dare! The next task is one level harder. Solve it at the first try without a hint and you stay up there.",
+      entry: "Starting dare! A task from level 3. Solve it at the first try without a hint and you jump straight there. If not: fine, then we climb from below.",
+      up: "Dare passed! From now on you are one level higher.",
+      entryUp: "Dare passed! From now on you climb on level 3.",
+      back: "Nearly is climbing too. We stay on your level, the next dare will come.",
+    },
     asleep: "This camp is still asleep. First comes the camp below.",
     pickWay: "How do you want to play?",
     toWorld: "To the world",

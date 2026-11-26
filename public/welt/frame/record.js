@@ -25,6 +25,7 @@
 // Understood: 8 of the last 10 tasks right the first time, played on two different days.
 // Bigger numbers: when three perspectives of the range had a good last round (share ≥ GOOD).
 // Smaller numbers again: the child said "hard" and the round was weak (share ≤ WEAK).
+// Ideas with dare: true (the thinking mountain) can also go up within a round: a dare (Mutprobe), see lift().
 
 import { store } from "../../shared/store.js";
 import * as profiles from "../../shared/profiles.js";
@@ -36,6 +37,10 @@ export const RECENT = 10;
 export const UNDERSTOOD = 8;
 /** Perspectives with a good last round before the next number range opens. */
 export const OPEN_AFTER = 3;
+/** Dares: after this many tasks in a row right at the first try without a hint, a dare comes. */
+export const DARE_AFTER = 3;
+/** The entry dare is a task of this range (index: 2 = the third). */
+export const ENTRY_DARE_AT = 2;
 /** Children below this age start in the smallest range (up to 5). */
 export const SMALL_UNTIL = 6;
 /** Children from this age start in the third range (up to 20), so they are not under-challenged. */
@@ -146,6 +151,28 @@ export function round(idea, p, r, { first, tasks, card = null }) {
     if (moved && rec.lowered) delete rec.lowered[idea];
   });
   return moved;
+}
+
+/** Dares (Mutproben, ideas with dare: true): a task one range higher. Solved at the first try and
+ *  without a hint, the child stays up there (lift). Not solved: nothing changes, no penalty. */
+export function lift(idea, r) {
+  update((rec) => {
+    if (!IDEAS[idea].ranges.includes(r)) return;
+    rec.ranges[idea] = r;
+    if (rec.lowered) delete rec.lowered[idea];
+  });
+}
+
+/** The entry dare (a task of the third range) comes once per idea, while the child is still below it. */
+export function entryDare(idea) {
+  const ranges = IDEAS[idea].ranges;
+  const target = ranges[Math.min(ENTRY_DARE_AT, ranges.length - 1)];
+  if (all().entry?.[idea] || ranges.indexOf(range(idea)) >= ranges.indexOf(target)) return null;
+  return target;
+}
+
+export function entryDone(idea) {
+  update((rec) => ((rec.entry ??= {})[idea] = true));
 }
 
 /** What the child said after the round: "easy" | "ok" | "hard". Returns −1 when the child said

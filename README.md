@@ -172,6 +172,12 @@ doc "Plan: Olympiade-Welt (Denk-Berg)".
   bell, a tower, (3) backwards and with time, (4) a field with corners, time backwards, part of a tower.
   Fences with more than 12 boards are drawn with "…": the child has to think, not count.
   Answers are typed on the number pad (`shared/numpad.js`).
+- **Dares (Mutproben)** so clever children don't get bored (`dare: true` in `IDEAS`, `spiel.js`,
+  `record.lift`). After 3 tasks in a row right at the first try and without a hint, the next task of
+  the round comes from the next level (💪 in the steps). Solved the same way, the child stays up there;
+  otherwise nothing changes and the dare is not counted. Once per idea, while the child is below level 3,
+  the first round starts with an entry dare from level 3. The whole question stays in a box at the top
+  of the board, also while the pad, the owl or the ways card show.
 - **Many ways to one answer** (一题多解): after a task is solved, a card shows every thinking tool that
   cracks the same task, with the task's own numbers (count the gaps, start small, match up, cut it open,
   turn it into a known problem, split it, table, whole minus part). `ideas/zaun/ways.js` picks them;

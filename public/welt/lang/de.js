@@ -298,6 +298,14 @@ export default {
     perspectives: { sehen: "Verstehen", machen: "Ausprobieren", forschen: "Regel finden", anwenden: "Übertragen", pruefen: "Begründen" },
     mapLabel: "Der Denk-Berg: such dir ein Lager aus",
     whereTo: "Expedition Denk-Berg. Ausrüstung: Kopf. Ziel: ganz oben.",
+    // Mutproben: eine Aufgabe eine Stufe höher. Beim ersten Versuch ohne Tipp gelöst: oben bleiben.
+    dare: {
+      go: "Mutprobe! Die nächste Aufgabe ist eine Stufe schwerer. Schaffst du sie beim ersten Versuch ohne Tipp, bleibst du oben.",
+      entry: "Mutprobe zum Start! Eine Aufgabe von Stufe 3. Schaffst du sie beim ersten Versuch ohne Tipp, springst du gleich dorthin. Wenn nicht: auch gut, dann klettern wir von unten.",
+      up: "Mutprobe bestanden! Ab jetzt bist du eine Stufe höher.",
+      entryUp: "Mutprobe bestanden! Du kletterst ab jetzt auf Stufe 3.",
+      back: "Knapp daneben ist auch geklettert. Wir bleiben auf deiner Stufe, die nächste Mutprobe kommt bestimmt.",
+    },
     asleep: "Dieses Lager schläft noch. Erst kommt das Lager darunter.",
     pickWay: "Wie möchtest du spielen?",
     toWorld: "Zur Welt",
