@@ -6,23 +6,29 @@
 //   how many are hiding in the house?
 // At the end the total appears in a block next to the house: "Drei und zwei sind zusammen fünf." The child learns that 5 is 3 and 2, 4 and 1 …
 // Levels go from 3 animals up to 10 (see LEVELS).
+// Every task comes from task() in tasks.js (shared/gen.js); this file only draws it.
 // All texts are in lang/<language>.js; names of the animals are shared (shared/lang).
 
-import { say, oneOf, sound, celebrate, shuffle, randInt, icons, homeButton } from "../../shared/kit.js";
+import { say, oneOf, sound, celebrate, icons, homeButton } from "../../shared/kit.js";
 import { texts, fill, num } from "../../shared/i18n.js";
 import * as adapt from "../../shared/adapt.js";
 import { LEVELS } from "./levels.js";
 import { things } from "../../shared/things.js";
+import * as gen from "../../shared/gen.js";
+import { task, WALKERS } from "./tasks.js";
 
 const ID = "zahlenhaus";
 const T = await texts(import.meta.url);
 const cheer = (text) => `${oneOf(T.praise)} ${text}`; // "Toll! Das sind fünf Hasen." – a different praise each time
 const oops = (text) => `${oneOf(T.oops)} ${text}`; // "Fast! Schau ins Haus!"
 
-// Only animals that can walk into a house.
-const WALKERS = ["rabbit", "duck", "ladybird", "snail", "elephant", "rhino", "unicorn", "giraffe", "lion", "dinosaur",
-  "turtle", "penguin", "frog", "owl", "kangaroo", "crocodile", "ant", "fox", "panda", "butterfly", "crab"];
+// Only animals that can walk into a house (WALKERS in tasks.js) and have a name in this language.
 const ANIMALS = things(T).filter((t) => WALKERS.includes(t.id));
+const ANIMAL_IDS = ANIMALS.map((t) => t.id);
+const byId = Object.fromEntries(ANIMALS.map((t) => [t.id, t]));
+
+// A new animal for the last 3 tasks, and not the same split (e.g. 5 = 2 + 3) as last time.
+const nextTask = gen.generator(task, { avoid: { animal: 3, key: 1 } });
 
 const STARS_PER_GAME = 5;
 
@@ -36,7 +42,7 @@ const play = adapt.player(ID, LEVELS); // the level follows the child (shared/ad
 let level = play.level;
 let stars = 0;
 let animal = ANIMALS[0];
-let lastAnimal = null;
+let t = null; // the task of this round (tasks.js)
 
 // The steps of a round:
 //   "first"   – count all animals ("Wie viele Hasen sind da?")
@@ -89,7 +95,8 @@ const openHouse = (open) => $("wall").classList.toggle("open", open);
 
 // Some animals walk to the door at the same time and disappear: hard to count, easy to think.
 async function walkIn() {
-  const going = shuffle([...$("field").children]).slice(0, inside);
+  const yard = [...$("field").children];
+  const going = t.going.map((i) => yard[i]);
   for (const a of going) {
     a.classList.add("walk");
     a.style.left = "50%";
@@ -110,11 +117,9 @@ function newRound() {
   locked = true;
   phase = "first";
   misses = 0;
-  animal = shuffle(ANIMALS.filter((t) => t !== lastAnimal))[0];
-  lastAnimal = animal;
-
-  total = randInt(...LEVELS[level].total);
-  inside = randInt(1, total - 1);
+  t = nextTask(LEVELS[level], ANIMAL_IDS);
+  animal = byId[t.animal];
+  ({ total, inside } = t);
   answer = total;
 
   $("sign").textContent = num(0); // nobody in the house yet
@@ -122,7 +127,7 @@ function newRound() {
   $("total").textContent = "";
   openHouse(false);
   drawYard();
-  drawAnswers(answer, []);
+  drawAnswers(t.choices.first);
   show("round");
   locked = false;
   say(question());
@@ -131,7 +136,7 @@ function newRound() {
 // Step 2: some go into the house. Early levels: the house opens and the child counts inside.
 // Later levels: the house stays closed; the meadow sign shows who is outside, the house shows "?".
 async function intoHouse() {
-  const hidden = LEVELS[level].hidden;
+  const hidden = t.hidden;
   misses = 0;
   answer = inside;
   $("answers").innerHTML = "";
@@ -145,8 +150,7 @@ async function intoHouse() {
     $("outside").textContent = ""; // counted later
     openHouse(true);
   }
-  // Common mix-ups: the number outside and the number of all.
-  drawAnswers(answer, shuffle([total - inside, total]).filter((n) => n !== answer));
+  drawAnswers(t.choices[phase]); // with the usual mix-ups: the number outside and the number of all
   locked = false;
   say(question());
 }
@@ -156,22 +160,16 @@ function stillOutside() {
   phase = "outside";
   misses = 0;
   answer = total - inside;
-  drawAnswers(answer, shuffle([inside, total]).filter((n) => n !== answer));
+  drawAnswers(t.choices.outside);
   locked = false;
   say(question());
 }
 
-// Three choices: the right one, the given mix-ups and neighbours, smallest first.
-function drawAnswers(right, extra) {
-  const choices = new Set([right]);
-  for (const n of extra) if (choices.size < 3) choices.add(n);
-  while (choices.size < 3) {
-    const near = right + randInt(-2, 2);
-    if (near >= 1 && near <= 10) choices.add(near);
-  }
+// Three choices, smallest first.
+function drawAnswers(choices) {
   const answers = $("answers");
   answers.innerHTML = "";
-  for (const n of [...choices].sort((a, b) => a - b)) {
+  for (const n of choices) {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "btn answer";
