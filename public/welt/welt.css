@@ -2414,3 +2414,13 @@ body[data-world="berg"] .caption.quiet {
 .net-cell { fill: #fff; stroke: var(--ink); stroke-width: 2.5; }
 .net-cell.mark { fill: var(--sun); }
 .net-num { font-size: 22px; font-weight: 800; fill: var(--ink); }
+
+/* Camp 10: the hand with the drawn socks */
+.drawn:empty {
+  display: none;
+}
+
+.draw-btn {
+  align-self: center;
+  min-width: 160px;
+}

@@ -63,7 +63,7 @@ export const MOUNTAIN = [
   { id: "stall", height: 3, needs: ["huetten", "waage"], ideas: ["stall"] },
   { id: "tanz", height: 3, needs: ["ameisen"], ideas: ["tanz"] },
   { id: "fels", height: 3, needs: ["haken"], ideas: ["fels"] },
-  { id: "socken", height: 4, needs: ["huetten", "tanz"] },
+  { id: "socken", height: 4, needs: ["huetten", "tanz"], ideas: ["socken"] },
   { id: "steine", height: 4, needs: ["vorrat", "tanz"] },
   { id: "mauer", height: 4, needs: ["vorrat", "waage"] },
 ];
@@ -107,6 +107,8 @@ export const IDEAS = {
   tanz: { place: "tanz", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
   // Camp 9: count in order and turn things in your head (triangles, squares, mirrors, cube nets).
   fels: { place: "fels", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 10: to be sure, think of the worst luck (socks in the dark, birthdays, boxes).
+  socken: { place: "socken", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */
