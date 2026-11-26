@@ -19,10 +19,18 @@
 //   3  backwards and with time: posts → length, sawing takes minutes, bigger numbers
 //   4  masters: a field with four sides and corners, time backwards (minutes → pieces), part of a tower
 //
+// Everyday looks: the same problem comes as a fence, trees along a street, children in a row or a
+// circle, little flags on a string, lights along a path (LOOKS), a field as a meadow, a football
+// pitch or a vegetable bed (FIELDS). Anwenden tells it as chocolate, a train, pages of a book, a class
+// trip (days and nights), running from tree to tree and stairs in a house. Only the picture and the
+// words change, never the thinking: that is the point.
+//
 // Explaining counts as much as the answer: when the owl is wrong, the child first finds the right
 // number and then picks WHY she was wrong (`why`, and two other reasons that sound good).
 //
 //   task({ p, range }, r) → one task as plain data (no DOM, no texts). Every task has `answer`.
+//
+//   look – on fence tasks (sehen, forschen, pruefen): which everyday picture (LOOKS, FIELDS)
 //
 //   sehen     { kind, posts, answer }                          numbered posts stand: how many boards?
 //   machen    { mode: "boards", boards, slots }                set posts: a fence with `boards` boards
@@ -30,8 +38,10 @@
 //                                                              plant every `every` m (ends: also at both ends)
 //   forschen  { kind, boards, every?, length?, ask: "posts", answer }
 //             { kind, posts, every, ask: "length", answer }      level 3: backwards
-//   anwenden  { story, n, answer }                              level 1: saw | beads | necklace
-//             { story, a, given, b, answer, unit }               bell | tower | sawtime: a things take
+//   anwenden  { story, n, answer }                              level 1: saw | beads | necklace | choc | train
+//             { story: "pages", from, to, answer }              read from page `from` to `to`: to − from + 1
+//             { story: "trip", from, to, ask: nights|days, answer } a class trip from the `from`th to the `to`th
+//             { story, a, given, b, answer, unit }               bell | tower | sawtime | run | floors: a things take
 //                                                              `given`; how much for b?
 //   pruefen   like forschen (levels 1, 2) or anwenden (level 3) plus { said, right }
 //   key – short text that tells tasks apart.
@@ -50,6 +60,24 @@ export const postsFor = (kind, boards) =>
 export const lengthFor = (kind, posts, every) => (kind === "line" ? posts - 1 : kind === "trees" ? posts + 1 : posts) * every;
 /** Things in a row and the gaps between them: a closed necklace has as many gaps as beads. */
 export const gapsFor = (story, n) => (story === "necklace" ? n : n - 1);
+/** Pages from `from` to `to` (both read); a trip: nights between, days counted with both ends. */
+export const countFor = (t) => (t.story === "trip" && t.ask === "nights" ? t.to - t.from : t.to - t.from + 1);
+
+/** The everyday looks of a fence task and the kinds of fence each one can be. */
+export const LOOKS = {
+  zaun: ["line", "trees", "ring", "sides"],
+  baeume: ["line", "trees", "ring", "sides"],
+  kinder: ["line", "trees", "ring", "sides"],
+  fahnen: ["line", "trees", "ring", "sides"],
+  lichter: ["line", "trees", "ring", "sides"],
+};
+/** The looks of a field with four sides (level 4). */
+export const FIELDS = ["zaun", "feld", "beet"];
+
+function lookFor(kind, r) {
+  if (kind === "rect") return r.pick(FIELDS);
+  return r.pick(Object.keys(LOOKS).filter((l) => LOOKS[l].includes(kind)));
+}
 
 const EVERY = [2, 3, 4, 5, 6, 10];
 
@@ -60,9 +88,25 @@ function timeTask(story, r, level) {
     bell: { unit: r.pick(big ? [2, 3, 4, 5] : [1, 2, 3]), a: r.int(3, 6), b: [8, big ? 12 : 10] },
     tower: { unit: r.pick(big ? [12, 14, 15, 16, 18] : [8, 10, 12]), a: r.int(2, 4), b: [5, big ? 10 : 8] },
     sawtime: { unit: r.pick(big ? [3, 4, 5, 6] : [2, 3, 4, 5]), a: r.int(3, 5), b: [6, big ? 12 : 9] },
+    run: { unit: r.pick(big ? [4, 5, 6, 8] : [2, 3, 4, 5]), a: r.int(3, 6), b: [7, big ? 15 : 10] },
+    floors: { unit: r.pick(big ? [12, 15, 16, 18, 20] : [10, 12, 15]), a: r.int(2, 4), b: [5, big ? 12 : 8] },
   }[story];
   const b = r.int(Math.max(spec.b[0], spec.a + 2), spec.b[1]);
   return { story, a: spec.a, b, unit: spec.unit, given: (spec.a - 1) * spec.unit, answer: (b - 1) * spec.unit, key: `${story}${spec.a}${b}${spec.unit}` };
+}
+
+/** Counting with both ends: pages of a book (bigger with the level), or a class trip (days or nights). */
+function countTask(story, r, level) {
+  if (story === "trip") {
+    const from = r.int(1, 20);
+    const to = from + r.int(3, level === 1 ? 6 : 10);
+    const ask = r.pick(["nights", "days"]);
+    const t = { story, from, to, ask };
+    return { ...t, answer: countFor(t), key: `trip${from}${to}${ask}` };
+  }
+  const from = level === 1 ? r.int(3, 30) : level < 4 ? r.int(12, 90) : r.int(60, 400);
+  const to = from + (level === 1 ? r.int(4, 15) : level < 4 ? r.int(15, 60) : r.int(80, 300));
+  return { story, from, to, answer: to - from + 1, key: `pages${from}${to}` };
 }
 
 /** Level 4, backwards: every cut takes `unit` minutes, all cuts took `given`. How many pieces? */
@@ -92,14 +136,16 @@ function rectTask(r) {
   const every = r.pick(EVERY);
   const i = r.int(3, 9);
   const j = r.int(2, Math.min(6, i));
-  return { kind: "rect", every, a: i * every, b: j * every, boards: 2 * (i + j), ask: "posts", answer: 2 * (i + j), key: `rect${i}${j}${every}` };
+  const look = lookFor("rect", r);
+  return { kind: "rect", look, every, a: i * every, b: j * every, boards: 2 * (i + j), ask: "posts", answer: 2 * (i + j), key: `rect${look}${i}${j}${every}` };
 }
 
 const makers = {
   sehen(level, r) {
     const kind = level === 3 ? "trees" : level === 4 ? r.pick(["line", "trees"]) : "line";
     const posts = level === 1 ? r.int(8, 16) : level === 2 ? r.int(15, 40) : level === 3 ? r.int(12, 40) : r.int(50, 150);
-    return { kind, posts, answer: kind === "line" ? posts - 1 : posts + 1, key: `${kind}${posts}` };
+    const look = lookFor(kind, r);
+    return { kind, look, posts, answer: kind === "line" ? posts - 1 : posts + 1, key: `${look}${kind}${posts}` };
   },
   machen(level, r) {
     if (level === 1) {
@@ -121,29 +167,34 @@ const makers = {
     if (level === 1) {
       const kind = r.pick(["line", "trees", "ring"]);
       const boards = r.int(6, 20);
-      return { kind, boards, ask: "posts", answer: postsFor(kind, boards), key: `${kind}${boards}` };
+      const look = lookFor(kind, r);
+      return { kind, look, boards, ask: "posts", answer: postsFor(kind, boards), key: `${look}${kind}${boards}` };
     }
     if (level === 2) {
       const kind = r.pick(["line", "trees", "ring", "sides"]);
       const every = r.pick(EVERY);
       const most = Math.min(kind === "ring" ? RING_MAX : 24, Math.floor(120 / every));
       const boards = r.int(4, most);
-      return { kind, boards, every, length: boards * every, ask: "posts", answer: postsFor(kind, boards), key: `${kind}${boards}${every}` };
+      const look = lookFor(kind, r);
+      return { kind, look, boards, every, length: boards * every, ask: "posts", answer: postsFor(kind, boards), key: `${look}${kind}${boards}${every}` };
     }
     if (level === 4) return rectTask(r);
     const kind = r.pick(["line", "trees", "ring"]);
     const every = r.pick(EVERY);
     const posts = r.int(kind === "trees" ? 5 : 8, kind === "ring" ? RING_MAX : 40);
-    return { kind, posts, every, ask: "length", answer: lengthFor(kind, posts, every), key: `${kind}${posts}${every}` };
+    const look = lookFor(kind, r);
+    return { kind, look, posts, every, ask: "length", answer: lengthFor(kind, posts, every), key: `${look}${kind}${posts}${every}` };
   },
   anwenden(level, r) {
     if (level === 1) {
-      const story = r.pick(["saw", "beads", "necklace"]);
-      const n = story === "saw" ? r.int(5, 15) : r.int(6, 20);
+      const story = r.pick(["saw", "beads", "necklace", "choc", "train", "pages", "trip"]);
+      if (story === "pages" || story === "trip") return countTask(story, r, level);
+      const n = story === "saw" || story === "choc" ? r.int(5, 12) : r.int(6, 18);
       return { story, n, answer: gapsFor(story, n), key: `${story}${n}` };
     }
-    if (level === 4) return r.pick([sawBack, towerPart, (q) => timeTask("bell", q, 3)])(r);
-    return timeTask(r.pick(level === 2 ? ["bell", "tower"] : ["sawtime", "bell", "tower"]), r, level);
+    if (level === 4) return r.pick([sawBack, towerPart, (q) => timeTask(q.pick(["bell", "run", "floors"]), q, 3), (q) => countTask("pages", q, 4)])(r);
+    if (r.chance(0.25)) return countTask(r.pick(["pages", "trip"]), r, level);
+    return timeTask(r.pick(level === 2 ? ["bell", "tower", "run", "floors"] : ["sawtime", "bell", "tower", "run", "floors"]), r, level);
   },
   pruefen(level, r) {
     // The owl is quick and very sure of herself, and wrong in about 6 of 10 tasks. Each wrong number
@@ -170,7 +221,7 @@ const makers = {
       }[t.kind];
       return owl(t, options);
     }
-    const t = timeTask(r.pick(["sawtime", "bell"]), r, level);
+    const t = timeTask(r.pick(["sawtime", "bell", "run", "floors"]), r, level);
     const twice = (t.given * t.b) / t.a; // "twice as many, twice as long"
     const options = [[t.b * t.unit, "strikes"], [t.answer + t.unit, "oneMore"]];
     if (Number.isInteger(twice)) options.push([twice, "twice"], [twice, "twice"]);
@@ -211,6 +262,11 @@ export function check(t, level) {
     if (t.given !== (t.a - 1) * t.unit || t.answer !== (t.b - 1) * t.unit || t.b <= t.a) problems.push("bad time story");
   }
   if (t.p === "anwenden" && "n" in t && t.answer !== gapsFor(t.story, t.n)) problems.push("bad story");
+  if ("from" in t && (t.answer !== countFor(t) || t.to <= t.from)) problems.push("bad count");
+  if ("kind" in t && t.p !== "machen") {
+    const looks = t.kind === "rect" ? FIELDS : Object.keys(LOOKS).filter((l) => LOOKS[l].includes(t.kind));
+    if (!looks.includes(t.look)) problems.push(`look ${t.look} for ${t.kind}`);
+  }
   if (t.p === "pruefen") {
     if (!fits(t.said)) problems.push(`the owl says ${t.said}`);
     if (t.right !== (t.said === t.answer)) problems.push("right does not match");

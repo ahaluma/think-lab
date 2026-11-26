@@ -172,6 +172,13 @@ doc "Plan: Olympiade-Welt (Denk-Berg)".
   bell, a tower, (3) backwards and with time, (4) a field with corners, time backwards, part of a tower.
   Fences with more than 12 boards are drawn with "…": the child has to think, not count.
   Answers are typed on the number pad (`shared/numpad.js`).
+- **Everyday looks, so it never gets monotonous.** The same problem comes in many clothes, each story
+  with a little hook: a fence, trees along a street (hammocks between them), children in a row or a
+  circle (ropes), little flags on a string, lights along a path (Tihar, lantern festival), and as a
+  field: a meadow, a football pitch, a school garden (`LOOKS` and `FIELDS` in `ideas/zaun/tasks.js`,
+  texts in `zaun.looks`). Anwenden adds chocolate, a train, pages of a book, a class trip (days or
+  nights?), running from tree to tree and stairs in a house. The thinking never changes, the picture
+  does; the rules, hints and other ways are written so they fit every look.
 - **Many ways to one answer** (一题多解): after a task is solved, a card shows every thinking tool that
   cracks the same task, with the task's own numbers (count the gaps, start small, match up, cut it open,
   turn it into a known problem, split it, table, whole minus part). `ideas/zaun/ways.js` picks them;

@@ -47,6 +47,9 @@ export function waysFor(ctx, t, extra = {}) {
     list = W.back[t.kind](d(t.posts), d(gaps), d(t.every), d(t.answer));
   } else if ("kind" in t) {
     list = fence(t.kind, t.boards);
+  } else if ("from" in t) {
+    const args = [d(t.from), d(t.to)];
+    list = t.story === "trip" ? W.trip[t.ask](...args, d(t.answer)) : W.pages(...args, d(t.to - t.from), d(t.answer));
   } else if ("n" in t) {
     list = W[t.story](d(t.n), d(t.answer));
   } else if (t.story === "sawback") {
