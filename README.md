@@ -172,6 +172,10 @@ doc "Plan: Olympiade-Welt (Denk-Berg)".
   bell, a tower, (3) backwards and with time, (4) a field with corners, time backwards, part of a tower.
   Fences with more than 12 boards are drawn with "…": the child has to think, not count.
   Answers are typed on the number pad (`shared/numpad.js`).
+- **Many ways to one answer** (一题多解): after a task is solved, a card shows every thinking tool that
+  cracks the same task, with the task's own numbers (count the gaps, start small, match up, cut it open,
+  turn it into a known problem, split it, table, whole minus part). `ideas/zaun/ways.js` picks them;
+  the card only comes when there are at least two ways.
 - **The voice** is the expedition's logbook: first person, short, dry and a bit cheeky. An original
   story with its own characters (the child's animal, the goat, the owl).
 

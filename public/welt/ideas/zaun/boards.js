@@ -10,6 +10,7 @@
 import { el, button, shake, wait } from "../../frame/parts.js";
 import { numpad } from "../../../shared/numpad.js";
 import { DIGITS, DRAWN, REASONS } from "./tasks.js";
+import { waysFor } from "./ways.js";
 
 const SVG = "http://www.w3.org/2000/svg";
 const W = 340;
@@ -267,6 +268,36 @@ async function story(host, ctx, first, ask, pad) {
 
 const n = (ctx, fn, k) => fn(k, ctx.word(k), ctx.num(k));
 
+// ---------- Solved: first the other tools that crack the same task (一题多解), then on.
+
+/** Shows the card "Solved! And this works too:" with every tool that solves this task, then waits
+ *  for "Next". Without at least two ways the round simply goes on. */
+async function win(host, ctx, t, text) {
+  const ways = waysFor(ctx, t);
+  if (!ways.length) return ctx.solved(text);
+  const W = ctx.T.zaun.ways;
+  ctx.tap();
+  const card = el("div", "ways-card card pop");
+  card.append(el("strong", "ways-title", W.title));
+  const list = el("ul", "ways-list");
+  for (const w of ways) {
+    const li = el("li");
+    li.append(el("span", "ways-icon", w.icon));
+    const body = el("span", "ways-body");
+    body.append(el("b", "", w.name), el("span", "", w.text));
+    li.append(body);
+    list.append(li);
+  }
+  const next = button("btn go ways-next", W.next, W.next);
+  card.append(list, next);
+  for (const old of host.querySelectorAll(".numpad-box, .judge, .reasons, .fence-tools")) old.hidden = true;
+  host.append(card);
+  card.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  ctx.ready();
+  await ctx.tell(text);
+  next.addEventListener("click", () => ctx.solved(""), { once: true });
+}
+
 // ---------- Sehen: numbered posts stand (1 … n). How many boards go in between?
 
 export function sehen(host, t, ctx) {
@@ -281,7 +312,7 @@ export function sehen(host, t, ctx) {
     onWrong: (k) => ctx.miss(k === t.posts ? Z.sehen.missPosts : Z.sehen.miss[t.kind]),
     onRight: () => {
       f.raise();
-      ctx.solved(Z.sehen.done[t.kind](n(ctx, Z.posts, t.posts), n(ctx, Z.boards, boards)));
+      win(host, ctx, t, Z.sehen.done[t.kind](n(ctx, Z.posts, t.posts), n(ctx, Z.boards, boards)));
     },
   });
   story(host, ctx, Z.sehen.story[t.kind](n(ctx, Z.posts, t.posts)), Z.sehen.ask, pad);
@@ -357,7 +388,7 @@ function buildBoards(host, t, ctx) {
     if (built() !== t.boards) return void (shake(check), ctx.miss(M.count(n(ctx, Z.boards, built()), n(ctx, Z.boards, t.boards))));
     locked = true;
     check.classList.add("right");
-    ctx.solved(M.done(n(ctx, Z.posts, on.length), n(ctx, Z.boards, t.boards)));
+    win(host, ctx, t, M.done(n(ctx, Z.posts, on.length), n(ctx, Z.boards, t.boards)));
   });
 
   const tools = el("div", "fence-tools");
@@ -421,7 +452,7 @@ function plantEvery(host, t, ctx) {
     if (on.length !== want.size) return void (shake(check), ctx.miss(M.gapTooBig));
     locked = true;
     check.classList.add("right");
-    ctx.solved(M.planted[t.ends ? "ends" : "between"](ctx.num(on.length), ctx.num((t.spots - 1) * t.step), ctx.num(t.every)));
+    win(host, ctx, t, M.planted[t.ends ? "ends" : "between"](ctx.num(on.length), ctx.num((t.spots - 1) * t.step), ctx.num(t.every)));
   });
   const tools = el("div", "fence-tools");
   tools.append(check);
@@ -506,7 +537,7 @@ export function forschen(host, t, ctx) {
         f.raise();
       }
       const got = t.ask === "length" ? Z.metres(ctx.num(t.answer)) : n(ctx, Z.posts, t.answer);
-      ctx.solved(`${F.got(got)} ${F.rule[t.kind]}`);
+      win(host, ctx, t, `${F.got(got)} ${F.rule[t.kind]}`);
     },
   });
   story(host, ctx, fenceStory(ctx, t), t.ask === "length" ? F.askLength : F.ask, pad);
@@ -672,7 +703,7 @@ export function anwenden(host, t, ctx) {
           : t.story === "sawback"
             ? A.timeDone.sawback(ctx.num(t.answer - 1), ctx.num(t.answer))
             : A.timeDone[t.story](ctx.num(t.b - 1), ctx.num(t.answer));
-      ctx.solved(done);
+      win(host, ctx, t, done);
     },
   });
   const tell = !time
@@ -724,7 +755,7 @@ export function pruefen(host, t, ctx) {
     if (!t.right) return void (shake(yes), ctx.miss(P.lookAgain));
     locked = true;
     show();
-    ctx.solved(`${P.right} ${rule}`);
+    win(host, ctx, t, `${P.right} ${rule}`);
   });
   no.addEventListener("click", () => {
     if (locked) return;
@@ -763,7 +794,7 @@ export function pruefen(host, t, ctx) {
         }
         done = true;
         b.classList.add("right");
-        ctx.solved(`${P.reasonRight} ${rule}`);
+        win(host, ctx, t, `${P.reasonRight} ${rule}`);
       });
       box.append(b);
     }

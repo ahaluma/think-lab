@@ -15,7 +15,7 @@ const WORLD = [
   "/welt/ideas/zahl/tasks.js", "/welt/ideas/zahl/boards.js",
   "/welt/ideas/muster/tasks.js", "/welt/ideas/muster/boards.js",
   "/welt/ideas/gruppen/tasks.js", "/welt/ideas/gruppen/boards.js",
-  "/welt/berg/", "/welt/berg/berg.js", "/welt/ideas/zaun/tasks.js", "/welt/ideas/zaun/boards.js",
+  "/welt/berg/", "/welt/berg/berg.js", "/welt/ideas/zaun/tasks.js", "/welt/ideas/zaun/boards.js", "/welt/ideas/zaun/ways.js",
   "/catalog.js", "/games/zahlen-memory/", "/games/zahlen-memory/game.js", "/games/zahlen-memory/game.css",
   "/games/zahlen-memory/levels.js", "/games/zahlen-memory/tasks.js", "/shared/adapt.js", "/shared/progress.js", "/shared/fit.js",
   "/games/zahlen-memory/lang/de.js", "/games/zahlen-memory/lang/en.js", "/games/zahlen-memory/lang/ne.js",
