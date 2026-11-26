@@ -56,7 +56,7 @@ export const PLACES = [
 export const MOUNTAIN = [
   { id: "zaun", height: 1, ideas: ["zaun"] },
   { id: "haken", height: 1, needs: ["zaun"], ideas: ["haken"] },
-  { id: "huetten", height: 1, needs: ["haken"] },
+  { id: "huetten", height: 1, needs: ["haken"], ideas: ["huetten"] },
   { id: "vorrat", height: 2, needs: ["huetten"] },
   { id: "ameisen", height: 2, needs: ["zaun"] },
   { id: "waage", height: 2, needs: ["vorrat"] },
@@ -93,6 +93,8 @@ export const IDEAS = {
   zaun: { place: "zaun", world: "berg", ranges: [1, 2, 3, 4], startAt: 0, cards: { sehen: "luecken", anwenden: "luecken" } },
   // Camp 2: count every possibility, in order (combinations, tournaments, ways in a grid).
   haken: { place: "haken", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 3: logic puzzles, solved by ruling out (each one checked by a solver: exactly one solution).
+  huetten: { place: "huetten", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */

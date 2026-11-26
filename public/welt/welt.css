@@ -1886,3 +1886,100 @@ body[data-world="berg"] .caption.quiet {
   gap: 6px;
   font-size: 22px;
 }
+
+/* Camp 3: the clues, the grid of people and things */
+.clue-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+}
+
+.clue-people,
+.clue-things {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.clue-person {
+  padding: 2px 8px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 10px;
+  background: #fffbea;
+}
+
+.clue-thing {
+  font-size: 22px;
+}
+
+.clue-list {
+  margin: 0;
+  padding-left: 1.4em;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.clue-list li[hidden] {
+  display: none;
+}
+
+.people-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.people-choices .choice-btn {
+  min-height: 52px;
+}
+
+.logic-grid {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 3px;
+  padding: 6px;
+  text-align: center;
+}
+
+.logic-grid th {
+  font-size: 20px;
+}
+
+.logic-grid th.who {
+  font-size: 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.logic-grid .group {
+  border-left: 3px solid var(--ink);
+}
+
+.logic-cell {
+  width: 100%;
+  min-width: 34px;
+  height: 40px;
+  font-size: 22px;
+  font-weight: 800;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.logic-cell.no {
+  color: #c4372b;
+  background: #fde8e4;
+}
+
+.logic-cell.yes {
+  color: #fff;
+  background: var(--ok);
+}
+
+.owl-talk {
+  width: 100%;
+  padding: 10px 12px;
+}
