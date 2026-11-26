@@ -13,7 +13,7 @@ export default {
   allGames: "Alle Spiele",
   save: "Sichern",
   privacy: "Datenschutz",
-  ideas: { zahl: "Eine Zahl sagt, wie viele", teile: "Zahlen bestehen aus Zahlen" },
+  ideas: { zahl: "Eine Zahl sagt, wie viele", teile: "Zahlen bestehen aus Zahlen", muster: "Eine Reihe geht immer so weiter" },
   perspectives: { sehen: "Sehen", machen: "Machen", forschen: "Forschen", anwenden: "Anwenden", pruefen: "Prüfen" },
   states: { new: "neu", played: "gespielt", understood: "verstanden" },
   yourCards: "Deine Denk-Tricks",
@@ -34,11 +34,12 @@ export default {
   again: "Nochmal",
   other: "Etwas anderes",
   cards: {
-    vergleichen: { name: "Genau hinschauen", text: "Du hast genau hingeschaut und gezählt." },
+    vergleichen: { name: "Genau hinschauen", text: "Du hast genau hingeschaut." },
     ausprobieren: { name: "Ausprobieren", text: "Du hast es ausprobiert. Es gibt viele Wege." },
     vorhersagen: { name: "Erst denken", text: "Du hast erst gedacht und dann geschaut." },
     rueckwaerts: { name: "Was fehlt?", text: "Du hast gefunden, was fehlt." },
     nachpruefen: { name: "Nachzählen", text: "Du hast selbst nachgezählt." },
+    wiederholen: { name: "Was kommt wieder?", text: "Du hast gefunden, was immer wieder kommt." },
   },
   intro: {
     sehen: "Tiere gehen in den Bau. Wie viele sind drinnen?",
@@ -171,6 +172,52 @@ export default {
     },
   },
 
+
+  // ---------- Idee "Muster": Eine Reihe geht immer so weiter (der Wald). Hier gibt es keine Zahlen.
+  muster: {
+    intro: {
+      sehen: "Im Wald liegt eine Reihe. Wie geht sie weiter?",
+      machen: "Leg die Reihe weiter!",
+      forschen: "Was kommt immer wieder?",
+      anwenden: "Welche Reihe geht genauso?",
+      pruefen: "Die Eule legt eine Reihe. Stimmt sie?",
+    },
+    bigger: "Das kannst du gut! Bald werden die Reihen schwerer.",
+    smaller: "Bald nehmen wir leichtere Reihen.",
+    sehen: {
+      ask: "Was kommt jetzt?",
+      miss: "Schau auf den Anfang. Wie geht die Reihe?",
+      done: "So geht die Reihe weiter.",
+      hint: "Schau: Dieses Stück kommt immer wieder.",
+    },
+    machen: {
+      ask: "Leg die Reihe weiter! Tipp unten auf ein Ding.",
+      miss: "Hier passt es noch nicht.",
+      done: "Die Reihe geht richtig weiter.",
+      hint: "Schau: Dieses Stück kommt immer wieder. Leg es noch einmal.",
+    },
+    forschen: {
+      ask: "Welches Stück kommt immer wieder?",
+      miss: "Dieses Stück passt nicht. Schau auf den Anfang.",
+      done: "Dieses Stück kommt immer wieder.",
+      hint: "Schau auf die Punkte. Dort fängt die Reihe neu an.",
+    },
+    anwenden: {
+      ask: "Welche Reihe unten geht genauso wie oben?",
+      miss: "Diese Reihe geht anders.",
+      done: "Beide Reihen gehen gleich.",
+      hint: "Schau auf die Stücke. Welches Stück geht wie oben?",
+    },
+    pruefen: {
+      ask: "Die Eule hat eine Reihe gelegt. Stimmt sie?",
+      lookAgain: "Schau nochmal genau!",
+      fix: "Gut aufgepasst! Tipp auf das falsche Ding.",
+      fixMiss: "Das passt. Such weiter!",
+      right: "Die Reihe stimmt.",
+      fixed: "Jetzt stimmt die Reihe.",
+      hint: "Schau: Jedes Stück muss gleich sein.",
+    },
+  },
 
   // Sichern (für Eltern)
   backup: {

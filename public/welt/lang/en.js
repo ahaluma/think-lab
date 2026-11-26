@@ -13,7 +13,7 @@ export default {
   allGames: "All games",
   save: "Back up",
   privacy: "Privacy",
-  ideas: { zahl: "A number says how many", teile: "Numbers are made of numbers" },
+  ideas: { zahl: "A number says how many", teile: "Numbers are made of numbers", muster: "A row always goes on like this" },
   perspectives: { sehen: "See", machen: "Make", forschen: "Explore", anwenden: "Use", pruefen: "Check" },
   states: { new: "new", played: "played", understood: "understood" },
   yourCards: "Your thinking tricks",
@@ -33,11 +33,12 @@ export default {
   again: "Again",
   other: "Something else",
   cards: {
-    vergleichen: { name: "Look closely", text: "You looked closely and counted." },
+    vergleichen: { name: "Look closely", text: "You looked closely." },
     ausprobieren: { name: "Try it out", text: "You tried it out. There are many ways." },
     vorhersagen: { name: "Think first", text: "You thought first and then looked." },
     rueckwaerts: { name: "What is missing?", text: "You found what was missing." },
     nachpruefen: { name: "Count again", text: "You counted it yourself." },
+    wiederholen: { name: "What comes again?", text: "You found what comes again and again." },
   },
   intro: {
     sehen: "Animals go into the burrow. How many are inside?",
@@ -163,6 +164,52 @@ export default {
       right: (n) => `Yes! There are ${n}.`,
       fixed: (n) => `Now it is right: there are ${n}.`,
       hint: "Count along: one, two, three …",
+    },
+  },
+
+  // ---------- Idea "Muster": a row always goes on like this (the forest). No numbers here.
+  muster: {
+    intro: {
+      sehen: "There is a row in the forest. How does it go on?",
+      machen: "Make the row go on!",
+      forschen: "What comes again and again?",
+      anwenden: "Which row goes the same way?",
+      pruefen: "The owl makes a row. Is it right?",
+    },
+    bigger: "You are good at this! Soon the rows get harder.",
+    smaller: "Soon we take easier rows.",
+    sehen: {
+      ask: "What comes now?",
+      miss: "Look at the start. How does the row go?",
+      done: "This is how the row goes on.",
+      hint: "Look: this piece comes again and again.",
+    },
+    machen: {
+      ask: "Make the row go on! Tap a thing below.",
+      miss: "It does not fit here yet.",
+      done: "The row goes on the right way.",
+      hint: "Look: this piece comes again and again. Put it down once more.",
+    },
+    forschen: {
+      ask: "Which piece comes again and again?",
+      miss: "This piece does not fit. Look at the start.",
+      done: "This piece comes again and again.",
+      hint: "Look at the dots. There the row starts again.",
+    },
+    anwenden: {
+      ask: "Which row below goes the same way as the one on top?",
+      miss: "This row goes another way.",
+      done: "Both rows go the same way.",
+      hint: "Look at the pieces. Which piece goes like the one on top?",
+    },
+    pruefen: {
+      ask: "The owl has made a row. Is it right?",
+      lookAgain: "Look closely again!",
+      fix: "Well spotted! Tap the wrong thing.",
+      fixMiss: "This one fits. Keep looking!",
+      right: "The row is right.",
+      fixed: "Now the row is right.",
+      hint: "Look: every piece must be the same.",
     },
   },
 

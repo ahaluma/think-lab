@@ -27,6 +27,9 @@ const $ = (id) => document.getElementById(id);
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 /** The texts of the idea: "teile" has them at the top of the language file, later ideas under their id. */
 const INTRO = (T[IDEA] ?? T).intro;
+/** "Soon it gets harder / easier": an idea without numbers says it in its own words. */
+const BIGGER = T[IDEA]?.bigger ?? T.bigger;
+const SMALLER = T[IDEA]?.smaller ?? T.smaller;
 const P = perspective(params.get("p")) || perspective(record.suggest(IDEA));
 
 const CARD = cardOf(IDEA, P.id);
@@ -166,7 +169,7 @@ async function finish() {
   sound.win();
   celebrate();
   await tell(`${T.done} ${T.cardGot(T.cards[CARD].name)} ${T.cards[CARD].text}`);
-  await tell(moved > 0 ? T.bigger : T.grew);
+  await tell(moved > 0 ? BIGGER : T.grew);
   tell(T.feelQuestion);
 }
 
@@ -188,7 +191,7 @@ for (const b of $("feel").children) {
   b.addEventListener("click", () => {
     for (const other of $("feel").children) other.classList.toggle("on", other === b);
     sound.tap();
-    if (record.feel(IDEA, P.id, range, b.dataset.feel) < 0) tell(T.smaller);
+    if (record.feel(IDEA, P.id, range, b.dataset.feel) < 0) tell(SMALLER);
   });
 }
 

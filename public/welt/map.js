@@ -26,13 +26,14 @@ const STATE_MARK = { new: "", played: "🌱", understood: "🌼" };
 // Where flowers grow at each place, one for every finished round of its idea (up to 12).
 const FLOWER_SPOTS = {
   teile: [[30, 414], [128, 416], [18, 396], [142, 396], [44, 372], [112, 366], [146, 376], [10, 416], [100, 420], [60, 420], [132, 356], [26, 356]],
+  muster: [[244, 290], [344, 292], [252, 274], [338, 270], [304, 296], [240, 256], [348, 250], [276, 296], [326, 296], [236, 236], [350, 230], [258, 292]],
   zahl: [[246, 346], [282, 356], [312, 344], [338, 334], [258, 326], [300, 326], [336, 356], [228, 360], [270, 340], [322, 330], [296, 346], [244, 334]],
 };
 const FLOWER_COLORS = ["#e8488a", "#ffc83a", "#fff", "#ff5a36"];
 // Where the yellow play sign of an awake place stands: "here you can play".
-const SIGN_AT = { teile: [40, 338], zahlen: [326, 366] };
+const SIGN_AT = { teile: [40, 338], zahlen: [326, 366], regeln: [338, 200] };
 // Where the child's animal stands at each place.
-const WALKER_AT = { teile: [120, 372], zahlen: [222, 338] };
+const WALKER_AT = { teile: [120, 372], zahlen: [222, 338], regeln: [222, 262] };
 
 const kid = profiles.current();
 const awake = PLACES.filter((p) => p.awake);
