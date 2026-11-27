@@ -4,7 +4,7 @@
 // Network first: with a connection the newest file is used and its copy is refreshed, so an update
 // goes live as before. Without a connection the copy is used. Registered by welt/map.js.
 
-const CACHE = "ankaplay-v6";
+const CACHE = "ankaplay-v14";
 
 // The files of the new world, fetched once when the worker is installed, so a round works offline
 // even if the child has only seen the map. Everything else is copied when it is first used.
@@ -15,7 +15,8 @@ const WORLD = [
   "/welt/ideas/zahl/tasks.js", "/welt/ideas/zahl/boards.js",
   "/welt/ideas/muster/tasks.js", "/welt/ideas/muster/boards.js",
   "/welt/ideas/gruppen/tasks.js", "/welt/ideas/gruppen/boards.js",
-  "/welt/berg/", "/welt/berg/berg.js", "/welt/berg/kit.js", "/welt/berg/camp.js", "/welt/berg/keepsake.js", "/welt/ideas/huetten/tasks.js", "/welt/ideas/huetten/boards.js", "/welt/ideas/haken/tasks.js", "/welt/ideas/haken/boards.js", "/welt/ideas/zaun/tasks.js", "/welt/ideas/zaun/boards.js", "/welt/ideas/zaun/ways.js",
+  "/welt/berg/", "/welt/berg/berg.js", "/welt/berg/kit.js", "/welt/berg/camp.js", "/welt/berg/keepsake.js", "/welt/ideas/huetten/tasks.js", "/welt/ideas/huetten/boards.js", "/welt/ideas/vorrat/tasks.js", "/welt/ideas/vorrat/boards.js", "/welt/ideas/haken/tasks.js", "/welt/ideas/haken/boards.js", "/welt/ideas/zaun/tasks.js", "/welt/ideas/zaun/boards.js", "/welt/ideas/zaun/ways.js",
+  "/welt/ideas/ameisen/tasks.js", "/welt/ideas/ameisen/boards.js", "/welt/ideas/waage/tasks.js", "/welt/ideas/waage/boards.js", "/welt/ideas/stall/tasks.js", "/welt/ideas/stall/boards.js", "/welt/ideas/tanz/tasks.js", "/welt/ideas/tanz/boards.js", "/welt/ideas/fels/tasks.js", "/welt/ideas/fels/boards.js", "/welt/ideas/socken/tasks.js", "/welt/ideas/socken/boards.js", "/welt/ideas/steine/tasks.js", "/welt/ideas/steine/boards.js", "/welt/ideas/mauer/tasks.js", "/welt/ideas/mauer/boards.js", "/welt/ideas/gipfel/tasks.js", "/welt/ideas/gipfel/boards.js", "/welt/berg/gipfel/", "/welt/berg/gipfel/gipfel.js",
   "/catalog.js", "/games/zahlen-memory/", "/games/zahlen-memory/game.js", "/games/zahlen-memory/game.css",
   "/games/zahlen-memory/levels.js", "/games/zahlen-memory/tasks.js", "/shared/adapt.js", "/shared/progress.js", "/shared/fit.js",
   "/games/zahlen-memory/lang/de.js", "/games/zahlen-memory/lang/en.js", "/games/zahlen-memory/lang/ne.js",

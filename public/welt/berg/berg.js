@@ -47,8 +47,6 @@ const FLOWER_SPOTS = { zaun: [[62, 420], [140, 420], [48, 434], [156, 436], [120
 const FLOWER_COLORS = ["#e8488a", "#ffc83a", "#fff", "#ff5a36"];
 
 const kid = profiles.current();
-/** "Lager 3: Wer wohnt wo?" and a sentence: no full stop after a question mark. */
-const named = (name, text) => `${name}${/[?!.।]$/.test(name) ? "" : "."} ${text}`;
 const byId = Object.fromEntries(MOUNTAIN.map((c) => [c.id, c]));
 /** Built: the camp has its idea. Mastered: three perspectives understood (record.mastered). */
 const built = (c) => Boolean(c.ideas?.length);
@@ -123,14 +121,13 @@ for (const c of visible) $("camps").append(camp(c));
   };
   fog.addEventListener("click", go);
   fog.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && go());
-  // The summit (competition rounds) shows only when every camp is mastered.
+  // The summit (competition rounds, berg/gipfel/) shows only when every camp is mastered.
   const summit = $("summit");
   if (!summitOpen) summit.style.display = "none";
   summit.setAttribute("aria-label", B.camps.gipfel);
   const atTop = () => {
     sound.tap();
-    $("ways").hidden = true;
-    tell(named(B.camps.gipfel, B.summitSoon));
+    location.href = "/welt/berg/gipfel/";
   };
   summit.addEventListener("click", atTop);
   summit.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && atTop());

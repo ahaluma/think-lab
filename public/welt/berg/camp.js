@@ -15,7 +15,7 @@
 //   rules[tool]    the tool in one sentence, said after a solved task
 //   hints[tool]    the hint (bulb, or by itself after two misses)
 //   miss[tool]     what a wrong answer gets
-//   tables[id] → [left column, right column]; tableIntro[id](fixed) what the table is about
+//   tables[id] → [left column, right column]; tableIntro[id](fixed, a) what the table is about
 //   reasons[id]    why the owl can be wrong
 //   ways[story or tool](a) → [[tool, text], …]         the "So geht es auch" card; tools[tool] its name
 // and the words every camp shares under berg.owl and berg.table.
@@ -25,7 +25,7 @@ import * as kit from "./kit.js";
 
 /** The task's numbers in the language's digits (lists too); words stay as they are. */
 export function args(ctx, t) {
-  const d = (v) => (typeof v === "number" ? ctx.num(v) : Array.isArray(v) ? v.map(d) : v);
+  const d = (v) => (typeof v === "number" ? ctx.num(v) : Array.isArray(v) ? v.map(d) : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, d(x)])) : v);
   return Object.fromEntries(Object.entries({ ...t.a, answer: t.answer }).map(([k, v]) => [k, d(v)]));
 }
 
@@ -53,14 +53,31 @@ export function picture(ctx, rows) {
 export function solvedBy(ctx, camp, tools) {
   return (host, t, text) => {
     const C = ctx.T[camp];
-    const list = (C.ways?.[t.story] ?? C.ways?.[t.tool])?.(args(ctx, t)) ?? [];
+    const a = args(ctx, t);
+    if (t.choices) a.answer = choiceLabel(ctx, camp, t, t.answer);
+    const list = (C.ways?.[t.story] ?? C.ways?.[t.tool])?.(a) ?? [];
     const ways = list.length < 2 ? [] : list.map(([tool, line]) => ({ icon: tools[tool] ?? "💡", name: C.tools[tool], text: line }));
     return kit.win(host, ctx, ways, `${text} ${C.rules[t.tool] ?? ""}`.trim());
   };
 }
 
+/** What an answer to tap says: the shape itself, or a word (choices.kind "days": the days of the week). */
+const choiceLabel = (ctx, camp, t, id) => (t.choices.kind === "icons" ? id : ctx.T[camp].choices[t.choices.kind][id]);
+
 export function campBoards(camp, { TOOLS = {}, DIGITS = 3, machen, picture: draw = picture } = {}) {
-  const typed = (ctx, host, right, on) => kit.typed(ctx, host, right, { ...on, digits: DIGITS });
+  /** The answer: the number pad, or buttons when the task has choices. Returns { box, open() }. */
+  const typed = (ctx, host, right, on, t = null) => {
+    if (!t?.choices) return kit.typed(ctx, host, right, { ...on, digits: DIGITS });
+    let box = null;
+    return {
+      get box() {
+        return box;
+      },
+      open() {
+        box = kit.choose(host, ctx, t.choices.ids.map((id) => ({ id, text: choiceLabel(ctx, camp, t, id) })), right, { onWrong: on.onWrong, onRight: on.onRight, className: `camp-choices${t.choices.kind === "icons" ? " icons" : ""}` });
+      },
+    };
+  };
 
   /** Story, picture, number pad: Verstehen and Übertragen. */
   function solve(host, t, ctx) {
@@ -71,7 +88,7 @@ export function campBoards(camp, { TOOLS = {}, DIGITS = 3, machen, picture: draw
     const pad = typed(ctx, host, t.answer, {
       onWrong: () => ctx.miss(C.miss[t.tool]),
       onRight: () => win(host, t, ""),
-    });
+    }, t);
     kit.story(host, ctx, text, ask, pad);
     return { hint: () => C.hints[t.tool] };
   }
@@ -82,7 +99,9 @@ export function campBoards(camp, { TOOLS = {}, DIGITS = 3, machen, picture: draw
     const C = ctx.T[camp];
     const W = ctx.T.berg.table;
     const win = solvedBy(ctx, camp, TOOLS);
-    const [left, right] = C.tables[t.table.id];
+    if (t.pic) host.append(draw(ctx, t.pic, t));
+    const heads = C.tables[t.table.id];
+    const [left, right] = typeof heads === "function" ? heads(args(ctx, t)) : heads;
     const grid = el("table", "camp-table card");
     const head = el("tr");
     head.append(el("th", "", left), el("th", "", right));
@@ -99,7 +118,7 @@ export function campBoards(camp, { TOOLS = {}, DIGITS = 3, machen, picture: draw
     open.classList.add("now");
     host.append(grid);
     const [text, ask] = storyOf(ctx, camp, t);
-    const intro = C.tableIntro[t.table.id](ctx.num(t.table.fixed ?? 0));
+    const intro = C.tableIntro[t.table.id](ctx.num(t.table.fixed ?? 0), args(ctx, t));
     const q = kit.question(host, intro, W.next(ctx.num(nx)));
     let pad = typed(ctx, host, ny, {
       onWrong: () => ctx.miss(W.look),
@@ -134,7 +153,8 @@ export function campBoards(camp, { TOOLS = {}, DIGITS = 3, machen, picture: draw
     const talk = el("div", "talk");
     const bubble = el("span", "bubble");
     const unit = C.units?.[t.story] ?? "";
-    bubble.append(el("span", "", ctx.num(t.said)), el("small", "bubble-word", unit ? " " + unit : ""));
+    const saidText = t.choices ? choiceLabel(ctx, camp, t, t.said) : ctx.num(t.said);
+    bubble.append(el("span", "", saidText), el("small", "bubble-word", unit && !t.choices ? " " + unit : ""));
     talk.append(el("span", "owl", "🦉"), bubble);
     scene.prepend(talk);
     const judge = el("div", "judge");
@@ -143,7 +163,7 @@ export function campBoards(camp, { TOOLS = {}, DIGITS = 3, machen, picture: draw
     judge.append(yes, no);
     host.append(scene, judge);
     const [text, ask] = storyOf(ctx, camp, t);
-    const said = `${ctx.num(t.said)}${unit ? " " + unit : ""}`;
+    const said = t.choices ? saidText : `${ctx.num(t.said)}${unit ? " " + unit : ""}`;
     const q = kit.question(host, `${text} ${ask}`, O.ask(said));
     let locked = false;
     let fixer = null;
@@ -165,7 +185,7 @@ export function campBoards(camp, { TOOLS = {}, DIGITS = 3, machen, picture: draw
           await ctx.tell(O.fixed);
           if (host.isConnected) why();
         },
-      });
+      }, t);
       fixer.open();
       q.ask(O.fix);
       ctx.tell(O.fix, "");

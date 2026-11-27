@@ -33,6 +33,24 @@ for (const [id, idea] of Object.entries(IDEAS)) {
     }
   }
 }
+// The summit's own families (welt/ideas/gipfel/): every answer found again by trying.
+{
+  const { task, check, STORIES } = await import(pathToFileURL(join(root, "gipfel", "tasks.js")));
+  console.log("\ngipfel");
+  for (const story of STORIES) {
+    const r = kit(1);
+    const seen = new Set();
+    let problems = 0;
+    for (let i = 0; i < N; i++) {
+      const t = task(r, story);
+      seen.add(t.key);
+      for (const problem of check(t)) if (problems++ < 3) console.log(`  ✗ ${story}: ${problem}  ${JSON.stringify(t)}`);
+    }
+    failed += problems;
+    console.log(`  ${problems ? "✗" : "✓"} ${story.padEnd(10)} ${String(seen.size).padStart(5)} different of ${N}`);
+  }
+}
+
 // The mountain: a camp needs only camps below it (so every camp can be reached), and a built camp's
 // idea lives on the mountain.
 console.log("\nberg");

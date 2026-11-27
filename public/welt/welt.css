@@ -2032,3 +2032,522 @@ body[data-world="berg"] .caption.quiet {
   justify-content: center;
   gap: 10px;
 }
+
+/* Camp 4: the chain of steps, rewound box by box */
+.chain {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: safe center;
+  gap: 4px;
+  padding: 12px 8px;
+  overflow-x: auto;
+}
+
+.chain-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: 46px;
+  height: 46px;
+  padding: 0 6px;
+  font-size: 20px;
+  font-weight: 800;
+  border: 3px dashed var(--ink);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.chain-box.known {
+  border-style: solid;
+  background: #e5f4e4;
+}
+
+.chain-box.now {
+  background: var(--sun);
+}
+
+.chain-step {
+  flex: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 12px;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.chain-step b::after {
+  content: " →";
+}
+
+.chain-undo {
+  min-height: 1.2em;
+  font-size: 13px;
+  font-weight: 800;
+  color: #c4372b;
+}
+
+/* Camp 5: figures from matches, a row of beads, days and beads to tap */
+.sticks-scene {
+  overflow-x: auto;
+}
+
+.sticks-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 18px;
+  min-width: min-content;
+  padding: 4px;
+}
+
+.sticks-fig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.sticks-svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.sticks-svg .wood {
+  stroke: #c8742c;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.sticks-svg .slot .wood {
+  stroke: #c9ced8;
+  stroke-dasharray: 4 5;
+}
+
+.sticks-svg .slot.on .wood {
+  stroke: #c8742c;
+  stroke-dasharray: none;
+}
+
+.sticks-svg .hit {
+  stroke: transparent;
+  stroke-width: 22;
+  stroke-linecap: round;
+  cursor: pointer;
+}
+
+.build-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.shape-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px;
+}
+
+.shape {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: 28px;
+}
+
+.shape.slot {
+  border: 3px dashed var(--ink);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.camp-choices.icons .choice-btn {
+  min-width: 60px;
+  font-size: 30px;
+}
+
+.camp-choices:not(.reasons) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+.camp-choices.icons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.camp-choices.icons .choice-btn {
+  width: auto;
+}
+
+.build-box {
+  width: 100%;
+}
+
+.build-box .find-count {
+  white-space: nowrap;
+}
+
+/* Camp 6: the scales (two pans on a beam that tips to the heavier side) */
+.scales-scene {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 16px;
+}
+
+.scale {
+  position: relative;
+  width: min(100%, 300px);
+  padding-bottom: 34px;
+}
+
+.scale.small {
+  width: min(100%, 200px);
+  opacity: 0.85;
+}
+
+.scale-pans {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 52px;
+  transition: transform 0.4s;
+}
+
+.scale-pan {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  justify-content: center;
+  gap: 2px;
+  min-height: 48px;
+  padding: 4px 4px 6px;
+  border-bottom: 5px solid var(--ink);
+  border-radius: 0 0 40% 40%;
+  transition: transform 0.4s;
+}
+
+.scale-beam {
+  height: 6px;
+  margin: 4px 12px 0;
+  border-radius: 3px;
+  background: var(--ink);
+  transition: transform 0.4s;
+}
+
+.scale-foot {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border: 16px solid transparent;
+  border-bottom: 30px solid var(--ink);
+  border-top: 0;
+}
+
+.scale[data-tilt="left"] .scale-beam {
+  transform: rotate(-8deg);
+}
+
+.scale[data-tilt="right"] .scale-beam {
+  transform: rotate(8deg);
+}
+
+.scale[data-tilt="left"] .scale-pan:first-child,
+.scale[data-tilt="right"] .scale-pan:last-child {
+  transform: translateY(12px);
+}
+
+.scale[data-tilt="left"] .scale-pan:last-child,
+.scale[data-tilt="right"] .scale-pan:first-child {
+  transform: translateY(-12px);
+}
+
+.scale[data-tilt="level"] .scale-beam {
+  background: var(--ok);
+}
+
+.scale-thing {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.scale.small .scale-thing {
+  font-size: 18px;
+}
+
+.scale-many {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 24px;
+}
+
+.scale-many b {
+  font-size: 17px;
+}
+
+.scale-weight {
+  padding: 2px 6px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  border-radius: 8px 8px 4px 4px;
+  background: #4b5563;
+}
+
+.scale-status {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  font-weight: 800;
+}
+
+.weight-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 18px;
+  min-width: 80px;
+}
+
+.weight-btn small {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Camp 7: things to swap (all the small kind at first) */
+.swap-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+}
+
+.swap-btn {
+  min-width: 52px;
+  min-height: 52px;
+  padding: 0 6px;
+  font-size: 26px;
+  background: #fff;
+}
+
+.swap-btn.big {
+  background: var(--sun);
+}
+
+.scale-status.ok {
+  color: var(--ok);
+}
+
+/* Camp 8: the chessboard, dancers in groups */
+.board-svg .cell.dark { fill: #6b4f3a; }
+.board-svg .cell.light { fill: #f3e3c3; }
+.board-svg .cell.gone { fill: #fff; stroke: #c9ced8; stroke-dasharray: 3 3; }
+.board-svg .cell-x { fill: #e8488a; font-weight: 800; }
+
+.dancer.picked { background: var(--sun); }
+.dancer.grouped[data-g="0"] { background: #ffd6e7; }
+.dancer.grouped[data-g="1"] { background: #cfeaff; }
+.dancer.grouped[data-g="2"] { background: #d8f5c8; }
+.dancer.grouped[data-g="3"] { background: #ffe8c2; }
+.dancer.grouped[data-g="4"] { background: #e6dcff; }
+.dancer.grouped[data-g="5"] { background: #c9f2ee; }
+
+/* Camp 9: signs on the rock */
+.rock-scene {
+  display: flex;
+  justify-content: center;
+}
+
+.rock-svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.rock-line {
+  stroke: #5b4636;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.rock-label {
+  font-size: 15px;
+  font-weight: 800;
+  fill: var(--ink);
+}
+
+.rock-svg .tri {
+  fill: rgba(255, 200, 58, 0.65);
+}
+
+.rock-svg .tri.again {
+  fill: rgba(232, 72, 138, 0.45);
+}
+
+.clock-face { fill: #fff; stroke: var(--ink); stroke-width: 3; }
+.clock-tick { stroke: var(--ink); stroke-width: 2; }
+.clock-twelve { fill: #e8488a; }
+.clock-hour { stroke: var(--ink); stroke-width: 6; stroke-linecap: round; }
+.clock-minute { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+
+.net-cell { fill: #fff; stroke: var(--ink); stroke-width: 2.5; }
+.net-cell.mark { fill: var(--sun); }
+.net-num { font-size: 22px; font-weight: 800; fill: var(--ink); }
+
+/* Camp 10: the hand with the drawn socks */
+.drawn:empty {
+  display: none;
+}
+
+.draw-btn {
+  align-self: center;
+  min-width: 160px;
+}
+
+/* Camp 11: the heap to play with */
+.heap .heap-stone {
+  font-size: 22px;
+}
+
+.take-btn:disabled {
+  opacity: 0.4;
+}
+
+/* Camp 12: the number wall and the magic square */
+.wall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.wall-row {
+  display: flex;
+  gap: 4px;
+}
+
+.brick {
+  min-width: clamp(42px, 13vw, 60px);
+  height: 38px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #e9a27a;
+  border: 2px solid #9c5a3c;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.brick.empty {
+  background: #f6e3d6;
+  border-style: dashed;
+}
+
+.brick.ask {
+  background: var(--sun);
+  border-color: var(--ink);
+}
+
+.brick.now {
+  box-shadow: 0 0 0 3px #e8488a;
+}
+
+.magic {
+  display: grid;
+  grid-template-columns: repeat(3, 52px);
+  gap: 4px;
+  justify-content: center;
+}
+
+.magic-cell {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #fff;
+  border: 2px solid var(--ink);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.magic-cell.empty {
+  background: #eee;
+  border-style: dashed;
+}
+
+.magic-cell.ask {
+  background: var(--sun);
+}
+
+/* The summit: pick the tool from the backpack, then the logbook */
+.tool-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.summit-from {
+  color: #5b6478;
+  font-weight: 700;
+}
+
+.tool-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.tool-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 84px;
+  padding: 8px 6px;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.tool-btn .tool-icon {
+  font-size: 26px;
+}
+
+.tool-btn:disabled:not(.right) {
+  opacity: 0.45;
+}
+
+.summit-log .log-list {
+  margin: 0;
+  padding-left: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

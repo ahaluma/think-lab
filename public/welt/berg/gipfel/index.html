@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Gipfel · AnkaPlay</title>
+    <meta name="theme-color" content="#e9eef2" />
+    <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+    <link rel="stylesheet" href="/shared/base.css" />
+    <link rel="stylesheet" href="../../welt.css" />
+    <script type="module" src="gipfel.js"></script>
+  </head>
+  <body data-world="berg">
+    <main class="app">
+      <div class="topbar">
+        <a class="icon-btn" id="home" href="/welt/berg/" aria-label="Zum Berg"></a>
+        <div class="spacer"></div>
+        <ol class="steps" id="steps" data-t-label="progress" aria-label="Aufgaben"></ol>
+        <div class="spacer"></div>
+        <button class="icon-btn" id="hint" type="button" data-t-label="hint" aria-label="Tipp" hidden>💡</button>
+        <button class="icon-btn sun" id="hear" type="button" data-t-label="hear" aria-label="Vorlesen"></button>
+      </div>
+      <p class="caption" id="caption" aria-live="polite"></p>
+
+      <!-- Start: the summit and one big button. -->
+      <section class="screen" id="start">
+        <div class="start-art" aria-hidden="true">🏔️</div>
+        <button class="btn go play pulse" id="play" type="button" data-t-label="play" aria-label="Spielen"></button>
+      </section>
+
+      <!-- Play: first the tool from the backpack, then the board of the task's camp. -->
+      <section class="screen board" id="board" hidden></section>
+
+      <!-- Done: the logbook. -->
+      <section class="screen" id="done" hidden>
+        <div class="think-card card pop summit-log">
+          <span class="think-icon" aria-hidden="true">📓</span>
+          <strong id="logTitle"></strong>
+          <ol class="log-list" id="log"></ol>
+        </div>
+        <div class="next">
+          <button class="btn" id="again" type="button"></button>
+          <a class="btn sun" id="back" href="/welt/berg/"></a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

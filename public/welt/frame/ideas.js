@@ -57,15 +57,15 @@ export const MOUNTAIN = [
   { id: "zaun", height: 1, ideas: ["zaun"] },
   { id: "haken", height: 1, needs: ["zaun"], ideas: ["haken"] },
   { id: "huetten", height: 1, needs: ["haken"], ideas: ["huetten"] },
-  { id: "vorrat", height: 2, needs: ["huetten"] },
-  { id: "ameisen", height: 2, needs: ["zaun"] },
-  { id: "waage", height: 2, needs: ["vorrat"] },
-  { id: "stall", height: 3, needs: ["huetten", "waage"] },
-  { id: "tanz", height: 3, needs: ["ameisen"] },
-  { id: "fels", height: 3, needs: ["haken"] },
-  { id: "socken", height: 4, needs: ["huetten", "tanz"] },
-  { id: "steine", height: 4, needs: ["vorrat", "tanz"] },
-  { id: "mauer", height: 4, needs: ["vorrat", "waage"] },
+  { id: "vorrat", height: 2, needs: ["huetten"], ideas: ["vorrat"] },
+  { id: "ameisen", height: 2, needs: ["zaun"], ideas: ["ameisen"] },
+  { id: "waage", height: 2, needs: ["vorrat"], ideas: ["waage"] },
+  { id: "stall", height: 3, needs: ["huetten", "waage"], ideas: ["stall"] },
+  { id: "tanz", height: 3, needs: ["ameisen"], ideas: ["tanz"] },
+  { id: "fels", height: 3, needs: ["haken"], ideas: ["fels"] },
+  { id: "socken", height: 4, needs: ["huetten", "tanz"], ideas: ["socken"] },
+  { id: "steine", height: 4, needs: ["vorrat", "tanz"], ideas: ["steine"] },
+  { id: "mauer", height: 4, needs: ["vorrat", "waage"], ideas: ["mauer"] },
 ];
 
 /** The camp an idea belongs to (or undefined for an idea of the nature world). */
@@ -95,6 +95,24 @@ export const IDEAS = {
   haken: { place: "haken", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
   // Camp 3: logic puzzles, solved by ruling out (each one checked by a solver: exactly one solution).
   huetten: { place: "huetten", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 4: think backwards (undo every step, the last one first).
+  vorrat: { place: "vorrat", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 5: find the rule of a row and jump far ahead (sequences, matches, days of the week, sums).
+  ameisen: { place: "ameisen", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 6: what weighs the same can take the other's place (scales, sums and differences, weights).
+  waage: { place: "waage", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 7: assume they are all the small kind, then swap one at a time (heads and legs, points).
+  stall: { place: "stall", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 8: pairs and the rest (even and odd, groups, colours on a board, last digits).
+  tanz: { place: "tanz", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 9: count in order and turn things in your head (triangles, squares, mirrors, cube nets).
+  fels: { place: "fels", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 10: to be sure, think of the worst luck (socks in the dark, birthdays, boxes).
+  socken: { place: "socken", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 11: games against the owl, thought from the end (heaps, counting games, chocolate).
+  steine: { place: "steine", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
+  // Camp 12: number walls and riddles, narrowed down clue by clue (gaps, magic squares, codes).
+  mauer: { place: "mauer", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
 /** The map an idea lives on: "/welt/" or "/welt/berg/". */
