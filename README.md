@@ -15,7 +15,7 @@ Small number and logic games for young children („अङ्क“ / *anka* = n
 | ------------ | ----------------------------------------------------------------------------------------------- | ------------------------------- |
 | **Category** | A big learning area. One row of tiles on the start page.                                        | `zahlen`, `rechnen`, `sprache`  |
 | **Skill**    | One ability inside a category (the "subcategory"). Groups the progress report.                  | `zahlen/zaehlen`, `rechnen/plus` |
-| **Game**     | One folder with one game idea. Several small games may train the same skill.                    | `games/zahlenzug/`              |
+| **Game**     | One folder with one game idea, outside the worlds. Only the number memory is left.              | `games/zahlen-memory/`          |
 | **Level**    | The parameters that make a game easier or harder, in the game's `levels.js`. Each level has a fixed `id`, the `age` it is made for and a `label` for parents. The level follows the child by itself (`shared/adapt.js`). | `{ id: "bis-3", age: 3, max: 3 }` … |
 
 Categories, skills and games are all listed in `public/catalog.js`. Levels stay inside each game, because only the game knows what "harder" means.
@@ -41,7 +41,7 @@ think-lab/
 │   │   ├── store.js         ← safe localStorage
 │   │   └── lang/de.js       ← words every page needs (numbers, praise, names of the things)
 │   ├── games/
-│   │   └── zahlenzug/       ← one folder = one game (flat: the category is in catalog.js)
+│   │   └── zahlen-memory/   ← one folder = one game (flat: the category is in catalog.js)
 │   │       ├── index.html
 │   │       ├── game.css
 │   │       ├── game.js      ← the game, no texts
@@ -77,7 +77,7 @@ The start page has a door to each; the one that fits the child's age comes first
 The idea: a **grid of ideas and perspectives**. Every mathematical idea can be played in five
 perspectives, each with a fixed symbol: see 👁️, make ✋, explore 🔍, use 🔑, check ✅. The map is a
 piece of nature with six places. A place with something to play is awake, the others sleep.
-Four places are awake. A place can hold more than one idea: the map then first shows a choice of
+All six places are awake. A place can hold more than one idea: the map then first shows a choice of
 ideas at that place (`ideaTabs` in `lang/`), then the five perspectives of the chosen one.
 
 | Place | Idea | See 👁️ | Make ✋ | Explore 🔍 | Use 🔑 | Check ✅ |
@@ -87,6 +87,12 @@ ideas at that place (`ideaTabs` in `lang/`), then the five perspectives of the c
 | Burrow and pond | `zehn`: friends of ten | frogs on lily pads: how many are free? | fill the nut box | the staircase of friends | 7 + ? = 10 | the owl's friends: right or one off? |
 | Fruit tree and nests | `gruppen`: groups of the same size, sharing fairly | eggs under the hen | share among the animals | think first: does it come out even? | cherries: for how many birds is it enough? | the owl shared: who has too many? |
 | Forest | `muster`: a row goes on, because one piece comes again and again | what comes next? | lay the next things | which piece comes again? | the same row with other things | the owl laid a row: find the wrong thing |
+| Hill and lake | `lage`: where is it? | who is under the table? | put the animal on the table | where is it? pick the word (a small picture on each) | the bench: who sits between …? | the owl says where it is |
+| Hill and lake | `form`: circle, triangle, square, rectangle | tap the circle | build a picture from shapes | find all the triangles | which shape is the clock? | the owl names the shape |
+| Hill and lake | `groesse`: longer, higher, heavier, in order | which snake is longer? which glass has more water? | from the smallest to the biggest | the balance: think first, which is heavier? | the small bear needs a bed | the owl says which snake is the longest |
+| Sky | `sortieren`: what belongs together | which basket? | sort six things | which one does not fit? | baskets without a sign: find the rule | the owl sorted: find the wrong thing |
+| Sky | `folge`: first and then | what was first? | lay the picture story | what happens next (level 3: what was before)? | who is first, second, third at the flag? | the owl laid a story: is the order right? |
+| Sky | `schauen`: look closely | find the differences | colour the same places | the same from memory | which picture is just like this one? | the owl says the two pictures are the same |
 
 **Two number ranges: up to 5 and up to 10** (`ranges` in `frame/ideas.js`); the forest has three.
 A child starts by age (`frame/record.js`): under 6 up to 5, from 6 up to 10. Three good perspectives move the
@@ -94,6 +100,17 @@ range up; two weak rounds of an idea in a row move it down (`record.settle`), an
 show the digit and that many dots. Up to 20 they show only the digit, the dots stay on the sign of the
 whole and in the hint. More than ten pictures are drawn smaller, still five in a row. In the range up
 to 20 the stepping stones also go in steps of two.
+
+**Hill and lake, sky: three levels** instead of number ranges (`startAges` in `frame/ideas.js`: 3 → level 1,
+4 → level 2, from 5 → level 3), shown on the parents' page as "Stufe 1 … 3". They hold the ideas of the
+old games "Wo ist es?", "Formen", "Größen vergleichen", "Sortieren", "Zuerst und dann", "Wer ist Erster?"
+and "Genau hinschauen", as far as they are preschool ideas. The school parts of those games (days of the
+week, the clock, corners and edges, mirroring, ordinals up to 20, colour and kind at once) are in the town.
+Level 1: on, under, next to; circle, triangle, square; two things far apart in size; sorting by kind;
+stories of three pictures; 2 × 2 places. Level 2 adds in front of and behind, the rectangle, three
+things, water, colours, stories of four. Level 3 adds left and right, turned shapes, snakes that do not
+start at one line, small but heavy, big and small animals and three baskets, "what was before?",
+first to fifth, two differences and look-alikes (🍎 and 🍏).
 
 At the fruit tree the three ranges say how many things there are to share in all: up to 6, 10 or 20
 (`MOST` in `ideas/gruppen/tasks.js`). The answers are small numbers, 1 to 5: how many each gets, or
@@ -127,10 +144,9 @@ lie mixed up and are laid in order. "Wo sind mehr?" and "Wer kommt dazu?" were d
 
 The meadow holds the ideas of the old games "Zahlenzug" and "Gleich machen", the forest the idea of
 "Muster-Kette", the fruit tree the idea of "Gerecht teilen", the burrow the idea of "Zehnerfreunde".
-These games have **moved**: in `catalog.js` they carry `moved: "<idea>"` and are no longer on the
-start page (`shared/fit.js`). Their folders stay until the world covers everything they do, and
-parents can switch each one back on per child on `/eltern/`. "Wie viele?", "Blitzblick",
-"Zahlenhaus" and "Plus" were deleted: the meadow, the burrow and the market do all they did.
+Their folders are deleted, like those of "Wie viele?", "Blitzblick", "Zahlenhaus" and "Plus":
+the worlds do all they did. Their school levels (numbers only, with signs, beyond 10) are in the town
+and at the market. Hill and lake and the sky hold the other old games (see the levels above).
 
 **Games that live at a place as they are.** A place can also hold a game from `catalog.js` unchanged
 (`games` in `PLACES`, `frame/ideas.js`): the map shows it below the five perspectives, marked "play
@@ -424,9 +440,9 @@ Where a game has tasks (rounds), one function makes each task, so every round is
   const nextTask = gen.generator(task, { avoid: { thing: 3, count: 1 } }); // not the same thing as in the last 3 tasks, not the same number as last time
   const t = nextTask(LEVELS[play.level]);
   ```
-- **Testing:** open a game with `?seed=7` in the address (`/games/zahlenzug/?seed=7`) and it deals the same tasks every time (at the same level). Without a seed every game is different. `node tools/check-tasks.mjs` (optional, nothing to install) makes 2000 tasks per level of every game with a `tasks.js`, runs `check()` on them and shows how many different tasks each level has.
+- **Testing:** open a game with `?seed=7` in the address (`/games/zahlen-memory/?seed=7`) and it deals the same tasks every time (at the same level). Without a seed every game is different. `node tools/check-tasks.mjs` (optional, nothing to install) makes 2000 tasks per level of every game with a `tasks.js`, runs `check()` on them and shows how many different tasks each level has.
 
-`zahlenzug` is the example; `zehnerfreunde`, `gleich-machen`, `gerecht-teilen`, `wer-ist-erster`, `zahlen-memory`, `muster-kette`, `groessen`, `raumlage`, `reihenfolge`, `sortieren`, `genau-hinschauen` and `formen` use it too.
+`zahlen-memory` uses it.
 
 ## Guidelines for every game
 
@@ -438,18 +454,11 @@ Where a game has tasks (rounds), one function makes each task, so every round is
 
 ## The games
 
+Every game of the old start page has moved into the worlds (see "The new world", "The town" and "The
+market"); the start page shows only the world doors. One game is left as its own page:
+
 | Game        | Folder              | Skill            | For the child                                                                                             |
 | ----------- | ------------------- | ---------------- | --------------------------------------------------------------------------------------------------------- |
-| Zahlenzug | `games/zahlenzug/` | `zahlen/reihe` | A train with numbered wagons. Find the missing wagon, say which number comes after or before, or hang the mixed-up wagons on in order (each one is read out). Levels: 1–4, 1–5, after/before up to 10, trains starting anywhere up to 10, after/before up to 20. The train drives off after each right answer. |
-| Zehnerfreunde | `games/zehnerfreunde/` | `rechnen/zerlegen` | How many are missing to 10? A ten-frame (2 × 5 places) with animals: tap how many places are still empty. At the end the missing animals fill the empty places (on green): "Sieben und drei sind zusammen zehn." Levels: one row of 5; 10 with the top row full; any amount; animals mixed up in the frame; frame shown only briefly (tap to look again); only numbers 7 + ? = 10 (after two wrong answers the frame helps); also ? + 3 = 10. |
-| Gleich machen | `games/gleich-machen/` | `rechnen/minus` | Two meadows, one with more animals: make them equal. A first step towards minus. The child taps animals on the fuller meadow and they hop into their house (tap the house: one comes back), then ✓. Right: both groups jump and the sum shows (7 − 3 = 4): "Drei Hasen gehen nach Hause. Jetzt sind auf beiden Wiesen vier." After two wrong answers the animals line up in pairs, a line joins partners and the ones without a partner glow. Tapping the smaller meadow, too many or too few count as wrong. Levels: up to 5, up to 10; then give the number with pictures (7 − ? = 4: one of three, or the number pad from 8), then numbers only (the pairs help after two wrong answers); then the other way round: "Wie viele müssen dazu?" (tap the house of the smaller meadow, 4 + ? = 7), numbers only, away or more mixed up to 10 and up to 20. |
-| Wer ist Erster? | `games/wer-ist-erster/` | `zahlen/ordnung` | Ordinal numbers: the animals queue for ice cream, the one at the ice-cream cart is the first. "Tippe auf das dritte Tier!" Levels: first or last (3–4 animals), first to third, first to fifth (sometimes "the last"), "Das wievielte Tier ist der Löwe?" (one of three answers like "3.", the number pad from 8), "Wer steht direkt vor / hinter dem Löwen?", up to the eighth, counting from the back ("das zweite Tier von hinten"), then all mixed. A wrong tap says what it was ("Das ist das zweite Tier."); after two wrong answers the places 1, 2, 3 … appear under the animals (from the back on "von hinten" tasks). The animal found gets its place in green. |
-| Gerecht teilen | `games/gerecht-teilen/` | `rechnen/teilen` | A basket of cookies (apples, carrots …) and 2–4 animal friends with a plate each: share fairly. A first idea of dividing and halving. The child taps a plate and one thing jumps from the basket onto it (tap it on the plate: back into the basket), then ✓. Right: the friends jump, every plate shows its number and the sum appears (6 : 2 = 3): "Jeder bekommt drei Kekse." After two wrong answers every plate shows how many are on it. Levels: 2 friends up to 6 and 10, 3 friends up to 12, 2–4 friends; then one or two are left over and stay in the basket ("Eins bleibt im Korb. Das kann man nicht gerecht teilen."); then halving (5 for 2: the last one is tapped and cut in half, two and a half each, 5 : 2 = 2½); then "Wie viele bekommt jeder?" with pictures (one of three, or the number pad from 8; after two wrong answers the things are dealt out one by one), numbers only up to 20 and up to 50 (times tables). |
 | Zahlen-Memory | `games/zahlen-memory/` | `zahlen/erkennen` | Memory with number cards (4) and picture cards (4 apples). Every tapped card is read out. Levels: 3 open pairs up to 3 and 5, then face down with 3–6 pairs up to 10, then 6 pairs with numbers up to 12, 15 and 20. A wrong pair counts as a mistake only with open cards. One star per board, 3 boards per game. |
-| Muster-Kette | `games/muster-kette/` | `logik/muster` | A chain of animals, fruit or flowers repeats a pattern: what comes next? Tap one of three big pictures. Levels: AB (🍎🍌🍎🍌), longer AB, ABB, ABC, AABB, all mixed, then the empty bead moves into the middle: what is missing? After two wrong answers the repeating part is marked. For older children: growing patterns (🍎🍌 / 🍎🍎🍌 / 🍎🍎🍎🍌, one row per step), number sequences (to 20, steps of 2–10 also backwards, to 100), shape and colour at once (🔴🟦🟡…: the shape follows one pattern, the colour another), and a mix of the hard ones. From 9 years, number sequences up to 1000: times sequences (×2, ×3: 5, 10, 20, 40, ?), divided-by sequences (÷2, ÷3: 729, 243, 81, ?), a step that grows each time (+1, +2, +3 …), times and divided by 2–5 with the gap in the middle, square and triangular numbers, Fibonacci (1, 1, 2, 3, 5, 8 … and with other start numbers), primes up to 100, all famous sequences with the gap in the middle, and a mix of all hard number sequences. Number chains: from 8 the child types the number on the number pad (it shows in the empty bead); the hint uses the numbers of the chain ("5 und 8 sind 13", "7 mal 7 ist 49") and comes after 5 wrong tries, the answer after 7. |
-| Größen vergleichen | `games/groessen/` | `messen/groessen` | Compare sizes, ages 3–7. Tap the longer pencil, the higher tower, the glass with more water, or on a balance the heavier side (it goes down); later also shorter, lower, less, lighter. Levels: two pencils or towers, also shorter/lower, two glasses, a balance with two animals (an elephant is heavier than a rabbit), three things (the longest, the most water), put three in order by tapping (each gets its number, then they line up), pencils that don't start at one line and towers on hills, small but heavy (a stone and a balloon: the balance tells the truth), wide and narrow glasses (the lower water can be more), four or five in order (also big to small), two balances with three parcels (which is the heaviest of all?), all mixed. After a wrong answer (with only two things: after one) help: dashed lines at the ends, everything moves onto one line or one ground, the water is poured into the same glasses, an arrow shows the side that went down, or the next one to tap wiggles. |
-| Sortieren | `games/sortieren/` | `logik/sortieren` | One thing at a time: tap the basket where it belongs. Each basket already holds one example. Levels: animal or fruit, animal or vehicle, red or yellow, red/yellow or green (coloured baskets), big or small animals, all mixed; then "Was passt nicht dazu?": four things, three belong together (kind, colour, then all rules). After the right odd one: "Die anderen sind alle Tiere." Harder levels: 3 baskets (animal/fruit/vehicle, red/yellow/green), tricky things (a blue whale when the animal basket shows a red ladybird and the vehicle basket a blue car: "Die Farbe ist egal!"), 4 baskets (adds flowers, blue), a rule switch (four things sorted by colour, then "Neue Regel!" and the same four by kind), then all of these mixed. For older children: colour and kind at once (4 baskets: red animal, red fruit, yellow animal, yellow fruit), find the rule yourself (each basket shows two examples, nobody says the rule), hidden rules (can it fly? at home in the water or on land? a penguin cannot fly), odd one out with hidden rules, and a mix of the hard ones. |
-| Formen | `games/formen/` | `logik/formen` | Circle, triangle, square and rectangle (shapes drawn as SVG, no pictures to load). Find: "Tipp auf den Kreis!" one of three, then of four in other colours and sizes, then turned, long or flat (a triangle on its tip is still a triangle). Build pictures: a house, an ice cream, a rocket, a robot … made of shapes; the gaps are dashed and the next one glows: which shape fits? (small pictures with 2–3 parts, then 4–6 parts). Find all: nine shapes on a board, tap all the triangles. Count: how many circles are in the train? (one of three, or the number pad from 8). Riddles: "Ich habe drei Ecken. Wer bin ich?" Then all of these mixed. After two wrong answers (typing: five) the corners get dots and the game says what makes the shape; when counting only the shapes to count stay bright. |
-| Wo ist es? | `games/raumlage/` | `logik/raumlage` | Where things are (Raumlage), ages 3–7. Animals sit around a table with a cloth: "Wer ist unter dem Tisch?" (tap the animal) or one waits at the top: "Setz mich auf den Tisch!" (tap the empty place). Words: auf, unter, neben, vor, hinter (only the head peeks out above the table), then links and rechts from the child's view; animals on a bench: "Wer sitzt zwischen dem Hasen und dem Fuchs?", "links neben dem Bären?"; a shelf with 3 × 3 compartments: "Wer sitzt oben links?", "Setz mich unten in der Mitte!". A wrong animal says where it is ("Der Fuchs ist neben dem Tisch."); after two wrong answers the right place glows, for left and right with the tip "your left hand makes an L". Levels: auf/unter, + neben, put it there, vor/hinter, zwischen, links/rechts, put it left/right, a row of 5, shelf, put it in the shelf, all mixed. |
-| Genau hinschauen | `games/genau-hinschauen/` | `logik/hinschauen` | Concentration practice for preschoolers, two kinds of task taking turns (find, copy, find, copy, find). **Find the differences:** two pictures (a little landscape with animals and things) are almost the same; tap what is different on either picture: a thing is missing, another thing, looks the other way, or is smaller. Found ones get a green ring on both pictures and are named ("Die Schnecke schaut in die andere Richtung. Noch zwei Unterschiede."). After two wrong taps the next difference glows. **Copy the shapes:** a model with coloured shapes on top, an empty board below: tap a shape, then a place (tap again to take it away), then ✓. A wrong ✓ gives a hint (too few, too many, look at the places); after two the places that are still different glow; after five the solution shows. Levels: 2 × 2 with 1 difference and one shape; 3 × 3 with 1, 2, 3 differences (also turned around) and 1–3 shapes plus one that is not needed; 4 × 4 (also smaller, 4 colours, stars and hearts); copy from memory (the model is covered after 5 s, tap the cloth to look again); copy mirrored as in a lake (the top row goes to the bottom); 5 × 5 with 5 small differences where a swapped thing is one already in the picture; expert: mirrored from memory. |
-| Zuerst und dann | `games/reihenfolge/` | `logik/zeit` | Order and time, ages 3–7. Picture stories lie mixed up (🫘 🌱 🌻, 🥚 🐣 🐥 🐔, ⛄ ☀️ 💧): tap them in order, each one moves up into the next numbered place and is read out. Other tasks: day or night?; put morning, midday, evening and night in order (a different thing to do each time: 🐓, 🍝, 📖, 🦉); when is that? (🥣 → morning, 🛷 → winter); put the seasons in order from a given one ("and then the year starts again"); one picture of a story: what came just before, what comes just after?; days of the week: "Heute ist Dienstag. Welcher Tag ist morgen?" first with the coloured week strip, then also yesterday and without the strip (in Nepali the week starts on Sunday). After two wrong answers the right picture glows. Levels: tag-nacht (3), geschichte-3, tag-ordnen (4), tageszeit, geschichte-4, jahreszeit (5), jahreszeiten-ordnen, vorher-nachher, wochentage (6), wochentage-gestern, alles-gemischt (7). |
+
+It is played at the meadow, by two children together (`games` of the place in `frame/ideas.js`).

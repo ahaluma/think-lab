@@ -52,7 +52,7 @@ export const PLACES = [
   { id: "gruppen", awake: true, ideas: ["gruppen"] },
   { id: "regeln", awake: true, ideas: ["muster"] },
   { id: "raum", awake: true, ideas: ["lage", "form", "groesse"] },
-  { id: "daten", awake: false },
+  { id: "daten", awake: true, ideas: ["sortieren", "folge", "schauen"] },
 ];
 
 /** The town (welt/stadt/): the world for school children. A place holds ideas played in the rounds of
@@ -115,6 +115,10 @@ export const IDEAS = {
   lage: { place: "raum", ranges: [1, 2, 3], startAges: [0, 4, 5] },
   form: { place: "raum", ranges: [1, 2, 3], startAges: [0, 4, 5] },
   groesse: { place: "raum", ranges: [1, 2, 3], startAges: [0, 4, 5], cards: { forschen: "vorhersagen", anwenden: "vergleichen", pruefen: "vergleichen" } },
+  // The sky (preschool): levels as well.
+  sortieren: { place: "daten", ranges: [1, 2, 3], startAges: [0, 4, 5], cards: { forschen: "vergleichen", anwenden: "vergleichen" } },
+  folge: { place: "daten", ranges: [1, 2, 3], startAges: [0, 4, 5], cards: { forschen: "vorhersagen" } },
+  schauen: { place: "daten", ranges: [1, 2, 3], startAges: [0, 4, 5], cards: { sehen: "vergleichen", machen: "vergleichen", anwenden: "vergleichen" } },
   teile: { place: "teile", ranges: [5, 10], tasks: { forschen: 3 } },
   // Friends of ten: friends of five (a hand) and friends of ten (the ten-frame).
   zehn: { place: "teile", ranges: [5, 10], cards: { machen: "ausprobieren", pruefen: "nachpruefen" } },
