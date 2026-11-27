@@ -1,6 +1,7 @@
 // English texts for the new world (map, round, the idea "Teile": numbers are made of numbers).
 // Number words and names of the things are in /shared/lang/en.js. a, b, c … = number words ("three").
 const big = (text) => text[0].toUpperCase() + text.slice(1);
+const pv = (k, word) => (k === "1" ? word : word + "s"); // "1 ten", "3 tens"
 
 /** 1st, 2nd, 3rd, 4th … 11th, 12th, 13th, 21st (for dates in the stories). */
 const ord = (x) => {
@@ -97,7 +98,9 @@ export default {
   allGames: "All games",
   save: "Back up",
   privacy: "Privacy",
-  ideas: { zahl: "A number says how many", teile: "Numbers are made of numbers", muster: "A row always goes on like this", gruppen: "Sharing fairly: everyone gets the same", zaun: "Posts and gaps", haken: "Count every possibility, none twice", huetten: "Logic puzzles: rule out until one is left", vorrat: "Think backwards: from the end to the start", ameisen: "Find the rule: jump far without writing it all down", waage: "Swap it: what weighs the same may swap", stall: "Assume and improve: all the same first, then swap", tanz: "Make pairs: even, odd and the rest", fels: "Count in order and turn it in your head", socken: "The worst case: sure is what works even with bad luck", steine: "From the end: games against the owl", mauer: "Narrowing down: clue by clue, until one number is left" },
+  ideas: { zahl: "A number says how many", stellen: "Ten ones make a ten: tens and ones", zehn: "Friends of ten: two numbers fill it up together", teile: "Numbers are made of numbers", muster: "A row always goes on like this", gruppen: "Sharing fairly: everyone gets the same", zaun: "Posts and gaps", haken: "Count every possibility, none twice", huetten: "Logic puzzles: rule out until one is left", vorrat: "Think backwards: from the end to the start", ameisen: "Find the rule: jump far without writing it all down", waage: "Swap it: what weighs the same may swap", stall: "Assume and improve: all the same first, then swap", tanz: "Make pairs: even, odd and the rest", fels: "Count in order and turn it in your head", socken: "The worst case: sure is what works even with bad luck", steine: "From the end: games against the owl", mauer: "Narrowing down: clue by clue, until one number is left" },
+  ideaTabs: { zahl: "How many?", stellen: "Tens and ones", teile: "Splitting numbers", zehn: "Friends of ten" },
+  pickIdea: "What would you like to play?",
   perspectives: { sehen: "See", machen: "Make", forschen: "Explore", anwenden: "Use", pruefen: "Check" },
   states: { new: "new", played: "played", understood: "understood" },
   together2: "Play together",
@@ -251,6 +254,137 @@ export default {
       right: (n) => `Yes! There are ${n}.`,
       fixed: (n) => `Now it is right: there are ${n}.`,
       hint: "Count along: one, two, three …",
+    },
+  },
+
+  // ---------- Idea "Zehn": friends of ten (burrow and pond). Two numbers that fill it up together.
+  zehn: {
+    intro: {
+      sehen: "Frogs sit on the lily pads. How many pads are free?",
+      machen: "Fill the nut box right up!",
+      forschen: "One more here, one fewer there. What is missing?",
+      anwenden: "Which number fills it up?",
+      pruefen: "The owl is looking for friends. Is that right?",
+    },
+    friends: (a, b, whole) => `${big(a)} and ${b} make ${whole}.`,
+    sehen: {
+      story: (whole, n, nWord) => `The pond has ${whole} lily pads. ${n === 1 ? "One frog sits" : big(nWord) + " frogs sit"} on them.`,
+      ask: "How many pads are free?",
+      look: "Look again",
+      miss: (chosen, n, sum, whole) => `${big(n)} and ${chosen} make ${sum}. But there are ${whole} pads.`,
+      rows: (five) => `A full row is ${five}.`,
+      hint: "Look at the rows. The empty pads are free.",
+    },
+    machen: {
+      question: (whole, n) => `The box holds ${whole} nuts. ${big(n)} are in already. Take as many as still fit!`,
+      paw: "What the squirrel holds",
+      take: "Take a nut",
+      back: "Put the nut back",
+      pour: "In they go!",
+      tooFew: (k, word) => (k === 1 ? "One hole is still free. Take one more!" : `${big(word)} holes are still free.`),
+      tooMany: (k, word) => (k === 1 ? "One nut does not fit any more." : `${big(word)} nuts do not fit any more.`),
+      hint: "Count the empty holes.",
+    },
+    forschen: {
+      question: "Look at the rows. Which number is missing?",
+      questionTwenty: "At the top it is ten, below it is twenty. Which number is missing?",
+      miss: (chosen) => `With ${chosen} it is not full.`,
+      missTwenty: (n, chosen, sum) => `${big(n)} and ${chosen} make ${sum}.`,
+      done: (whole) => `Always one more and one fewer. Together it stays ${whole}.`,
+      doneTwenty: (a, b, n) => `${big(a)} and ${b} make ten. So ${n} and ${b} make twenty.`,
+      hint: "One number gets bigger, the other smaller.",
+      hintRows: "Go from row to row: + 1 on the left, − 1 on the right.",
+      hintTwenty: (a, n) => `Look at the top: what does ${a} need? ${n} needs just as many.`,
+    },
+    anwenden: {
+      question: (n, whole) => `Which number turns ${n} into ${whole}?`,
+      miss: (n, chosen, sum, whole) => `${big(n)} and ${chosen} make ${sum}, not ${whole}.`,
+      hint: "The empty places are still missing.",
+    },
+    pruefen: {
+      question: (a, b, whole) => `The owl says: ${a} and ${b} make ${whole}. Is that right?`,
+      look: "Look whether a place is still free or one is left over.",
+      fix: (a, whole) => `Well spotted! Which number turns ${a} into ${whole}?`,
+      fixMiss: (whole) => `Not yet. Together it should be ${whole}.`,
+      hint: (whole) => `All ${whole} places should be full, none left over.`,
+    },
+  },
+
+  // ---------- Idea "Stellen": tens and ones (meadow). Ten flowers make a bunch, ten bunches a basket.
+  stellen: {
+    intro: {
+      sehen: "Bunches and flowers. How many flowers are there?",
+      machen: "Make the number with bunches and flowers.",
+      forschen: "One more flower, one more bunch. What happens?",
+      anwenden: "Tens and ones. Which number is it?",
+      pruefen: "The owl has counted. Is that right?",
+    },
+    bigger: "You are good at this! Bigger numbers are coming soon.",
+    short: { h: "H", z: "T", e: "O" },
+    parts: ({ h, z, e }, num) =>
+      h ? `${num(h)} ${h === 1 ? "hundred" : "hundreds"}, ${num(z)} ${z === 1 ? "ten" : "tens"} and ${num(e)} ${e === 1 ? "one" : "ones"}` : `${num(z)} ${z === 1 ? "ten" : "tens"} and ${num(e)} ${e === 1 ? "one" : "ones"}`,
+    label: {
+      h: (k, v) => `${k} ${k === "1" ? "basket" : "baskets"}${v ? ` = ${v}` : ""}`,
+      z: (k, v) => `${k} ${k === "1" ? "bunch" : "bunches"}${v ? ` = ${v}` : ""}`,
+      e: (k) => `${k} ${k === "1" ? "flower" : "flowers"}`,
+    },
+    miss: {
+      swap: (z, z10) => `Bunches first: ${z} bunches are ${z10} flowers.`,
+      counted: "A bunch has ten flowers, not one.",
+      ten: "Nearly! Count the bunches again.",
+      other: "First count the bunches in tens: ten, twenty, thirty … Then add the flowers.",
+    },
+    sehen: {
+      ask: "How many flowers are there?",
+      done: (n, parts) => `There are ${n}: ${parts}.`,
+      hint: "A bunch has ten flowers. Count the bunches in tens.",
+    },
+    machen: {
+      question: (n) => `Make ${n} flowers!`,
+      addH: "Add a basket",
+      addZ: "Add a bunch",
+      addE: "Add a flower",
+      check: "Done",
+      miss: (value, n) => `That is ${value}. You need ${n}.`,
+      tie: "We tie ten flowers into a bunch!",
+      pack: "Ten bunches go into a basket!",
+      done: (n, parts) => `Exactly ${n}: ${parts}.`,
+      hint: "The table shows how many bunches and flowers you need.",
+    },
+    forschen: {
+      question: "Tap + and −. What happens to the number?",
+      opName: (op) =>
+        ({ 1: "One more flower.", "-1": "One flower fewer.", 10: "One more bunch.", "-10": "One bunch fewer.", 100: "One more basket.", "-100": "One basket fewer." })[op],
+      edge: "That does not work here. Try something else!",
+      more: "Try some more!",
+      ready: "Do you know what happens? Then tap the lamp.",
+      know: "I know!",
+      predict: (from, op) =>
+        `Think first: ${from} and ${({ 1: "one more flower", "-1": "one flower fewer", 10: "one more bunch", "-10": "one bunch fewer", 100: "one more basket", "-100": "one basket fewer" })[op]}. Which number is that?`,
+      yes: (from, answer) => `Yes! ${big(String(from))} becomes ${answer}.`,
+      predictMiss: (from, answer) => `Look: ${from} becomes ${answer}.`,
+      done: "You know how the number grows!",
+      hintTry: "Tap + 10 and watch which digit changes.",
+      hint: (op) => (Math.abs(op) === 1 ? "Only the ones change, unless they make ten." : Math.abs(op) === 10 ? "Only the tens change. The ones stay the same." : "Only the hundreds change."),
+    },
+    anwenden: {
+      build: (h, z, e, withH) => (withH ? `${h} ${pv(h, "hundred")}, ${z} ${pv(z, "ten")} and ${e} ${pv(e, "one")}. Which number is it?` : `${z} ${pv(z, "ten")} and ${e} ${pv(e, "one")}. Which number is it?`),
+      swap: (h, z, e, withH) => (withH ? `${e} ${pv(e, "one")}, ${z} ${pv(z, "ten")} and ${h} ${pv(h, "hundred")}. Which number is it?` : `${e} ${pv(e, "one")} and ${z} ${pv(z, "ten")}. Which number is it?`),
+      split: (n, ask) => `How many ${({ h: "hundreds", z: "tens", e: "ones" })[ask]} does ${n} have?`,
+      missSplit: (ask) => ({ h: "The hundreds are at the very front.", z: "The tens come before the ones.", e: "The ones are at the very end." })[ask],
+      missOver: "Ten ones make a ten. Bundle them!",
+      doneSplit: (n, parts) => `${n} has ${parts}.`,
+      done: (n, parts) => `${big(String(n))}: ${parts}.`,
+      hint: "Look at the bunches and flowers.",
+      hintOver: "Ten flowers become a bunch. Then count the bunches.",
+    },
+    pruefen: {
+      question: (said) => `The owl says: these are ${said} flowers. Is that right?`,
+      look: "Count again: first the bunches, then the flowers.",
+      fix: "Well spotted! How many are there?",
+      right: (n, parts) => `Yes! There are ${n}: ${parts}.`,
+      fixed: (n, parts) => `Now it is right: ${n}, that is ${parts}.`,
+      hint: "Every bunch counts as ten.",
     },
   },
 

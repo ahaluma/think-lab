@@ -246,7 +246,7 @@ $("play").innerHTML = icons.play;
 $("startArt").textContent = P.icon;
 $("again").textContent = T.again;
 $("other").textContent = T.other;
-$("other").href = `${mapOf(IDEA)}?o=${IDEAS[IDEA].place}`;
+$("other").href = `${mapOf(IDEA)}?o=${IDEAS[IDEA].place}${IDEAS[IDEA].world ? "" : `&i=${IDEA}`}`;
 $("home").href = mapOf(IDEA);
 $("feel").setAttribute("aria-label", T.feelQuestion);
 for (const b of $("feel").children) {

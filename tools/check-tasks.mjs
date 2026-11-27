@@ -1,7 +1,7 @@
 // Checks the task generators of all games (see public/shared/gen.js). Optional, nothing to install:
 //
 //   node tools/check-tasks.mjs            → every game with a tasks.js
-//   node tools/check-tasks.mjs wie-viele  → one game
+//   node tools/check-tasks.mjs zahlenzug  → one game
 //
 // For every level it makes many tasks with fixed seeds, runs the game's check() on each, and
 // prints how many different tasks a level has and how the answers are spread.

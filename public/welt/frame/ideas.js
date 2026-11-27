@@ -9,7 +9,9 @@
 // Four places are awake: the meadow with the idea "zahl" (a number says how many), the burrow with
 // "teile" (numbers are made of numbers), the forest with "muster" (a row goes on, because one piece
 // comes again and again) and the fruit tree with "gruppen" (groups of the same size, sharing fairly).
-// The other places are on the map, asleep.
+// A place can hold more than one idea: the meadow also holds "stellen" (ten ones make a ten: tens and
+// ones, up to 1000), the burrow "zehn" (two numbers that fill a ten together: friends of ten). The map
+// then shows a choice of ideas at that place. The other places are on the map, asleep.
 //
 // A second world grows next to it: the thinking mountain (welt/berg/), for Mathe-Olympiade training.
 // Its places are camps on the way up (MOUNTAIN). Each camp gives one thinking tool, and the camps
@@ -40,8 +42,8 @@ export const CARDS = {
  *  games: games from catalog.js that live at this place as they are (their own page, their own levels):
  *  games to play together, like the memory game. The map shows them below the five perspectives. */
 export const PLACES = [
-  { id: "zahlen", awake: true, ideas: ["zahl"], games: ["zahlen-memory"] },
-  { id: "teile", awake: true, ideas: ["teile"] },
+  { id: "zahlen", awake: true, ideas: ["zahl", "stellen"], games: ["zahlen-memory"] },
+  { id: "teile", awake: true, ideas: ["teile", "zehn"] },
   { id: "gruppen", awake: true, ideas: ["gruppen"] },
   { id: "regeln", awake: true, ideas: ["muster"] },
   { id: "raum", awake: false },
@@ -77,7 +79,13 @@ export const campOf = (idea) => MOUNTAIN.find((c) => c.ideas?.includes(idea));
  */
 export const IDEAS = {
   zahl: { place: "zahlen", ranges: [5, 10, 20], cards: { machen: "nachpruefen", anwenden: "vergleichen" } },
+  // Tens and ones: ten flowers make a bunch, ten bunches a basket. Here the range is the biggest number:
+  // the teens and 20 (one bunch and some flowers), up to 50, up to 100, up to 1000.
+  // from: the map's animal leads only children of this age and older here (the place still opens for all).
+  stellen: { place: "zahlen", from: 6, ranges: [20, 50, 100, 1000], cards: { anwenden: "vergleichen" } },
   teile: { place: "teile", ranges: [5, 10, 20], tasks: { forschen: 3 } },
+  // Friends of ten: friends of five (a hand), friends of ten (the ten-frame), and filling up to twenty.
+  zehn: { place: "teile", ranges: [5, 10, 20], cards: { machen: "ausprobieren", pruefen: "nachpruefen" } },
   // Here the range is not the size of the numbers but the length of the piece that comes again: 2, 3 or 4 things.
   muster: {
     place: "regeln",

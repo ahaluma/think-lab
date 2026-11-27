@@ -8,7 +8,7 @@
     "directory": "./public",
     // Unknown address -> show public/404.html with status 404.
     "not_found_handling": "404-page",
-    // /games/wie-viele/ serves games/wie-viele/index.html.
+    // /games/zahlenzug/ serves games/zahlenzug/index.html.
     "html_handling": "auto-trailing-slash"
   },
   // Preview links for pull requests (Cloudflare runs "npx wrangler preview" on branches).

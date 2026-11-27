@@ -15,7 +15,7 @@ Small number and logic games for young children („अङ्क“ / *anka* = n
 | ------------ | ----------------------------------------------------------------------------------------------- | ------------------------------- |
 | **Category** | A big learning area. One row of tiles on the start page.                                        | `zahlen`, `rechnen`, `sprache`  |
 | **Skill**    | One ability inside a category (the "subcategory"). Groups the progress report.                  | `zahlen/zaehlen`, `rechnen/plus` |
-| **Game**     | One folder with one game idea. Several small games may train the same skill.                    | `games/wie-viele/`              |
+| **Game**     | One folder with one game idea. Several small games may train the same skill.                    | `games/zahlenzug/`              |
 | **Level**    | The parameters that make a game easier or harder, in the game's `levels.js`. Each level has a fixed `id`, the `age` it is made for and a `label` for parents. The level follows the child by itself (`shared/adapt.js`). | `{ id: "bis-3", age: 3, max: 3 }` … |
 
 Categories, skills and games are all listed in `public/catalog.js`. Levels stay inside each game, because only the game knows what "harder" means.
@@ -36,13 +36,12 @@ think-lab/
 │   │   ├── profiles.js      ← children on this device (name, age, animal)
 │   │   ├── fit.js           ← which games and start levels fit a child's age
 │   │   ├── gen.js           ← task generators: random kit, seeds (?seed=7), no repeats
-│   │   ├── rechnen.js       ← arithmetic tasks for Plus (later Minus): numbers, answer choices, column sums
 │   │   ├── numpad.js        ← number pad for typed answers (children from 8, parents can switch it)
 │   │   ├── things.js        ← the 34 animals and things that number games count and compare
 │   │   ├── store.js         ← safe localStorage
 │   │   └── lang/de.js       ← words every page needs (numbers, praise, names of the things)
 │   ├── games/
-│   │   └── wie-viele/       ← one folder = one game (flat: the category is in catalog.js)
+│   │   └── zahlenzug/       ← one folder = one game (flat: the category is in catalog.js)
 │   │       ├── index.html
 │   │       ├── game.css
 │   │       ├── game.js      ← the game, no texts
@@ -71,12 +70,15 @@ A second way into AnkaPlay is growing next to the games: `/welt/`. The start pag
 The idea: a **grid of ideas and perspectives**. Every mathematical idea can be played in five
 perspectives, each with a fixed symbol: see 👁️, make ✋, explore 🔍, use 🔑, check ✅. The map is a
 piece of nature with six places. A place with something to play is awake, the others sleep.
-Four places are awake:
+Four places are awake. A place can hold more than one idea: the map then first shows a choice of
+ideas at that place (`ideaTabs` in `lang/`), then the five perspectives of the chosen one.
 
 | Place | Idea | See 👁️ | Make ✋ | Explore 🔍 | Use 🔑 | Check ✅ |
 | --- | --- | --- | --- | --- | --- | --- |
 | Meadow and stream | `zahl`: a number says how many | flowers at a glance | pick n flowers | the missing stepping stone | where are more? | the owl has counted |
+| Meadow and stream | `stellen`: ten ones make a ten (tens and ones) | bunches and flowers: how many? | make the number from bunches and flowers | +1, −1, +10, −10: try, then predict | tens and ones in the place-value table | the owl has counted (swapped digits, a ten off) |
 | Burrow and pond | `teile`: numbers are made of numbers | animals hide in the burrow | split on two leaves | the hollow tree | a hidden part | the owl adds |
+| Burrow and pond | `zehn`: friends of ten | frogs on lily pads: how many are free? | fill the nut box | the staircase of friends | 7 + ? = 10 | the owl's friends: right or one off? |
 | Fruit tree and nests | `gruppen`: groups of the same size, sharing fairly | eggs under the hen | share among the animals | think first: does it come out even? | cherries: for how many birds is it enough? | the owl shared: who has too many? |
 | Forest | `muster`: a row goes on, because one piece comes again and again | what comes next? | lay the next things | which piece comes again? | the same row with other things | the owl laid a row: find the wrong thing |
 
@@ -96,15 +98,29 @@ that repeats: two things (🍄🌰), three (🍄🌰🌰) or four (🍄🌰🍄�
 row started at another place (`sameWay` in `ideas/muster/tasks.js`), because that would be right too.
 It holds the idea of the old game "Muster-Kette".
 
-The meadow holds the ideas of the old games "Blitzblick", "Wie viele?", "Zahlenzug" and "Wo sind
-mehr?", the forest the idea of "Muster-Kette", the fruit tree the idea of "Gerecht teilen". These six
-games have **moved**: in `catalog.js` they
-carry `moved: "<idea>"` and are no longer on the start page (`shared/fit.js`). Their folders stay, and
-parents can switch each one back on per child on `/eltern/`.
+**Friends of ten** (`zehn`, at the burrow next to `teile`). Its three ranges are the whole to fill:
+friends of 5 (a hand), friends of 10 (the ten-frame) and filling up to 20 (13 and 7: the same friends
+one ten higher). Everything is laid out in ten-frames, rows of five. In "see" the pond shows only for a
+moment from the second round on, so the child sees "a full row and two more" instead of counting.
+
+**Tens and ones** (`stellen`, at the meadow next to `zahl`). Ten flowers are tied into a bunch, ten
+bunches go into a basket: the same picture as the sticks and plates of school. Four ranges: the teens
+and 20, up to 50, up to 100, up to 1000. Answers are typed on the number pad. A wrong answer says what
+went wrong: swapped digits ("Die Sträuße zuerst"), a bunch counted as one, a ten off. "Use" has the
+hard cases on purpose: the ones said first ("4 Einer und 3 Zehner"), more than nine ones ("2 Zehner
+und 13 Einer"), and zeros in the middle (305). The animal on the map leads only children from 6 here
+(`from` in `IDEAS`); the place still opens for everyone.
+
+The meadow holds the ideas of the old games "Wo sind mehr?" and "Zahlenzug", the forest the idea of
+"Muster-Kette", the fruit tree the idea of "Gerecht teilen", the burrow the idea of "Zehnerfreunde".
+These games have **moved**: in `catalog.js` they carry `moved: "<idea>"` and are no longer on the
+start page (`shared/fit.js`). Their folders stay until the world covers everything they do, and
+parents can switch each one back on per child on `/eltern/`. "Wie viele?", "Blitzblick",
+"Zahlenhaus" and "Plus" were deleted: the meadow, the burrow and the market do all they did.
 
 **Games that live at a place as they are.** A place can also hold a game from `catalog.js` unchanged
 (`games` in `PLACES`, `frame/ideas.js`): the map shows it below the five perspectives, marked "play
-together". The meadow holds "Zahlen-Memory": same page, same levels and the same rule for moving up
+together". The meadow holds "Zahlen-Memory" (moved, so not on the start page; its folder stays): same page, same levels and the same rule for moving up
 (`shared/adapt.js`); opened with `?welt`, its home button leads back to the map. Its levels go in
 small steps from 3 open pairs up to 3, to 6 hidden pairs with numbers from 11 to 20.
 
@@ -123,7 +139,7 @@ public/welt/
 │   ├── record.js          ← what the child can do, per idea, perspective and number range
 │   ├── voice.js           ← every sentence is spoken (if on) and always shown as text
 │   └── parts.js           ← building blocks of the boards: pictures, the number sign, number buttons
-├── ideas/<idea>/          ← one idea: zahl (the meadow), teile (the burrow)
+├── ideas/<idea>/          ← one idea: zahl and stellen (the meadow), teile and zehn (the burrow) …
 │   ├── tasks.js           ← the tasks of the five perspectives (data only)
 │   └── boards.js          ← how each perspective looks and reacts
 ├── spiel/                 ← one round: tasks, one surprise from another perspective, a thinking card
@@ -343,9 +359,9 @@ Where a game has tasks (rounds), one function makes each task, so every round is
   const nextTask = gen.generator(task, { avoid: { thing: 3, count: 1 } }); // not the same thing as in the last 3 tasks, not the same number as last time
   const t = nextTask(LEVELS[play.level]);
   ```
-- **Testing:** open a game with `?seed=7` in the address (`/games/wie-viele/?seed=7`) and it deals the same tasks every time (at the same level). Without a seed every game is different. `node tools/check-tasks.mjs` (optional, nothing to install) makes 2000 tasks per level of every game with a `tasks.js`, runs `check()` on them and shows how many different tasks each level has.
+- **Testing:** open a game with `?seed=7` in the address (`/games/zahlenzug/?seed=7`) and it deals the same tasks every time (at the same level). Without a seed every game is different. `node tools/check-tasks.mjs` (optional, nothing to install) makes 2000 tasks per level of every game with a `tasks.js`, runs `check()` on them and shows how many different tasks each level has.
 
-`wie-viele` is the example; `wo-sind-mehr`, `blitzblick`, `zahlenzug`, `wer-kommt-dazu`, `zahlenhaus`, `zehnerfreunde`, `gleich-machen`, `gerecht-teilen`, `wer-ist-erster`, `zahlen-memory`, `muster-kette`, `groessen`, `raumlage`, `reihenfolge`, `sortieren`, `genau-hinschauen` and `formen` use it too. `shared/rechnen.js` is the same idea for the arithmetic games and moves to this pattern when Plus does.
+`zahlenzug` is the example; `wo-sind-mehr`, `wer-kommt-dazu`, `zehnerfreunde`, `gleich-machen`, `gerecht-teilen`, `wer-ist-erster`, `zahlen-memory`, `muster-kette`, `groessen`, `raumlage`, `reihenfolge`, `sortieren`, `genau-hinschauen` and `formen` use it too.
 
 ## Guidelines for every game
 
@@ -359,14 +375,10 @@ Where a game has tasks (rounds), one function makes each task, so every round is
 
 | Game        | Folder              | Skill            | For the child                                                                                             |
 | ----------- | ------------------- | ---------------- | --------------------------------------------------------------------------------------------------------- |
-| Wie viele?  | `games/wie-viele/`  | `zahlen/zaehlen` | Count the things (tap each one to hear "eins, zwei, drei…"), then tap the right number. 34 things to count (apples, elephants, unicorns, kangaroos, sharks, pandas…). Starts with 1–3 and goes up to 10. |
 | Wo sind mehr? | `games/wo-sind-mehr/` | `zahlen/vergleichen` | Two groups of the same animal: tap the one with more. Levels go from big differences (5 vs 2) to close ones (7 vs 6), then add a "the same" button, then sometimes ask "where are fewer?". After the answer both groups show their number. |
-| Blitzblick | `games/blitzblick/` | `zahlen/simultan` | A picture flashes up for a moment and hides: how many were there? Trains seeing small amounts at a glance (subitizing). Every round shows other animals, fruit or things. Levels: dice patterns 1–6 (2 s down to 1 s), then random places, then 5 + x in a 2 × 5 frame. Tap the card to see it again; a wrong answer shows it once more. |
 | Zahlenzug | `games/zahlenzug/` | `zahlen/reihe` | A train with numbered wagons. Find the missing wagon, say which number comes after or before, or hang the mixed-up wagons on in order (each one is read out). Levels: 1–4, 1–5, after/before up to 10, trains starting anywhere up to 10, after/before up to 20. The train drives off after each right answer. |
 | Wer kommt dazu? | `games/wer-kommt-dazu/` | `rechnen/dazu-weg` | Two steps: first count the animals on the meadow, then one hops in or runs away: how many are there now? Trains one more / one less without plus or minus signs. Levels: animals stay visible, then they hide behind a bush first (think, don't recount; after two wrong answers the bush opens), then two animals at once, up to 10. |
-| Zahlenhaus | `games/zahlenhaus/` | `rechnen/zerlegen` | Count the animals in front of the house (the house shows 0, the number appears on a meadow sign), then some walk into the house at once. Early levels (house open): how many are in the house? how many are still outside? Later levels (house closed): the child knows the total and sees who is outside: how many are hiding in the house? (first wrong answer: think again; second: the house opens). At the end the total appears in a block next to the house: "Drei und zwei sind zusammen fünf." Levels: 3, 4, 3–5 open; 3–4, 5, 3–6, 6–7, 7–8, 8–10 closed. |
 | Zehnerfreunde | `games/zehnerfreunde/` | `rechnen/zerlegen` | How many are missing to 10? A ten-frame (2 × 5 places) with animals: tap how many places are still empty. At the end the missing animals fill the empty places (on green): "Sieben und drei sind zusammen zehn." Levels: one row of 5; 10 with the top row full; any amount; animals mixed up in the frame; frame shown only briefly (tap to look again); only numbers 7 + ? = 10 (after two wrong answers the frame helps); also ? + 3 = 10. |
-| Plus | `games/plus/` | `rechnen/plus` | Adding, ages 5–10, 15 levels: pictures to 5 and 10 (🐰🐰🐰 + 🐰🐰); counting on from a bush; numbers only; gaps (3 + ? = 7); above 10 with two ten-frames (8 + 5 = 8 + 2 + 3); gaps above 10; whole tens, then to 100 without and with carrying; whole hundreds, then to 1000 without and with carrying. After two wrong answers pictures, ten-frames or a place-value chart (hundreds plates, tens sticks, ones cubes: 38 + 27 = 50 + 15) help. The numbers come from `shared/rechnen.js`. |
 | Gleich machen | `games/gleich-machen/` | `rechnen/minus` | Two meadows, one with more animals: make them equal. A first step towards minus. The child taps animals on the fuller meadow and they hop into their house (tap the house: one comes back), then ✓. Right: both groups jump and the sum shows (7 − 3 = 4): "Drei Hasen gehen nach Hause. Jetzt sind auf beiden Wiesen vier." After two wrong answers the animals line up in pairs, a line joins partners and the ones without a partner glow. Tapping the smaller meadow, too many or too few count as wrong. Levels: up to 5, up to 10; then give the number with pictures (7 − ? = 4: one of three, or the number pad from 8), then numbers only (the pairs help after two wrong answers); then the other way round: "Wie viele müssen dazu?" (tap the house of the smaller meadow, 4 + ? = 7), numbers only, away or more mixed up to 10 and up to 20. |
 | Wer ist Erster? | `games/wer-ist-erster/` | `zahlen/ordnung` | Ordinal numbers: the animals queue for ice cream, the one at the ice-cream cart is the first. "Tippe auf das dritte Tier!" Levels: first or last (3–4 animals), first to third, first to fifth (sometimes "the last"), "Das wievielte Tier ist der Löwe?" (one of three answers like "3.", the number pad from 8), "Wer steht direkt vor / hinter dem Löwen?", up to the eighth, counting from the back ("das zweite Tier von hinten"), then all mixed. A wrong tap says what it was ("Das ist das zweite Tier."); after two wrong answers the places 1, 2, 3 … appear under the animals (from the back on "von hinten" tasks). The animal found gets its place in green. |
 | Gerecht teilen | `games/gerecht-teilen/` | `rechnen/teilen` | A basket of cookies (apples, carrots …) and 2–4 animal friends with a plate each: share fairly. A first idea of dividing and halving. The child taps a plate and one thing jumps from the basket onto it (tap it on the plate: back into the basket), then ✓. Right: the friends jump, every plate shows its number and the sum appears (6 : 2 = 3): "Jeder bekommt drei Kekse." After two wrong answers every plate shows how many are on it. Levels: 2 friends up to 6 and 10, 3 friends up to 12, 2–4 friends; then one or two are left over and stay in the basket ("Eins bleibt im Korb. Das kann man nicht gerecht teilen."); then halving (5 for 2: the last one is tapped and cut in half, two and a half each, 5 : 2 = 2½); then "Wie viele bekommt jeder?" with pictures (one of three, or the number pad from 8; after two wrong answers the things are dealt out one by one), numbers only up to 20 and up to 50 (times tables). |
