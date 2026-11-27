@@ -112,7 +112,7 @@ export default {
   progress: "Tasks",
   surprise: "Surprise! Now something different.",
   done: "You did it!",
-  grew: "Look! A new flower grows in the world.",
+  grew: "Look, your new flower! It grows on the map too.",
   cardGot: (name) => `Your thinking trick: ${name}.`,
   feelQuestion: "How was that for you?",
   feel: { easy: "easy", ok: "just right", hard: "hard" },

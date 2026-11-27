@@ -14,6 +14,7 @@ import { mount, tell, again } from "./frame/voice.js";
 import { PLACES, PERSPECTIVES, CARDS, IDEAS } from "./frame/ideas.js";
 import { GAMES } from "../catalog.js";
 import { local } from "../shared/i18n.js";
+import { store } from "../shared/store.js";
 
 const T = await texts(import.meta.url);
 fill(T);
@@ -93,6 +94,10 @@ for (const g of document.querySelectorAll(".place")) {
 // ---------- Flowers: what has grown at each place
 
 // The flowers of every idea at a place grow together (the burrow: "teile" and "zehn").
+// The flower of the last round (welt/spiel/ shows it on its done screen) blooms here once, so the
+// child finds it on the map too.
+const newFlower = store.get("newFlower", null);
+store.remove("newFlower");
 for (const g of document.querySelectorAll(".grown")) {
   const spots = FLOWER_SPOTS[g.dataset.i] || [];
   const place = PLACES.find((p) => p.ideas?.includes(g.dataset.i));
@@ -105,6 +110,7 @@ for (const g of document.querySelectorAll(".grown")) {
     c.setAttribute("fill", FLOWER_COLORS[i % FLOWER_COLORS.length]);
     c.setAttribute("stroke", "#1b2140");
     c.setAttribute("stroke-width", 2);
+    if (place?.id === newFlower && i === Math.min(grown, spots.length) - 1) c.classList.add("new");
     g.append(c);
   });
 }

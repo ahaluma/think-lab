@@ -89,8 +89,8 @@ ideas at that place (`ideaTabs` in `lang/`), then the five perspectives of the c
 | Forest | `muster`: a row goes on, because one piece comes again and again | what comes next? | lay the next things | which piece comes again? | the same row with other things | the owl laid a row: find the wrong thing |
 
 **Two number ranges: up to 5 and up to 10** (`ranges` in `frame/ideas.js`); the forest has three.
-A child starts by age (`frame/record.js`): under 6 up to 5, from 6 up to 10. After a round the three faces
-move the range up or down; a range the child chose to go down to stays. Up to 10 the answer buttons
+A child starts by age (`frame/record.js`): under 6 up to 5, from 6 up to 10. Three good perspectives move the
+range up; two weak rounds of an idea in a row move it down (`record.settle`), and that lower range stays. Up to 10 the answer buttons
 show the digit and that many dots. Up to 20 they show only the digit, the dots stay on the sign of the
 whole and in the hint. More than ten pictures are drawn smaller, still five in a row. In the range up
 to 20 the stepping stones also go in steps of two.
@@ -152,6 +152,7 @@ public/welt/
 │   ├── ideas.js           ← the grid: perspectives, thinking cards, places, ideas
 │   ├── record.js          ← what the child can do, per idea, perspective and number range
 │   ├── voice.js           ← every sentence is spoken (if on) and always shown as text
+│   ├── question.js        ← the question box at the top, no taps while the question is read
 │   └── parts.js           ← building blocks of the boards: pictures, the number sign, number buttons
 ├── stadt/                 ← the town: map of the school world (TOWN in frame/ideas.js)
 ├── ideas/<idea>/          ← one idea: zahl (the meadow), teile and zehn (the burrow), stellen, reihe, formen and zeit (the town) …
@@ -181,8 +182,16 @@ spots in `map.js`, and list the two new files in `public/sw.js`. A round is `/we
 - **A wrong answer explains, it does not punish.** It says what the child did; the hint shows the structure.
 - **Coming back counts.** An idea counts as understood only when it works on two different days.
 
-A round has no points, no clock and no streak. After a round a flower grows on the map and the
-child says how it felt (easy, just right, hard). `node tools/check-welt.mjs` checks the tasks.
+A round has no points, no clock and no streak. After a round in the nature world the done screen shows
+the flower bed of the place with the new flower coming up, and the same flower blooms once on the map
+when the child goes back. Small children are not asked how it felt; the town still asks (easy, just
+right, hard), the market too.
+
+**Every round, every world: the whole question stays in sight** (`frame/question.js`). What a board says
+before the child first taps is the question: it goes into a box at the top and stays until the next task,
+the caption under it only carries what comes after (a miss, a hint, praise), and the board is pushed down.
+While the voice reads the question the board takes no taps; if the voice fails or never ends, the lock
+ends after the time the sentence could take (at most 10 seconds). `node tools/check-welt.mjs` checks the tasks.
 
 ## The town (`public/welt/stadt/`)
 
