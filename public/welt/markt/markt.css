@@ -1,0 +1,499 @@
+/* The market (welt/markt/): the map with its stands and summits, the rounds and their pictures.
+   Builds on shared/base.css and welt/welt.css (colours, .btn, .card, .persp, .ways-panel). */
+
+:root {
+  --dot-a: #2456b8;
+  --dot-b: #ff5a36;
+  --stone: #e3d3b8;
+}
+
+.stand-name {
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 4px;
+  fill: var(--ink);
+}
+
+/* ---------- A stand: four summits (number ranges) */
+.summits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.summits:has(.stage) {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.summit {
+  min-height: 86px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 2px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 0 var(--ink);
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.summit:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.summit .peak {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.summit strong {
+  font-size: 15px;
+}
+
+.summit small {
+  font-size: 11px;
+  letter-spacing: -1px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.summit.stage strong {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.summit.stage small {
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.summit.on {
+  background: var(--sun);
+}
+
+.summit.flag {
+  background: #d9f5cf;
+}
+
+.summit.on.flag {
+  background: linear-gradient(var(--sun), #d9f5cf);
+}
+
+.summit-note {
+  margin: 0 0 10px;
+  font-size: 15px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ---------- A round */
+.where {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--muted);
+  text-align: center;
+}
+
+.markt-board {
+  gap: 14px;
+}
+
+.equation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: clamp(30px, 9vw, 44px);
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.equation .eq-sign {
+  color: var(--muted);
+}
+
+.equation .eq-rest {
+  font-size: 0.55em;
+  color: var(--muted);
+}
+
+.equation .gap {
+  min-width: 1.6em;
+  padding: 0 10px;
+  border: 4px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+  text-align: center;
+}
+
+.equation .gap.right,
+.numpad-display.right {
+  background: var(--ok);
+  color: #fff;
+}
+
+.equation.claim .gap {
+  border-style: dashed;
+  background: #fff8dc;
+}
+
+.row-tasks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.row-tasks .equation:not(:last-child) {
+  font-size: clamp(22px, 6.5vw, 30px);
+  color: var(--muted);
+}
+
+/* the gap box doubles as the display of the number pad */
+.equation .gap.numpad-display {
+  font-size: inherit;
+  min-width: 1.6em;
+}
+
+.answer-box {
+  width: 100%;
+}
+
+.picks {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+}
+
+.pick {
+  min-height: 64px;
+  font-size: clamp(26px, 8vw, 34px);
+  font-weight: 900;
+}
+
+.pick.right {
+  background: var(--ok);
+  color: #fff;
+}
+
+.pick:disabled {
+  opacity: 0.3;
+}
+
+/* ---------- Pictures: ten-frames, blocks, rows, bags */
+.picture {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 16px;
+  background: #fff;
+  border: 3px solid var(--ink);
+}
+
+.pic-sign {
+  font-size: 32px;
+  font-weight: 900;
+}
+
+.frames {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.frame {
+  display: grid;
+  grid-template-columns: repeat(5, 26px);
+  gap: 3px;
+  padding: 4px;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.frame i,
+.dot-rows i {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--dot-a);
+  border: 2px solid var(--ink);
+}
+
+.frame i.b,
+.dot-rows i.b {
+  background: var(--dot-b);
+}
+
+.frame i.empty {
+  background: transparent;
+  border: 2px dashed rgba(27, 33, 64, 0.18);
+}
+
+.frame i.gone {
+  background:
+    linear-gradient(45deg, transparent 44%, var(--ink) 44% 56%, transparent 56%),
+    #c9d2dc;
+}
+
+.blocks {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.bgroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 3px;
+  max-width: 150px;
+}
+
+.bgroup.hundred {
+  max-width: 132px;
+}
+
+.bgroup i {
+  display: block;
+  border: 2px solid var(--ink);
+  background: #ffc83a;
+}
+
+.bgroup i.hundred {
+  width: 40px;
+  height: 40px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(27, 33, 64, 0.25) 3px 4px),
+    repeating-linear-gradient(90deg, transparent 0 3px, rgba(27, 33, 64, 0.25) 3px 4px),
+    #ffc83a;
+}
+
+.bgroup i.ten {
+  width: 8px;
+  height: 40px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(27, 33, 64, 0.25) 3px 4px),
+    #ffc83a;
+}
+
+.bgroup i.one {
+  width: 9px;
+  height: 9px;
+}
+
+.blocks.b i {
+  background-color: #ffb199;
+}
+
+.blocks.gone {
+  opacity: 0.45;
+  position: relative;
+}
+
+.blocks.gone::after {
+  content: "";
+  position: absolute;
+  inset: 45% -4px auto;
+  height: 4px;
+  background: var(--ink);
+  transform: rotate(-12deg);
+}
+
+.zero {
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.dot-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dot-rows .row {
+  display: flex;
+  gap: 3px;
+}
+
+.dot-rows i {
+  width: 20px;
+  height: 20px;
+}
+
+.dot-rows.bags .row {
+  padding: 3px;
+  border: 3px solid var(--ok);
+  border-radius: 10px;
+}
+
+.dot-rows.bags .row.rest {
+  border-color: transparent;
+}
+
+.groups,
+.make-groups {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.group {
+  padding: 4px 6px;
+  border: 3px solid var(--blue);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.mini-row {
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--dot-a);
+}
+
+.bag-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 26px;
+}
+
+/* ---------- Make: lay it with buttons */
+.make-stage {
+  width: 100%;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.make-status {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.make-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tool {
+  min-width: 64px;
+  min-height: 52px;
+  padding: 0 12px;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.tool.minus {
+  background: #eef2f6;
+}
+
+/* ---------- Check: the owl */
+.owl-says {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.owl {
+  font-size: 52px;
+}
+
+.judge {
+  display: flex;
+  gap: 12px;
+}
+
+.judge .btn {
+  min-width: 130px;
+  font-size: 20px;
+}
+
+/* ---------- The way in steps (third miss) */
+.way {
+  margin: 0;
+  padding: 10px 14px 10px 34px;
+  border: 3px dashed var(--ink);
+  border-radius: 14px;
+  background: #fff8dc;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+/* ---------- The market square: a story */
+.story {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  background: #fff8dc;
+}
+
+.story-op {
+  font-size: 40px;
+}
+
+.story-text {
+  margin: 0;
+  font-size: clamp(17px, 4.8vw, 21px);
+  line-height: 1.4;
+}
+
+.story-pic {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.story-row.b {
+  opacity: 0.7;
+}
+
+.op-pick {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+.op-btn {
+  min-height: 64px;
+  font-size: 34px;
+}
+
+.op-btn.right {
+  background: var(--ok);
+}
+
+.summit-stars {
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+body[data-world="markt"] .caption {
+  min-height: 2.6em;
+}

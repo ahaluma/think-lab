@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Markt · AnkaPlay</title>
+    <meta name="theme-color" content="#e9eef2" />
+    <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+    <link rel="stylesheet" href="/shared/base.css" />
+    <link rel="stylesheet" href="../../welt.css" />
+    <link rel="stylesheet" href="../markt.css" />
+    <script type="module" src="stand.js"></script>
+  </head>
+  <body data-world="markt">
+    <main class="app">
+      <div class="topbar">
+        <a class="icon-btn" id="home" href="/welt/markt/" data-t-label="toMarket" aria-label="Zum Markt"></a>
+        <div class="spacer"></div>
+        <ol class="steps" id="steps" aria-label="Aufgaben"></ol>
+        <div class="spacer"></div>
+        <button class="icon-btn" id="hint" type="button" data-t-label="hint" aria-label="Tipp" hidden>💡</button>
+        <button class="icon-btn sun" id="hear" type="button" data-t-label="hear" aria-label="Vorlesen"></button>
+      </div>
+      <p class="caption" id="caption" aria-live="polite"></p>
+
+      <!-- Start: where the child is (stand, summit, perspective) and one big button. -->
+      <section class="screen" id="start">
+        <p class="where" id="where"></p>
+        <div class="start-art" id="startArt" aria-hidden="true"></div>
+        <button class="btn go play pulse" id="play" type="button" data-t-label="play" aria-label="Spielen"></button>
+      </section>
+
+      <!-- Play: the board of the perspective draws each task in here (boards.js). -->
+      <section class="screen board" id="board" hidden></section>
+
+      <!-- Done: stars of this summit, how it was, where to go next. -->
+      <section class="screen" id="done" hidden>
+        <div class="think-card card pop" id="card">
+          <span class="think-icon" id="cardIcon" aria-hidden="true"></span>
+          <strong id="cardName"></strong>
+          <span class="summit-stars" id="cardStars"></span>
+          <span id="cardText"></span>
+        </div>
+        <div class="feel" id="feel" role="group">
+          <button class="feel-btn" type="button" data-feel="easy"><span aria-hidden="true">😄</span><small></small></button>
+          <button class="feel-btn" type="button" data-feel="ok"><span aria-hidden="true">🙂</span><small></small></button>
+          <button class="feel-btn" type="button" data-feel="hard"><span aria-hidden="true">😅</span><small></small></button>
+        </div>
+        <div class="next">
+          <button class="btn" id="again" type="button"></button>
+          <a class="btn sun" id="other" href="/welt/markt/"></a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

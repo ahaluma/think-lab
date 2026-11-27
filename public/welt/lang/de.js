@@ -87,6 +87,8 @@ export default {
   whereTo: "Wohin möchtest du?",
   asleep: "Hier schläft noch alles.",
   comeHere: "Komm, hier geht es weiter!",
+  marktDoor: "Zum Markt",
+  marktNote: "Plus, Minus, Mal und Geteilt",
   pickWay: "Wie möchtest du spielen?",
   allGames: "Alle Spiele",
   save: "Sichern",

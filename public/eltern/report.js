@@ -10,6 +10,7 @@ import * as profiles from "../shared/profiles.js";
 import * as fit from "../shared/fit.js";
 import * as record from "../welt/frame/record.js";
 import { PERSPECTIVES } from "../welt/frame/ideas.js";
+import * as markt from "../welt/markt/record.js";
 
 const T = await texts(import.meta.url);
 const W = await texts(new URL("../welt/map.js", import.meta.url).href); // names of places, ideas, perspectives
@@ -23,6 +24,8 @@ const kids = profiles.all();
 const shown = profiles.get(new URLSearchParams(location.search).get("kind")) || profiles.current();
 const data = progress.all(shown?.id);
 const world = record.report(shown);
+const market = markt.report(shown);
+const M = await texts(new URL("../welt/markt/markt.js", import.meta.url).href); // names of stands and steps
 const kidName = (kid) => kid.name || T.noName;
 
 // The levels of every game, for their labels ("Zählen bis 5").
@@ -158,7 +161,7 @@ for (let i = 13; i >= 0; i--) {
   // Games and world together: an answer is an answer.
   const key = progress.today(date);
   const sum = { right: 0, wrong: 0, rounds: 0 };
-  for (const day of [data.days[key], world.daily[key]]) for (const k in sum) sum[k] += day?.[k] || 0;
+  for (const day of [data.days[key], world.daily[key], market.daily[key]]) for (const k in sum) sum[k] += day?.[k] || 0;
   days.push({ date, ...sum });
 }
 const most = Math.max(1, ...days.map((d) => d.right + d.wrong));
@@ -215,6 +218,43 @@ const rangeLabel = (idea) => (T.worldRange[idea.id] || T.worldRange.numbers)(num
     }
     section.append(box);
   }
+}
+
+// ---------- The market: stand → four summits, the facts it knows, what still wobbles
+
+{
+  const section = $("market");
+  const SIGN = { plus: "+", minus: "−", mal: "·", geteilt: ":" };
+  /** "plus:7,8" → "7 + 8", "minus:9,4:b" → "9 − _ = 4" stays "9 − 4" (the fact is the same). */
+  const fact = (k) => {
+    const [op, ab] = k.split(":");
+    const [a, b] = ab.split(",").map(Number);
+    return `${num(a)} ${SIGN[op]} ${num(b)}`;
+  };
+  for (const s of market.stands) {
+    const box = el("div", "card skill");
+    box.append(el("h3", "", `${M.stands[s.op]} (${SIGN[s.op]})`));
+    for (const r of s.ranges) {
+      const row = el("div", "game way " + (r.flag ? "understood" : r.rounds ? "played" : "new"));
+      row.append(el("span", "game-icon", r.flag ? "🚩" : "⛰️"));
+      const info = el("div", "game-info");
+      info.append(el("strong", "", M.summit(num(r.range))));
+      const where = r.flag ? (r.above ? T.marketAbove : T.marketFlag) : r.rounds ? T.marketStep(M.steps[s.op][r.stepId] ?? M.stepMixed, num(r.step + 1), num(r.steps + 1)) : T.notPlayed;
+      info.append(el("span", "muted", where));
+      if (r.rounds) info.append(el("span", "muted", T.worldStats(r.rounds, r.last ? showDate(r.last) : "–")));
+      row.append(info, el("span", "state " + (r.flag ? "understood" : r.rounds ? "played" : "new"), "⭐".repeat(r.stars) + "☆".repeat(5 - r.stars)));
+      box.append(row);
+    }
+    if (s.facts) box.append(el("p", "muted", T.marketKnown(num(s.known), num(s.facts))));
+    if (s.shaky.length) box.append(el("p", "muted", T.marketShaky(s.shaky.map(fact).join(", "))));
+    if (s.mistake) box.append(el("p", "muted", T.marketMistake[s.mistake]));
+    section.append(box);
+  }
+  const p = market.platz;
+  const box = el("div", "card skill");
+  box.append(el("h3", "", M.platz.name));
+  box.append(el("p", "muted", p.open ? T.marketPlatz(num(p.stages.length), num(p.rounds)) : T.marketPlatzClosed));
+  section.append(box);
 }
 
 // ---------- Category → skill → game
@@ -377,6 +417,7 @@ $("reset").addEventListener("click", () => {
   if (confirm(shown ? T.resetConfirmKid(kidName(shown)) : T.resetConfirm)) {
     progress.reset(shown?.id);
     record.reset(shown?.id);
+    markt.reset(shown?.id);
     location.reload();
   }
 });
