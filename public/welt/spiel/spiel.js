@@ -74,6 +74,7 @@ let steps = []; // [{ p, transfer, pack, idea, range }] – idea and range only 
 let at = 0;
 let misses = 0;
 let firstTries = 0; // tasks of the round right the first time (the surprise task is not counted)
+let firstAll = 0; // the same with the backpack tasks: the star on the mountain counts them
 let board = null;
 let busy = false;
 let fresh = false; // the child plays this perspective for the first time: the boards show more
@@ -119,6 +120,7 @@ const ctx = {
     const first = misses === 0;
     record.task(step.idea ?? IDEA, step.p, step.range ?? range, first, step.transfer);
     if (first && !step.transfer && !step.pack) firstTries++;
+    if (first && !step.transfer) firstAll++;
     sound.right();
     at++;
     drawSteps();
@@ -202,6 +204,7 @@ async function startRound() {
   if (others.length) steps.push({ p: nextTask.r.pick(others), transfer: true });
   at = 0;
   firstTries = 0;
+  firstAll = 0;
   busy = false;
   for (const { next } of Object.values(ideas)) next.forget();
   show("board");
@@ -210,7 +213,12 @@ async function startRound() {
 
 async function finish() {
   const tasks = steps.filter((s) => !s.transfer && !s.pack).length;
-  const moved = record.round(IDEA, P.id, range, { first: firstTries, tasks, card: CARD });
+  const berg = IDEAS[IDEA].world === "berg";
+  const hadStar = berg && record.won(IDEA, P.id);
+  const whole = { first: firstAll, tasks: steps.filter((s) => !s.transfer).length };
+  const moved = record.round(IDEA, P.id, range, { first: firstTries, tasks, card: CARD, whole });
+  // The mountain: the star of this perspective (4 of 5 right the first time), or how close it was
+  const star = !berg || hadStar ? "" : record.won(IDEA, P.id) ? (record.mastered(IDEA) ? T.berg.allStars : T.berg.star) : T.berg.noStar(num(whole.first), num(whole.tasks));
   $("cardIcon").textContent = CARDS[CARD];
   $("cardName").textContent = T.cards[CARD].name;
   $("cardText").textContent = T.cards[CARD].text;
@@ -219,6 +227,7 @@ async function finish() {
   sound.win();
   celebrate();
   await tell(`${T.done} ${T.cardGot(T.cards[CARD].name)} ${T.cards[CARD].text}`);
+  if (star) await tell(star);
   await tell(moved > 0 ? BIGGER : GREW);
   tell(T.feelQuestion);
 }

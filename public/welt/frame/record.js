@@ -8,6 +8,8 @@
 //   record.feel("teile", "sehen", 5, "ok") → what the child said about it
 //   record.state("teile", "sehen")        → "new" | "played" | "understood" (in the current range)
 //   record.suggest("teile")               → the perspective to play next
+//   record.won("zaun", "sehen")           → the thinking mountain: this perspective has its star ⭐
+//   record.mastered("zaun")               → the thinking mountain: all five stars, the next camps open
 //   record.all()                          → the whole record (a fresh copy)
 //   record.report(kid)                    → what the parents' page shows: per idea the range, the rounds
 //                                           and the state of each perspective; and the counts per day
@@ -21,6 +23,7 @@
 //   daily  – { "2026-11-26": { right, wrong, rounds } }: tasks right the first time / not, finished rounds.
 //   recent – the last 10 tasks: 1 = right the first time. days – the last days it was played (up to 5).
 //   share  – right the first time in the last round (0 … 1). feel – what the child said: easy / ok / hard.
+//   stars  – the thinking mountain: { zaun: { sehen: "2026-11-27" } } the day a perspective won its star.
 //
 // Understood: 8 of the last 10 tasks right the first time, played on two different days.
 // Bigger numbers: when three perspectives of the range had a good last round (share ≥ GOOD).
@@ -100,14 +103,22 @@ export function state(idea, p) {
   return !c || !c.n ? "new" : understood(c) ? "understood" : "played";
 }
 
-/** A camp of the mountain is mastered when this many of its five perspectives are understood. */
-export const MASTERED = 3;
+/** The thinking mountain: a perspective is won (a star ⭐) with one round where this share of the tasks
+ *  was right the first time: 4 of 5. Backpack tasks of the round count, the surprise task does not.
+ *  Any level, no days to wait. A star stays. */
+export const STAR_SHARE = 0.8;
 
-/** Mastered: at least MASTERED perspectives understood, each in any range (a child who has moved on to
- *  a higher level keeps what it understood below). */
+/** Won: this perspective of a camp has its star (rec.stars). A perspective already understood under the
+ *  earlier rule (8 of the last 10, on two days) keeps it as a star too. */
+export function won(idea, p, kidId) {
+  const rec = all(kidId);
+  if (rec.stars?.[idea]?.[p]) return true;
+  return Object.entries(rec.cells).some(([k, c]) => k.startsWith(`${idea}/${p}/`) && understood(c));
+}
+
+/** Mastered: a camp of the mountain with all five stars. Then the camps that need it open. */
 export function mastered(idea, kidId) {
-  const cells = all(kidId).cells;
-  return PERSPECTIVES.filter(({ id }) => Object.entries(cells).some(([k, c]) => k.startsWith(`${idea}/${id}/`) && understood(c))).length >= MASTERED;
+  return PERSPECTIVES.every(({ id }) => won(idea, id, kidId));
 }
 
 /** The perspectives of an idea the child has played in the range it plays now. */
@@ -153,9 +164,12 @@ export function task(idea, p, r, firstTry, transfer = false) {
 }
 
 /** A finished round. Returns +1 when the next number range opens, otherwise 0. */
-export function round(idea, p, r, { first, tasks, card = null }) {
+export function round(idea, p, r, { first, tasks, card = null, whole = null }) {
   let moved = 0;
   update((rec) => {
+    // The mountain: a round with 4 of 5 right the first time wins the star (whole: the round's tasks
+    // with the backpack ones, without the surprise task)
+    if (IDEAS[idea].world === "berg" && whole?.tasks && whole.first / whole.tasks >= STAR_SHARE - 1e-9) ((rec.stars ??= {})[idea] ??= {})[p] = today();
     rec.rounds++;
     count(rec, "rounds");
     rec.by ??= {};
@@ -197,6 +211,11 @@ export function feel(idea, p, r, said) {
  * PERSPECTIVES), then one that is not understood yet, longest ago first, then simply the one longest ago.
  */
 export function suggest(idea) {
+  // On the mountain: the first perspective without its star
+  if (IDEAS[idea].world === "berg") {
+    const open = PERSPECTIVES.find(({ id }) => !won(idea, id));
+    if (open) return open.id;
+  }
   const r = range(idea);
   const cells = PERSPECTIVES.map(({ id }) => ({ id, c: cell(idea, id, r) }));
   const fresh = cells.find(({ c }) => !c || !c.n);

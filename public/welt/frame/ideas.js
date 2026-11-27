@@ -50,8 +50,8 @@ export const PLACES = [
 
 /** The camps of the thinking mountain, from the foot to the top, four heights of three camps each.
  *  ideas: the idea of a camp that is built (a camp without one is drawn, but still being built).
- *  needs: the camps a child must have mastered before this one opens (record.mastered: three of the
- *  five perspectives understood). The summit needs every camp. Each camp only needs camps below it,
+ *  needs: the camps a child must have mastered before this one opens (record.mastered: all five
+ *  perspectives have their star, one round of 4 of 5 right the first time each). The summit needs every camp. Each camp only needs camps below it,
  *  and its rounds mix in tasks from the camps the child already has (the backpack, spiel/spiel.js). */
 export const MOUNTAIN = [
   { id: "zaun", height: 1, ideas: ["zaun"] },

@@ -377,7 +377,12 @@ export default {
     mapLabel: "Der Denk-Berg: such dir ein Lager aus",
     whereTo: "Expedition Denk-Berg. Ausrüstung: Kopf. Ziel: ganz oben.",
     fogLabel: "Nebel über dem Berg",
-    fog: "Oben ist Nebel. Versteh hier drei Wege 🌼, dann lichtet er sich.",
+    fog: "Oben ist Nebel. Hol dir hier alle fünf Sterne ⭐, dann lichtet er sich.",
+    // Der Stern einer Perspektive: eine Runde mit 4 von 5 richtig beim ersten Versuch
+    star: "Ein Stern ⭐ für diesen Weg!",
+    allStars: "Alle fünf Sterne ⭐! Auf der Karte wartet etwas Neues.",
+    noStar: (first, n) => `Für den Stern ⭐ brauchst du 4 von 5 beim ersten Versuch. Diesmal: ${first} von ${n}.`,
+    starLabel: "Stern geholt",
     fogBuilding: "Oben ist Nebel. Da wird gerade noch gebaut. Bald geht es weiter.",
     // Das Werkzeug jedes Lagers, kurz (für das Erinnerungsbild)
     tools: {

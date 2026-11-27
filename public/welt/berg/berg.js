@@ -1,6 +1,7 @@
 // The map of the thinking mountain (Denk-Berg): a path from the foot to the top with twelve camps
 // (MOUNTAIN in frame/ideas.js). Each camp carries one thinking tool for Mathe-Olympiade problems.
-// A camp opens when the camps it needs are mastered (record.mastered). Only open camps are drawn:
+// A perspective of a camp wins a star ⭐ with one round of 4 of 5 right the first time; a camp with all
+// five stars is mastered (record.mastered), and the camps that need it open. Only open camps are drawn:
 // above the highest one the mountain is in fog, so a child does not know how many camps there are
 // until the top. A camp that appears for the first time is a surprise, with a keepsake picture to
 // save (berg/keepsake.js). A mastered camp gets a lantern. The summit shows when every camp is mastered. The rounds are the
@@ -33,7 +34,8 @@ $("hear").addEventListener("click", again);
 $("map").setAttribute("aria-label", B.mapLabel);
 
 const SVG = "http://www.w3.org/2000/svg";
-const STATE_MARK = { new: "", played: "🌱", understood: "🌼" };
+/** A perspective with its star (4 of 5 right the first time in one round), or played so far. */
+const STATE_MARK = { new: "", played: "🌱", won: "⭐" };
 /** Where each camp stands on the path (the corners of the path in index.html). */
 const AT = {
   zaun: [100, 404], haken: [228, 386], huetten: [270, 348],
@@ -48,7 +50,7 @@ const FLOWER_COLORS = ["#e8488a", "#ffc83a", "#fff", "#ff5a36"];
 
 const kid = profiles.current();
 const byId = Object.fromEntries(MOUNTAIN.map((c) => [c.id, c]));
-/** Built: the camp has its idea. Mastered: three perspectives understood (record.mastered). */
+/** Built: the camp has its idea. Mastered: all five perspectives have their star (record.mastered). */
 const built = (c) => Boolean(c.ideas?.length);
 const isMastered = (c) => built(c) && c.ideas.every((idea) => record.mastered(idea));
 /** The camps still missing before this one opens (empty: open). */
@@ -81,6 +83,12 @@ function camp(c) {
     node("rect", { x: x + 18, y: y - 3, width: 24, height: 3, fill: "#c48a4e" }, fence);
     const hen = node("text", { x: x - 36, y: y + 4, "font-size": 16 }, g);
     hen.textContent = "🐔";
+  }
+  // Stars so far (each perspective with 4 of 5 right the first time); all five: the lantern
+  const stars = built(c) ? PERSPECTIVES.filter((p) => record.won(c.ideas[0], p.id)).length : 0;
+  if (open && stars && !isMastered(c)) {
+    const count = node("text", { x: x + 16, y: y + 8, "font-size": 11, "font-weight": 800, class: "camp-stars" }, g);
+    count.textContent = `${num(stars)}/${num(PERSPECTIVES.length)}⭐`;
   }
   if (isMastered(c)) {
     const light = node("text", { x: x + 16, y: y - 15, "font-size": 15, class: "lantern" }, g);
@@ -152,11 +160,11 @@ function openCamp(c) {
   const list = $("persp");
   list.innerHTML = "";
   for (const p of PERSPECTIVES) {
-    const state = record.state(idea, p.id);
+    const state = record.won(idea, p.id) ? "won" : record.state(idea, p.id) === "new" ? "new" : "played";
     const a = document.createElement("a");
     a.href = `/welt/spiel/?i=${idea}&p=${p.id}`;
     a.className = `${state}${p.id === suggested ? " next pulse" : ""}`;
-    a.setAttribute("aria-label", `${NAMES[p.id]} · ${T.states[state]}`);
+    a.setAttribute("aria-label", `${NAMES[p.id]} · ${state === "won" ? B.starLabel : T.states[state]}`);
     const icon = document.createElement("span");
     icon.className = "p-icon";
     icon.textContent = p.icon;

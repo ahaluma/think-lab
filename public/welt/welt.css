@@ -118,7 +118,8 @@
   background: var(--sun);
 }
 
-.persp a.understood {
+.persp a.understood,
+.persp a.won {
   background: #d9f5cf;
 }
 
