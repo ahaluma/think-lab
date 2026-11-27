@@ -374,7 +374,12 @@ export default {
     mapLabel: "The thinking mountain: pick a camp",
     whereTo: "Expedition Thinking Mountain. Equipment: your head. Goal: the very top.",
     fogLabel: "Fog over the mountain",
-    fog: "There is fog up there. Understand three ways here 🌼, then it clears.",
+    fog: "There is fog up there. Win all five stars ⭐ here, then it clears.",
+    // The star of a perspective: one round with 4 of 5 right the first time
+    star: "A star ⭐ for this way!",
+    allStars: "All five stars ⭐! Something new is waiting on the map.",
+    noStar: (first, n) => `For the star ⭐ you need 4 of 5 right the first time. This time: ${first} of ${n}.`,
+    starLabel: "star won",
     fogBuilding: "There is fog up there. Something is still being built. More soon.",
     tools: {
       zaun: "Count the gaps", haken: "Every one in order", huetten: "Rule out", vorrat: "Think backwards",
