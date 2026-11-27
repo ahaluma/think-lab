@@ -51,7 +51,7 @@ export const PLACES = [
   { id: "teile", awake: true, ideas: ["teile", "zehn"] },
   { id: "gruppen", awake: true, ideas: ["gruppen"] },
   { id: "regeln", awake: true, ideas: ["muster"] },
-  { id: "raum", awake: false },
+  { id: "raum", awake: true, ideas: ["lage", "form", "groesse"] },
   { id: "daten", awake: false },
 ];
 
@@ -111,6 +111,10 @@ export const IDEAS = {
   // The market, the money stand: euro coins and notes (whole euros). Its own place on the market map,
   // with the rounds of the world frame. The range is the most money in a task: 10, 20, 100 €.
   geld: { place: "geld", world: "markt", ranges: [10, 20, 100], startAges: [0, 7, 8] },
+  // Hill and lake (preschool): levels, not number ranges. startAges: 3 → level 1, 4 → 2, from 5 → 3.
+  lage: { place: "raum", ranges: [1, 2, 3], startAges: [0, 4, 5] },
+  form: { place: "raum", ranges: [1, 2, 3], startAges: [0, 4, 5] },
+  groesse: { place: "raum", ranges: [1, 2, 3], startAges: [0, 4, 5], cards: { forschen: "vorhersagen", anwenden: "vergleichen", pruefen: "vergleichen" } },
   teile: { place: "teile", ranges: [5, 10], tasks: { forschen: 3 } },
   // Friends of ten: friends of five (a hand) and friends of ten (the ten-frame).
   zehn: { place: "teile", ranges: [5, 10], cards: { machen: "ausprobieren", pruefen: "nachpruefen" } },

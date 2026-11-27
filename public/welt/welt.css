@@ -4044,3 +4044,294 @@ body.listening .board :is(button, .pic, .key) {
   opacity: 0.55;
   transition: opacity 0.2s;
 }
+
+/* ---------- Idee "Lage": a room with a table, a bench (ideas/lage/boards.js) */
+.lage-scene {
+  aspect-ratio: 5 / 4;
+  min-height: 0;
+  padding: 0;
+  container-type: inline-size;
+  background: linear-gradient(#e7f3ff 0 76%, #e9c99a 76% 100%);
+}
+.lage-table {
+  position: absolute;
+  left: 28%;
+  width: 44%;
+  bottom: 20%;
+  height: 38%;
+  z-index: 2;
+  pointer-events: none;
+}
+.lage-table .top {
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  top: 0;
+  height: 9%;
+  border-radius: 6px;
+  background: #b5651d;
+  border: 3px solid var(--ink);
+}
+.lage-table .cloth {
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 6%;
+  height: 32%;
+  background: repeating-linear-gradient(90deg, #ff8a8a 0 12px, #fff 12px 24px);
+  border: 3px solid var(--ink);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+.lage-table .leg {
+  position: absolute;
+  bottom: 0;
+  top: 30%;
+  width: 7%;
+  background: #8b4a12;
+  border: 3px solid var(--ink);
+}
+.lage-table .leg.l { left: 6%; }
+.lage-table .leg.r { right: 6%; }
+.lage-pet,
+.lage-slot {
+  position: absolute;
+  --s: 1;
+  width: calc(18cqw * var(--s));
+  height: calc(18cqw * var(--s));
+  margin-left: calc(-9cqw * var(--s));
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: calc(14cqw * var(--s));
+  line-height: 1;
+  cursor: pointer;
+}
+.at-auf { left: 50%; bottom: 58%; z-index: 3; }
+.at-unter { left: 50%; bottom: 20%; z-index: 3; --s: 0.85; }
+.at-links { left: 13%; bottom: 20%; z-index: 3; }
+.at-rechts { left: 87%; bottom: 20%; z-index: 3; }
+.at-vor { left: 50%; bottom: 0; z-index: 5; --s: 1.2; }
+.at-hinter { left: 50%; bottom: 50%; z-index: 1; --s: 0.85; }
+.lage-slot {
+  border: 3px dashed var(--ink);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  font-size: calc(12cqw * var(--s));
+}
+.lage-slot.at-hinter { bottom: 62%; z-index: 1; }
+.lage-slot.at-auf { bottom: 60%; }
+.lage-slot.filled { border-style: solid; background: none; border-color: transparent; }
+.lage-pet.right,
+.lage-pet.asked { filter: drop-shadow(0 0 8px var(--sun)) drop-shadow(0 0 3px var(--sun)); }
+.lage-pet.right { filter: drop-shadow(0 0 8px var(--ok)); }
+.lage-pet.quiet { cursor: default; }
+.lage-scene[class*="show-"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.show-auf .at-auf, .show-unter .at-unter, .show-vor .at-vor, .show-hinter .at-hinter,
+.show-links .at-links, .show-rechts .at-rechts, .show-sides .at-links, .show-sides .at-rechts {
+  outline: 4px solid var(--sun);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+.lage-waiting {
+  font-size: 54px;
+  line-height: 1;
+  text-align: center;
+  transition: opacity 0.3s;
+}
+.lage-waiting.gone { opacity: 0; }
+.lage-words[hidden] { display: none; }
+.lage-word {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 92px;
+  padding: 8px 10px;
+  font-size: 18px;
+}
+.lage-word.right { background: var(--ok); }
+.mini {
+  position: relative;
+  width: 64px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(#e7f3ff 0 72%, #e9c99a 72%);
+}
+.mini .mt { position: absolute; left: 20px; width: 24px; top: 16px; height: 5px; background: #b5651d; border-radius: 2px; }
+.mini .ml, .mini .mr { position: absolute; top: 20px; height: 14px; width: 3px; background: #8b4a12; }
+.mini .ml { left: 23px; }
+.mini .mr { left: 38px; }
+.mini .dot { position: absolute; width: 11px; height: 11px; margin-left: -5px; border-radius: 50%; background: #e8488a; border: 2px solid var(--ink); }
+.mini-auf .dot { left: 32px; top: 3px; }
+.mini-unter .dot { left: 32px; top: 22px; }
+.mini-neben .dot { left: 9px; top: 22px; }
+.mini-neben .dot.two { left: 55px; }
+.mini-links .dot { left: 9px; top: 22px; }
+.mini-rechts .dot { left: 55px; top: 22px; }
+.mini-vor .dot { left: 32px; top: 30px; width: 14px; height: 14px; margin-left: -7px; }
+.mini-hinter .dot { left: 32px; top: 9px; width: 8px; height: 8px; margin-left: -4px; z-index: -0; opacity: 0.85; }
+.mini-hinter .mt { z-index: 1; }
+.owl-room + .judge,
+.lage-scene + .lage-words { margin-top: 4px; }
+.bench-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 160px;
+}
+.bench-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+}
+.lage-pet.on-bench {
+  position: static;
+  margin: 0;
+  width: auto;
+  height: auto;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 72px;
+  font-size: clamp(34px, 11vw, 52px);
+}
+.lage-pet.named { filter: drop-shadow(0 0 7px var(--sun)) drop-shadow(0 0 3px var(--sun)); }
+.bench-plank {
+  width: 96%;
+  height: 16px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  background: #b5651d;
+}
+
+/* ---------- Idee "Form": shapes in a field, a picture to build (ideas/form/boards.js) */
+.form-field {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  gap: 6px;
+  background: linear-gradient(#e7f3ff, #fff);
+}
+.form-shape {
+  padding: 2px;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  cursor: pointer;
+}
+.form-shape.right { background: #c9f2dc; outline: 3px solid var(--ok); }
+.form-shape:disabled { opacity: 0.35; }
+.form-svg { display: block; }
+.form-names[hidden] { display: none; }
+.form-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 74px;
+  padding: 6px 8px;
+  font-size: 16px;
+}
+.form-name.right { background: var(--ok); }
+.form-build { display: grid; place-items: center; background: linear-gradient(#e7f3ff, #fff); }
+.form-picture { width: min(100%, 240px); height: auto; }
+.form-slot {
+  fill: rgba(255, 255, 255, 0.7);
+  stroke: #1b2140;
+  stroke-width: 3;
+  stroke-dasharray: 8 6;
+  stroke-linejoin: round;
+}
+.form-slot.next { fill: #fff3c4; stroke: #e0a100; stroke-width: 5; animation: form-glow 1.2s ease-in-out infinite alternate; }
+.form-slot.placed { stroke: #1b2140; stroke-dasharray: none; stroke-width: 4; animation: none; }
+@keyframes form-glow { to { fill: #ffe08a; } }
+.form-thing { display: grid; place-items: center; min-height: 170px; }
+.form-thing-icon { font-size: 96px; line-height: 1; }
+
+/* ---------- Idee "Größe": snakes, towers, glasses, a balance, three bears (ideas/groesse/boards.js) */
+.gr-scene { display: flex; gap: 10px; background: linear-gradient(#e7f3ff, #fff); }
+.gr-row-lang { flex-direction: column; justify-content: center; padding: 14px 12px; position: relative; }
+.gr-row-hoch, .gr-row-wasser { align-items: flex-end; justify-content: center; min-height: 200px; }
+.gr-thing { padding: 0; border: 0; background: none; cursor: pointer; }
+.gr-thing:disabled { opacity: 0.4; }
+.gr-lang { display: block; width: 100%; height: 34px; }
+.gr-lang .gr-body {
+  display: block;
+  height: 26px;
+  width: var(--size);
+  margin-left: var(--off);
+  border: 3px solid var(--ink);
+  border-radius: 6px 16px 16px 6px;
+  background: var(--color);
+  transition: margin-left 0.6s;
+  position: relative;
+}
+.gr-lang .gr-body::after { content: ""; position: absolute; right: 7px; top: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); }
+.aligned .gr-lang .gr-body { margin-left: 0; }
+.gr-hoch { width: 52px; height: 170px; display: flex; align-items: flex-end; }
+.gr-hoch .gr-body {
+  width: 100%;
+  height: var(--size);
+  border: 3px solid var(--ink);
+  border-radius: 4px 4px 0 0;
+  background: repeating-linear-gradient(var(--color) 0 18px, rgba(0, 0, 0, 0.12) 18px 21px);
+}
+.gr-wasser {
+  width: 58px;
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+  border: 3px solid var(--ink);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  background: rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+}
+.gr-wasser .gr-body { width: 100%; height: var(--size); background: #8fd3ff; }
+.gr-thing.right .gr-body { outline: 4px solid var(--ok); outline-offset: 2px; }
+.gr-wasser.right { box-shadow: 0 0 0 4px var(--ok); }
+.gr-thing.measured .gr-body { outline: 4px dashed var(--sun); outline-offset: 2px; }
+.gr-thing.used { visibility: hidden; }
+.gr-sorted { min-height: 120px; }
+.gr-row-hoch.gr-sorted, .gr-row-hoch.gr-pile { min-height: 190px; }
+.gr-row-lang.gr-sorted { min-height: 60px; }
+.gr-thing.owl-pick { position: relative; }
+.gr-thing.owl-pick::before { content: "🦉"; position: absolute; right: -4px; top: -6px; font-size: 30px; z-index: 2; }
+.gr-row-lang .gr-thing.owl-pick::before { right: auto; left: calc(var(--off) + var(--size) - 4px); top: -4px; }
+.aligned .gr-thing.owl-pick::before { left: calc(var(--size) - 6px); }
+.gr-bubble { font-size: 22px; white-space: normal; }
+.gr-balance { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 210px; }
+.gr-beam {
+  position: relative;
+  width: 86%;
+  height: 12px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  background: #b5651d;
+  transition: transform 0.8s ease;
+  margin-top: 110px;
+}
+.gr-beam.tip-l { transform: rotate(-12deg); }
+.gr-beam.tip-r { transform: rotate(12deg); }
+.gr-pan { position: absolute; bottom: 9px; width: 40%; display: flex; justify-content: center; align-items: flex-end; }
+.gr-pan.l { left: 0; }
+.gr-pan.r { right: 0; }
+.gr-beam.tip-l .gr-pan, .gr-beam.tip-r .gr-pan { transform-origin: bottom center; }
+.gr-beam.tip-l .gr-pan { transform: rotate(12deg); }
+.gr-beam.tip-r .gr-pan { transform: rotate(-12deg); }
+.gr-on-pan { padding: 0; border: 0; background: none; font-size: calc(58px * var(--k)); line-height: 1; cursor: pointer; }
+.gr-on-pan.right { filter: drop-shadow(0 0 8px var(--ok)); }
+.gr-stand { width: 0; height: 0; border-left: 22px solid transparent; border-right: 22px solid transparent; border-bottom: 40px solid var(--ink); }
+.gr-bears { display: grid; place-items: center; min-height: 150px; }
+.gr-bear { font-size: calc(80px * var(--k)); line-height: 1; }
+.gr-items { display: flex; justify-content: center; align-items: flex-end; gap: 12px; }
+.gr-item { min-width: 86px; min-height: 96px; padding: 4px; display: grid; place-items: end center; font-size: calc(54px * var(--k)); line-height: 1; }
+.gr-item.right { background: var(--ok); }
