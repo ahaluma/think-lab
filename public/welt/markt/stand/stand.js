@@ -22,6 +22,7 @@ import * as markt from "../record.js";
 import { task, inverse, STEPS, RANGES, OPS, mixed, audible } from "../tasks.js";
 import { story, STAGES } from "../stories.js";
 import { BOARDS, platzBoard, dropPad } from "../boards.js";
+import { questionBox } from "../../frame/question.js";
 
 const T = await texts(new URL("../markt.js", import.meta.url).href); // welt/markt/lang/<language>.js
 const $ = (id) => document.getElementById(id);
@@ -53,6 +54,22 @@ function tell(text, aud, shown = text) {
   return aud && voiceOn ? Promise.all([say(text), pause]) : pause;
 }
 
+/** The whole question stays in sight; no taps while it is read (frame/question.js). */
+const question = questionBox($("question"), $("board"));
+
+/** What a board says before the child taps is the question: into the box, the caption stays free. */
+function boardTell(text, aud, shown = text) {
+  if (!question.asking) return tell(text, aud, shown);
+  const loud = aud && voiceOn;
+  $("caption").textContent = "";
+  $("hear").hidden = !loud;
+  const said = loud ? say(text) : null;
+  question.take(shown, said);
+  last = { text: question.text || text, aud }; // 🔊 reads the whole question
+  const pause = wait(Math.min(2500, 600 + text.length * 25));
+  return said ? Promise.all([said, pause]) : pause;
+}
+
 // ---------- The round
 
 let slots = []; // what each task is: "cur", "bridge", "review", "inverse", "story"
@@ -73,6 +90,7 @@ let bridgeKind = null;
 const screens = { start: $("start"), board: $("board"), done: $("done") };
 function show(name) {
   for (const [k, e] of Object.entries(screens)) e.hidden = k !== name;
+  if (name !== "board") question.hide();
   $("hint").hidden = name !== "board";
 }
 
@@ -125,7 +143,7 @@ const ctx = {
   T,
   num,
   r,
-  tell,
+  tell: boardTell,
   tap: () => sound.tap(),
   locked: () => busy,
   started: () => (shownAt = Date.now()),
@@ -139,6 +157,7 @@ const ctx = {
   async miss(given, kind, text = "") {
     if (busy) return;
     busy = true;
+    question.stop();
     misses++;
     wrongInRow++;
     sound.wrong();
@@ -157,6 +176,7 @@ const ctx = {
   async solved(text) {
     if (busy) return;
     busy = true;
+    question.stop();
     const first = misses === 0;
     if (PLATZ) markt.platzTask(first);
     else markt.task(OP, current.range, current, first, Date.now() - shownAt);
@@ -184,6 +204,7 @@ const ctx = {
 
 async function hint() {
   if (!board || busy) return;
+  question.stop();
   if (misses < 2) board.help();
   else board.way();
 }
@@ -195,6 +216,7 @@ function runStep() {
   const box = $("board");
   box.innerHTML = "";
   box.className = `screen board markt-board board-${PLATZ ? "platz" : P}`;
+  question.reset();
   if (PLATZ) {
     current = story(PLATZ, markt.allowed(), r);
     board = platzBoard(box, current, ctx);

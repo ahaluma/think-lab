@@ -20,6 +20,8 @@
         <button class="icon-btn" id="hint" type="button" data-t-label="hint" aria-label="Tipp" hidden>💡</button>
         <button class="icon-btn sun" id="hear" type="button" data-t-label="hear" aria-label="Vorlesen"></button>
       </div>
+      <!-- The whole question of a task, in sight until the next task (frame/question.js). -->
+      <p class="question card" id="question" aria-live="polite" hidden></p>
       <p class="caption" id="caption" aria-live="polite"></p>
 
       <!-- Start: the symbol of the perspective and one big button. The first tap also switches on sound. -->
@@ -37,6 +39,11 @@
           <span class="think-icon" id="cardIcon" aria-hidden="true"></span>
           <strong id="cardName"></strong>
           <span id="cardText"></span>
+        </div>
+        <!-- The nature world: the flowers of this place, the new one comes up (spiel.js flowerBed). -->
+        <div class="bed card" id="bed" hidden>
+          <span class="bed-name" id="bedName"></span>
+          <div class="bed-flowers" id="bedFlowers" aria-hidden="true"></div>
         </div>
         <div class="feel" id="feel" role="group">
           <button class="feel-btn" type="button" data-feel="easy"><span aria-hidden="true">😄</span><small></small></button>

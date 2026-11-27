@@ -4,13 +4,13 @@
 // Network first: with a connection the newest file is used and its copy is refreshed, so an update
 // goes live as before. Without a connection the copy is used. Registered by welt/map.js.
 
-const CACHE = "ankaplay-v25";
+const CACHE = "ankaplay-v26";
 
 // The files of the new world, fetched once when the worker is installed, so a round works offline
 // even if the child has only seen the map. Everything else is copied when it is first used.
 const WORLD = [
   "/welt/", "/welt/welt.css", "/welt/map.js", "/welt/spiel/", "/welt/spiel/spiel.js",
-  "/welt/frame/ideas.js", "/welt/frame/record.js", "/welt/frame/voice.js",
+  "/welt/frame/ideas.js", "/welt/frame/record.js", "/welt/frame/voice.js", "/welt/frame/question.js",
   "/welt/frame/parts.js", "/welt/ideas/teile/tasks.js", "/welt/ideas/teile/boards.js",
   "/welt/ideas/zahl/tasks.js", "/welt/ideas/zahl/boards.js",
   "/welt/ideas/muster/tasks.js", "/welt/ideas/muster/boards.js",

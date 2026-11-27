@@ -17,8 +17,10 @@ import { things } from "../../shared/things.js";
 import * as gen from "../../shared/gen.js";
 import * as profiles from "../../shared/profiles.js";
 import * as record from "../frame/record.js";
-import { mount, tell, again } from "../frame/voice.js";
-import { IDEAS, CARDS, ROUND_TASKS, MOUNTAIN, perspective, cardOf, mapOf, campOf } from "../frame/ideas.js";
+import { mount, tell, ask, again } from "../frame/voice.js";
+import { questionBox } from "../frame/question.js";
+import { IDEAS, CARDS, ROUND_TASKS, MOUNTAIN, PLACES, perspective, cardOf, mapOf, campOf } from "../frame/ideas.js";
+import { store } from "../../shared/store.js";
 
 const params = new URLSearchParams(location.search);
 const IDEA = params.get("i") in IDEAS ? params.get("i") : "teile";
@@ -34,6 +36,11 @@ const BIGGER = T[IDEA]?.bigger ?? T.bigger;
 const SMALLER = T[IDEA]?.smaller ?? T.smaller;
 /** "A new flower grows": the mountain says it in its own words. */
 const GREW = T[IDEA]?.grew ?? T.grew;
+/** The nature world (3 to 6 years): no "how was it?" after a round, and the new flower is shown. */
+const NATURE = !IDEAS[IDEA].world;
+/** A place on the map of the nature world has room for this many flowers (FLOWER_SPOTS in map.js). */
+const BED = 12;
+const FLOWERS = ["🌸", "🌼", "🌷", "🌺"];
 const P = perspective(params.get("p")) || perspective(record.suggest(IDEA));
 
 const CARD = cardOf(IDEA, P.id);
@@ -68,6 +75,8 @@ async function load(idea) {
   return ideas[idea];
 }
 const screens = { start: $("start"), board: $("board"), done: $("done") };
+/** The whole question stays in sight; no taps while it is read (frame/question.js). */
+const question = questionBox($("question"), $("board"));
 
 let range = record.range(IDEA);
 let steps = []; // [{ p, transfer, pack, idea, range }] – idea and range only for a backpack task
@@ -81,6 +90,7 @@ let fresh = false; // the child plays this perspective for the first time: the b
 
 function show(name) {
   for (const [key, el] of Object.entries(screens)) el.hidden = key !== name;
+  if (name !== "board") question.hide();
   $("hint").hidden = name !== "board";
 }
 
@@ -100,13 +110,15 @@ const ctx = {
   num,
   word: (n) => T.numbers[n] ?? num(n),
   thing: (id) => (id === "nut" ? { icon: "🌰", ...T.nut } : THINGS[id]),
-  tell,
+  /** What the board says before the child taps is the question (frame/question.js), later the caption. */
+  tell: (text, shown = text) => (question.asking ? ask(question, text, shown) : tell(text, shown)),
   tap: () => sound.tap(),
   ready: () => restNudge(),
   fresh: () => fresh && !steps[at]?.transfer && !steps[at]?.pack,
 
   /** A wrong answer. Resolves when the sentence (and the hint after the second miss) was said. */
   async miss(text) {
+    question.stop();
     misses++;
     sound.wrong();
     await tell(`${oneOf(T.oops)} ${text}`);
@@ -116,6 +128,7 @@ const ctx = {
   async solved(text) {
     if (busy) return;
     busy = true;
+    question.stop();
     const step = steps[at];
     const first = misses === 0;
     record.task(step.idea ?? IDEA, step.p, step.range ?? range, first, step.transfer);
@@ -145,6 +158,7 @@ function restNudge() {
 $("board").addEventListener("pointerdown", restNudge);
 
 async function hint() {
+  question.stop();
   const text = board?.hint?.();
   if (text) await tell(text);
 }
@@ -155,6 +169,7 @@ async function runStep() {
   drawSteps();
   $("board").innerHTML = "";
   $("board").className = `screen board board-${step.p}`;
+  question.reset();
   if (step.transfer) {
     sound.tap();
     await tell(T.surprise);
@@ -211,6 +226,28 @@ async function startRound() {
   runStep();
 }
 
+/** The flower bed of this place on the done screen: every flower grown here, the new one comes up.
+ *  The map shows the same flowers at the place, the new one blooms there once (map.js, store "newFlower").
+ *  Returns false when the bed is full: then nothing new grows on the map either, and nothing is said. */
+function flowerBed() {
+  const place = PLACES.find((p) => p.ideas?.includes(IDEA));
+  const grown = (place?.ideas ?? [IDEA]).reduce((n, idea) => n + record.grown(idea), 0);
+  const bed = $("bed");
+  bed.hidden = !place || grown > BED;
+  if (bed.hidden) return false;
+  $("bedName").textContent = T.places[place.id];
+  const row = $("bedFlowers");
+  row.innerHTML = "";
+  for (let i = 0; i < grown; i++) {
+    const f = document.createElement("span");
+    f.textContent = FLOWERS[i % FLOWERS.length];
+    if (i === grown - 1) f.className = "new";
+    row.append(f);
+  }
+  store.set("newFlower", place.id);
+  return true;
+}
+
 async function finish() {
   const tasks = steps.filter((s) => !s.transfer && !s.pack).length;
   const berg = IDEAS[IDEA].world === "berg";
@@ -223,13 +260,21 @@ async function finish() {
   $("cardName").textContent = T.cards[CARD].name;
   $("cardText").textContent = T.cards[CARD].text;
   for (const b of $("feel").children) b.classList.remove("on");
+  // Small children are not asked how it was: two weak rounds take the numbers down by themselves.
+  $("feel").hidden = NATURE;
+  if (NATURE && moved <= 0) record.settle(IDEA, P.id, range);
+  $("bed").hidden = true;
+  const flower = NATURE && flowerBed();
   show("done");
   sound.win();
   celebrate();
   await tell(`${T.done} ${T.cardGot(T.cards[CARD].name)} ${T.cards[CARD].text}`);
+  if (flower) await tell(T.grew);
   if (star) await tell(star);
-  await tell(moved > 0 ? BIGGER : GREW);
-  tell(T.feelQuestion);
+  // The town has no flowers: it only says when the numbers get bigger. The mountain has its logbook.
+  if (moved > 0) await tell(BIGGER);
+  else if (IDEAS[IDEA].world === "berg") await tell(GREW);
+  if (!NATURE) tell(T.feelQuestion);
 }
 
 // ---------- Wire up

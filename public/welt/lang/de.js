@@ -108,7 +108,7 @@ export default {
   progress: "Aufgaben",
   surprise: "Überraschung! Jetzt kommt etwas anderes.",
   done: "Geschafft!",
-  grew: "Schau! In der Welt wächst eine neue Blume.",
+  grew: "Schau, deine neue Blume! Sie wächst auch auf der Karte.",
   cardGot: (name) => `Dein Denk-Trick: ${name}.`,
   feelQuestion: "Wie war das für dich?",
   feel: { easy: "leicht", ok: "genau richtig", hard: "schwer" },
