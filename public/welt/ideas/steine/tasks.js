@@ -17,8 +17,10 @@ export const DIGITS = 3;
 /** take 1..k, last one wins: how many to take now from n (never a multiple of k + 1) */
 function takeTask(r, level, story = r.pick(["steine", "hoelzer", "kekse"])) {
   const k = level === 1 ? 2 : r.int(3, 5);
-  let n = r.int(level === 1 ? 4 : 10, level === 1 ? 10 : level === 2 ? 30 : 60);
-  if (n % (k + 1) === 0) n++;
+  // never a trap at the start; drawn again (not n + 1, that would make the answer 1 too often)
+  let n;
+  do n = r.int(level === 1 ? 4 : 10, level === 1 ? 10 : level === 2 ? 30 : 60);
+  while (n % (k + 1) === 0);
   const first = n % (k + 1);
   return { story, a: { n, k, k1: k + 1, first, trap: n - first }, pic: [{ icon: { steine: "🪨", hoelzer: "🥢", kekse: "🍪" }[story], n }], answer: first, tool: "falle", key: `${story}${n}${k}` };
 }
@@ -26,8 +28,9 @@ function takeTask(r, level, story = r.pick(["steine", "hoelzer", "kekse"])) {
 /** the last one loses */
 function lastTask(r) {
   const k = r.int(2, 4);
-  let n = r.int(8, 40);
-  if ((n - 1) % (k + 1) === 0) n++;
+  let n;
+  do n = r.int(8, 40);
+  while ((n - 1) % (k + 1) === 0);
   const first = (n - 1) % (k + 1);
   return { story: "chili", a: { n, k, k1: k + 1, first, trap: n - first }, pic: [{ icon: "🍬", n }], answer: first, tool: "letzter", key: `c${n}${k}` };
 }
@@ -35,8 +38,9 @@ function lastTask(r) {
 /** the counting game: start at 0, add 1..k, who says T wins. Which number do you say first? */
 function countTask(r, level) {
   const k = level === 3 ? 2 : r.int(2, 5);
-  let T = level === 3 ? r.int(15, 30) : r.int(30, 100);
-  if (T % (k + 1) === 0) T++;
+  let T;
+  do T = level === 3 ? r.int(15, 30) : r.int(30, 100);
+  while (T % (k + 1) === 0);
   const first = T % (k + 1);
   return { story: "zaehlen", a: { T, k, k1: k + 1, first, next: first + k + 1 }, answer: first, tool: "zaehlen", key: `z${T}${k}` };
 }
@@ -59,8 +63,10 @@ function chocoTask(r) {
 
 /** Kombi with camp 8: who makes the last break? */
 function whoTask(r) {
-  const m = r.int(2, 7);
-  const n = r.int(2, 9);
+  // half the bars have an odd number of pieces (then the owl makes the last break), not just a quarter
+  const odd = r.chance(0.5);
+  const m = odd ? r.pick([3, 5, 7]) : r.int(2, 7);
+  const n = odd ? r.pick([3, 5, 7, 9]) : r.pick(m % 2 ? [2, 4, 6, 8] : [2, 3, 4, 5, 6, 7, 8, 9]);
   const breaks = m * n - 1;
   return { story: "schokower", a: { m, n, pieces: m * n, breaks }, pic: Array.from({ length: m }, () => ({ icon: "🟫", n })), answer: breaks % 2 === 1 ? 0 : 1, choices: { kind: "who", ids: [0, 1] }, tool: "paar", key: `w${m}${n}` };
 }

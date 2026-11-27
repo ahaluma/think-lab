@@ -209,33 +209,41 @@ if (asked) openCamp(asked);
 
 // ---------- A new camp: the surprise, and a keepsake to save (once per camp and child)
 
+/** The summit as a place to reach (for the keepsake). */
+const SUMMIT = { id: "gipfel" };
 const SEEN = `berg:seen:${kid?.id || "guest"}`;
 const seen = store.get(SEEN, ["zaun"]);
 const fresh = visible.filter((c) => !seen.includes(c.id));
-if (fresh.length) {
-  store.set(SEEN, [...seen, ...fresh.map((c) => c.id)]);
-  const c = fresh.at(-1);
+// The summit is a surprise of its own, once, when the last camp is mastered.
+const summitFresh = summitOpen && !seen.includes("gipfel");
+if (fresh.length || summitFresh) {
+  store.set(SEEN, [...seen, ...fresh.map((c) => c.id), ...(summitFresh ? ["gipfel"] : [])]);
+  const c = summitFresh ? SUMMIT : fresh.at(-1);
   setTimeout(() => reveal(c), 600);
 }
 
 async function reveal(c) {
   const K = B.keep;
   const box = $("reached");
-  const rank = visible.indexOf(c) + 1;
+  const top = c === SUMMIT;
+  // The camp's number on the mountain (camps open in their own order, so not how many are open)
+  const rank = top ? MOUNTAIN.length + 1 : MOUNTAIN.indexOf(c) + 1;
   const tools = visible.filter(isMastered).map((m) => B.tools[m.id]);
   const solved = MOUNTAIN.flatMap((m) => m.ideas ?? []).reduce((k, idea) => k + record.solved(idea), 0);
   const picture = keepsake({
     title: B.title,
-    headline: K.headline(kid?.name || "", num(rank)),
+    headline: top ? K.summitHeadline(kid?.name || "") : K.headline(kid?.name || "", num(rank)),
     camp: B.camps[c.id].replace(/^[^:]*:\s*/, ""),
     lines: [...(tools.length ? [K.tools(tools)] : []), K.solved(num(solved))],
     date: new Date().toLocaleDateString(K.locale, { day: "numeric", month: "long", year: "numeric" }),
     brand: "AnkaPlay",
     animal: kid?.animal || "🐰",
-    camps: visible.slice(0, rank).map((v) => AT[v.id]),
+    camps: visible.filter((v) => MOUNTAIN.indexOf(v) < rank).map((v) => AT[v.id]),
   });
-  $("reachedTitle").textContent = K.title;
-  $("reachedText").textContent = K.text(B.camps[c.id]);
+  const title = top ? K.summitTitle : K.title;
+  const text = top ? K.summitText : K.text(B.camps[c.id]);
+  $("reachedTitle").textContent = title;
+  $("reachedText").textContent = text;
   const img = $("reachedImg");
   img.src = picture.toDataURL("image/png");
   img.alt = K.alt;
@@ -256,7 +264,7 @@ async function reveal(c) {
   box.hidden = false;
   sound.win();
   celebrate();
-  await tell(`${K.title} ${K.text(B.camps[c.id])} ${K.offer}`);
+  await tell(`${title} ${text} ${K.offer}`);
 }
 
 navigator.serviceWorker?.register("/sw.js").catch(() => {});
