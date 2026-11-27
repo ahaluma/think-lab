@@ -3462,3 +3462,374 @@ b.cmp-gap.right {
 .count-row .chip.gap {
   border-style: dashed;
 }
+
+/* ---------- Idea "Formen" (the workshop): shapes, the mirror, the ruler. */
+.shape-scene {
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: #fff6e0;
+}
+
+.shape-svg {
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.name-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.name-row[hidden] {
+  display: none;
+}
+
+.name-btn {
+  min-width: 100px;
+  padding: 10px 14px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.name-btn.right {
+  background: #c9efb4;
+}
+
+.hint-text {
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+}
+
+.corner {
+  cursor: pointer;
+}
+
+.corner-hit {
+  fill: rgba(255, 255, 255, 0.01);
+  stroke: transparent;
+}
+
+.corner.on .corner-hit {
+  fill: var(--sun);
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+.corner.glow .corner-hit {
+  fill: rgba(255, 200, 58, 0.6);
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
+.corner-no {
+  font-size: 17px;
+  font-weight: 900;
+  fill: var(--ink);
+  pointer-events: none;
+}
+
+.corner-dot {
+  fill: var(--pink);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.mirror-scene {
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  background: #fff6e0;
+}
+
+.mirror-grid {
+  display: grid;
+  gap: 3px;
+  width: min(100%, 300px);
+}
+
+.m-cell {
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border: 2px solid #c6b48f;
+  border-radius: 4px;
+  background: #fff;
+}
+
+button.m-cell {
+  cursor: pointer;
+  font: inherit;
+}
+
+.m-cell.on {
+  background: var(--blue);
+  border-color: var(--ink);
+}
+
+.mirror-grid.v .m-cell.after-line {
+  box-shadow: -5px 0 0 -1px var(--pink);
+}
+
+.mirror-grid.h .m-cell.below-line {
+  box-shadow: 0 -5px 0 -1px var(--pink);
+}
+
+.m-cell.glow-next {
+  background: rgba(255, 200, 58, 0.7);
+  animation: nudge 1.2s ease-in-out infinite;
+}
+
+.mirror-grid.done .m-cell.on {
+  background: var(--ok);
+}
+
+.ruler-scene {
+  padding: 12px 8px;
+  background: #fff;
+}
+
+.ruler-svg {
+  width: 100%;
+  height: auto;
+}
+
+.cm-no {
+  font-size: 12px;
+  font-weight: 800;
+  fill: var(--ink);
+}
+
+.thing-icon {
+  font-size: 22px;
+}
+
+/* ---------- Idea "Zeit" (the weather station): clock, bag of balls, charts, the week. */
+.clock-scene {
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: #eaf6ff;
+}
+
+.clock-svg {
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.clock-no {
+  font-size: 18px;
+  font-weight: 900;
+  fill: var(--ink);
+}
+
+.clock-min {
+  font-size: 11px;
+  font-weight: 800;
+  fill: var(--blue);
+}
+
+.hand {
+  transition: transform 0.25s ease;
+}
+
+.clock-tools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.clock-btn {
+  padding: 10px 6px;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.clock-btn.hour {
+  background: #ffd0e8;
+}
+
+.clock-btn.min {
+  background: #cfeaff;
+}
+
+.time-btn {
+  min-width: 86px;
+  font-size: 22px;
+}
+
+.bag-scene {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  background: #fff6e0;
+}
+
+.bag-icon {
+  font-size: 46px;
+}
+
+.bag {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 220px;
+  padding: 10px;
+  border: 3px dashed #c6b48f;
+  border-radius: 18px 18px 40px 40px;
+  background: #fff;
+}
+
+.ball {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+
+.ball.small {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.draw-btn {
+  align-self: center;
+  padding: 10px 18px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.tally {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+}
+
+.tally .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.name-btn .ball.small {
+  margin-right: 6px;
+}
+
+.chart-scene {
+  padding: 12px 14px 16px;
+  background: #eaf6ff;
+}
+
+.chart-title {
+  margin: 0 0 8px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.chart {
+  position: relative;
+  display: grid;
+  gap: 6px;
+}
+
+.chart-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-key {
+  flex: none;
+  width: 30px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.chart-bar {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  min-height: 26px;
+}
+
+.chart-bar .pic {
+  font-size: 18px;
+}
+
+.chart.scaled .chart-bar {
+  align-items: center;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 7 - 1px), rgba(27, 33, 64, 0.15) calc(100% / 7 - 1px) calc(100% / 7));
+}
+
+.bar-fill {
+  height: 22px;
+  box-sizing: border-box;
+  border: 2px solid var(--ink);
+  border-radius: 0 6px 6px 0;
+  background: var(--blue);
+}
+
+.chart-axis {
+  position: relative;
+  height: 18px;
+  margin: 2px 0 0 38px;
+  border-top: 2px solid var(--ink);
+}
+
+.chart-axis span {
+  position: absolute;
+  top: 2px;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.week-scene {
+  padding: 16px 8px;
+  background: #eaf6ff;
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.week .day {
+  display: grid;
+  place-items: center;
+  min-height: 52px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.week .day.today {
+  background: var(--sun);
+}
+
+.week .day small {
+  color: var(--pink);
+}
+
+.days-row .name-btn {
+  min-width: 0;
+  font-size: 15px;
+  padding: 8px 10px;
+}
