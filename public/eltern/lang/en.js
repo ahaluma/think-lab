@@ -73,7 +73,7 @@ export default {
   worldStats: (rounds, date) => `${rounds} ${rounds === 1 ? "round" : "rounds"} · last played ${date}`,
   worldFirst: (right, of) => `${right} of ${of} right at the first try`,
   worldStates: { new: "new", played: "played", understood: "understood" },
-  worldRange: { geld: (n) => `money up to ${n} €`, zeit: (n) => `level ${n}`, formen: (n) => `level ${n}`, numbers: (n) => `Numbers up to ${n}`, zehn: (n) => `filling up to ${n}`, gruppen: (n, k, most) => `sharing up to ${most} things`, zaun: () => "Posts and gaps", muster: (n, k) => `Rows made of pieces with ${k} things` },
+  worldRange: { sortieren: (n) => `level ${n}`, folge: (n) => `level ${n}`, schauen: (n) => `level ${n}`, lage: (n) => `level ${n}`, form: (n) => `level ${n}`, groesse: (n) => `level ${n}`, geld: (n) => `money up to ${n} €`, zeit: (n) => `level ${n}`, formen: (n) => `level ${n}`, numbers: (n) => `Numbers up to ${n}`, zehn: (n) => `filling up to ${n}`, gruppen: (n, k, most) => `sharing up to ${most} things`, zaun: () => "Posts and gaps", muster: (n, k) => `Rows made of pieces with ${k} things` },
   moved: (place) => `hidden, now in the world (${place})`,
   weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
 };

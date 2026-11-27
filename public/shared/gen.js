@@ -26,7 +26,7 @@
 // opts.tries (30) attempts – a tiny level has only so many tasks – the one with the fewest
 // clashes is used, so next() always returns a task.
 //
-// Testing: open a game with ?seed=7 (e.g. /games/zahlenzug/?seed=7) and it deals the same tasks
+// Testing: open a game with ?seed=7 (e.g. /games/zahlen-memory/?seed=7) and it deals the same tasks
 // every time, handy to reproduce a bug. Without a seed every game is different.
 
 /** A random source from a seed (mulberry32): the same seed, the same numbers. No seed: Math.random. */
