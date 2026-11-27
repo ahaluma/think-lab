@@ -23,6 +23,10 @@ export default {
   switchKid: "बच्चा बदल्नुहोस्",
   addKidsHint: "अभिभावकका लागि: बच्चा थप्नुहोस्",
   newWorld: "नयाँ: संसार खोज",
+  natureWorld: "प्रकृति",
+  natureAges: "३–६ वर्ष",
+  townWorld: "सहर",
+  townAges: "६–१० वर्ष",
 
   // The number pad (shared/numpad.js): older children type the answer.
   yourAnswer: "तिम्रो उत्तर",

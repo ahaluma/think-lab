@@ -4,7 +4,7 @@ const full = (t, n) => `${n(t.a)} ${OP[t.op]} ${n(t.b)} बराबर ${n(t.c)
 
 export default {
   title: "बजार",
-  toWorld: "संसारमा",
+  toWorld: "सहरमा",
   toMarket: "बजारमा",
   hear: "पढेर सुनाऊ",
   hint: "सङ्केत",

@@ -1,4 +1,4 @@
-// The map of the new world: six places in one landscape. A place with something to play is awake,
+// The map of the nature world (preschool, 3 to 6): six places in one landscape. A place with something to play is awake,
 // the others sleep. The child's animal stands at the place where the next activity is; a tap on it
 // starts that activity. A tap on a place opens its five perspectives.
 //
@@ -218,12 +218,10 @@ for (const [id, icon] of Object.entries(CARDS)) {
   $("cards").append(li);
 }
 
-// ---------- The way to the thinking mountain
+// ---------- The way to the town (school children: the market, the station, the thinking mountain)
 
-$("doorName").textContent = T.berg.door;
-$("doorNote").textContent = T.berg.doorNote;
-$("marketName").textContent = T.marktDoor;
-$("marketNote").textContent = T.marktNote;
+$("townName").textContent = T.stadt.door;
+$("townNote").textContent = T.stadt.doorNote;
 
 $("caption").textContent = T.whereTo;
 const query = new URLSearchParams(location.search);

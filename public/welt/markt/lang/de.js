@@ -5,7 +5,7 @@ const full = (t, n) => `${n(t.a)} ${OP[t.op]} ${n(t.b)} ist ${n(t.c)}${t.rest ||
 
 export default {
   title: "Markt",
-  toWorld: "Zur Welt",
+  toWorld: "Zur Stadt",
   toMarket: "Zum Markt",
   hear: "Vorlesen",
   hint: "Tipp",

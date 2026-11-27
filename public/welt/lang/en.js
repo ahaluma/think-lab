@@ -88,7 +88,7 @@ const GPART = { 2: "half", 4: "a quarter", 8: "an eighth", 3: "a third", 9: "a n
 export default {
   title: "AnkaPlay World",
   mapLabel: "The world: choose a place",
-  places: { zahlen: "Meadow and stream", teile: "Burrow and pond", gruppen: "Fruit tree and nests", zaun: "Thinking mountain: the fence", haken: "Thinking mountain: every one in order", huetten: "Thinking mountain: who lives where?", vorrat: "Thinking mountain: think backwards", ameisen: "Thinking mountain: find the rule", waage: "Thinking mountain: the market scales", stall: "Thinking mountain: the stable", tanz: "Thinking mountain: the dance floor", fels: "Thinking mountain: the rock with signs", socken: "Thinking mountain: the sock box", steine: "Thinking mountain: the heap of stones", mauer: "Thinking mountain: the number wall", regeln: "Forest", raum: "Hill and lake", daten: "Sky" },
+  places: { zahlen: "Meadow and stream", teile: "Burrow and pond", gruppen: "Fruit tree and nests", zaun: "Thinking mountain: the fence", haken: "Thinking mountain: every one in order", huetten: "Thinking mountain: who lives where?", vorrat: "Thinking mountain: think backwards", ameisen: "Thinking mountain: find the rule", waage: "Thinking mountain: the market scales", stall: "Thinking mountain: the stable", tanz: "Thinking mountain: the dance floor", fels: "Thinking mountain: the rock with signs", socken: "Thinking mountain: the sock box", steine: "Thinking mountain: the heap of stones", mauer: "Thinking mountain: the number wall", regeln: "Forest", raum: "Hill and lake", daten: "Sky", blumen: "Town: flower shop" },
   whereTo: "Where would you like to go?",
   asleep: "Everything is still asleep here.",
   comeHere: "Come, this is where we go on!",
@@ -255,6 +255,19 @@ export default {
       fixed: (n) => `Now it is right: there are ${n}.`,
       hint: "Count along: one, two, three …",
     },
+  },
+
+  // ---------- The town: the world for school children (welt/stadt/)
+  stadt: {
+    title: "The town",
+    mapLabel: "The town: pick a place",
+    whereTo: "Where in the town?",
+    asleep: "This is still being built.",
+    places: { bahnhof: "Station", blumen: "Flower shop", markt: "Market", werkstatt: "Workshop", wetter: "Weather station" },
+    door: "To the town",
+    doorNote: "For school children: numbers to 1000, sums, the thinking mountain",
+    natureDoor: "To nature",
+    natureNote: "The first ideas: how many, more and less",
   },
 
   // ---------- Idea "Zehn": friends of ten (burrow and pond). Two numbers that fill it up together.
@@ -563,7 +576,7 @@ export default {
       hint: "How does one row turn into the next? Compare the numbers on the right.",
     },
     pickWay: "How do you want to play?",
-    toWorld: "To the world",
+    toWorld: "To the town",
     door: "To the thinking mountain",
     doorNote: "Puzzles like in a maths olympiad",
     camps: {

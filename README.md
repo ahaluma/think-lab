@@ -64,8 +64,15 @@ Rule of thumb: a game only uses its own folder plus `shared/`. Games never impor
 
 ## The new world (`public/welt/`)
 
-A second way into AnkaPlay is growing next to the games: `/welt/`. The start page has a door to it
-("Neu: die Welt entdecken"), the games stay as they are.
+A second way into AnkaPlay is growing next to the games: `/welt/`. It has **two worlds for two ages**,
+because learning what a number is and training calculation are different things:
+
+- **The nature world** (`/welt/`, ages 3 to 6, preschool): the basic ideas with things and pictures,
+  numbers up to 10, no signs. Described in this section.
+- **The town** (`/welt/stadt/`, ages 6 to 10, school): skills, with numbers up to 1000. See
+  "The town" below. The market and the thinking mountain are reached from the town.
+
+The start page has a door to each; the one that fits the child's age comes first.
 
 The idea: a **grid of ideas and perspectives**. Every mathematical idea can be played in five
 perspectives, each with a fixed symbol: see 👁️, make ✋, explore 🔍, use 🔑, check ✅. The map is a
@@ -76,14 +83,13 @@ ideas at that place (`ideaTabs` in `lang/`), then the five perspectives of the c
 | Place | Idea | See 👁️ | Make ✋ | Explore 🔍 | Use 🔑 | Check ✅ |
 | --- | --- | --- | --- | --- | --- | --- |
 | Meadow and stream | `zahl`: a number says how many | flowers at a glance | pick n flowers | the missing stepping stone | where are more? | the owl has counted |
-| Meadow and stream | `stellen`: ten ones make a ten (tens and ones) | bunches and flowers: how many? | make the number from bunches and flowers | +1, −1, +10, −10: try, then predict | tens and ones in the place-value table | the owl has counted (swapped digits, a ten off) |
 | Burrow and pond | `teile`: numbers are made of numbers | animals hide in the burrow | split on two leaves | the hollow tree | a hidden part | the owl adds |
 | Burrow and pond | `zehn`: friends of ten | frogs on lily pads: how many are free? | fill the nut box | the staircase of friends | 7 + ? = 10 | the owl's friends: right or one off? |
 | Fruit tree and nests | `gruppen`: groups of the same size, sharing fairly | eggs under the hen | share among the animals | think first: does it come out even? | cherries: for how many birds is it enough? | the owl shared: who has too many? |
 | Forest | `muster`: a row goes on, because one piece comes again and again | what comes next? | lay the next things | which piece comes again? | the same row with other things | the owl laid a row: find the wrong thing |
 
-**Three number ranges: up to 5, 10 and 20** (`ranges` in `frame/ideas.js`). A child starts by age
-(`frame/record.js`): under 6 up to 5, at 6 up to 10, from 7 up to 20. After a round the three faces
+**Two number ranges: up to 5 and up to 10** (`ranges` in `frame/ideas.js`); the forest has three.
+A child starts by age (`frame/record.js`): under 6 up to 5, from 6 up to 10. After a round the three faces
 move the range up or down; a range the child chose to go down to stays. Up to 10 the answer buttons
 show the digit and that many dots. Up to 20 they show only the digit, the dots stay on the sign of the
 whole and in the hint. More than ten pictures are drawn smaller, still five in a row. In the range up
@@ -98,18 +104,17 @@ that repeats: two things (🍄🌰), three (🍄🌰🌰) or four (🍄🌰🍄�
 row started at another place (`sameWay` in `ideas/muster/tasks.js`), because that would be right too.
 It holds the idea of the old game "Muster-Kette".
 
-**Friends of ten** (`zehn`, at the burrow next to `teile`). Its three ranges are the whole to fill:
-friends of 5 (a hand), friends of 10 (the ten-frame) and filling up to 20 (13 and 7: the same friends
-one ten higher). Everything is laid out in ten-frames, rows of five. In "see" the pond shows only for a
+**Friends of ten** (`zehn`, at the burrow next to `teile`). Its two ranges are the whole to fill:
+friends of 5 (a hand) and friends of 10 (the ten-frame). Everything is laid out in ten-frames, rows of five. In "see" the pond shows only for a
 moment from the second round on, so the child sees "a full row and two more" instead of counting.
 
-**Tens and ones** (`stellen`, at the meadow next to `zahl`). Ten flowers are tied into a bunch, ten
+**Tens and ones** (`stellen`, in the town at the flower shop). Ten flowers are tied into a bunch, ten
 bunches go into a basket: the same picture as the sticks and plates of school. Four ranges: the teens
 and 20, up to 50, up to 100, up to 1000. Answers are typed on the number pad. A wrong answer says what
 went wrong: swapped digits ("Die Sträuße zuerst"), a bunch counted as one, a ten off. "Use" has the
 hard cases on purpose: the ones said first ("4 Einer und 3 Zehner"), more than nine ones ("2 Zehner
-und 13 Einer"), and zeros in the middle (305). The animal on the map leads only children from 6 here
-(`from` in `IDEAS`); the place still opens for everyone.
+und 13 Einer"), and zeros in the middle (305). The start range goes by age (`startAges` in `IDEAS`): 6 the teens,
+7 up to 50, 8 up to 100, 9 up to 1000.
 
 The meadow holds the ideas of the old games "Wo sind mehr?" and "Zahlenzug", the forest the idea of
 "Muster-Kette", the fruit tree the idea of "Gerecht teilen", the burrow the idea of "Zehnerfreunde".
@@ -139,7 +144,8 @@ public/welt/
 │   ├── record.js          ← what the child can do, per idea, perspective and number range
 │   ├── voice.js           ← every sentence is spoken (if on) and always shown as text
 │   └── parts.js           ← building blocks of the boards: pictures, the number sign, number buttons
-├── ideas/<idea>/          ← one idea: zahl and stellen (the meadow), teile and zehn (the burrow) …
+├── stadt/                 ← the town: map of the school world (TOWN in frame/ideas.js)
+├── ideas/<idea>/          ← one idea: zahl (the meadow), teile and zehn (the burrow), stellen (the town) …
 │   ├── tasks.js           ← the tasks of the five perspectives (data only)
 │   └── boards.js          ← how each perspective looks and reacts
 ├── spiel/                 ← one round: tasks, one surprise from another perspective, a thinking card
@@ -169,10 +175,23 @@ spots in `map.js`, and list the two new files in `public/sw.js`. A round is `/we
 A round has no points, no clock and no streak. After a round a flower grows on the map and the
 child says how it felt (easy, just right, hard). `node tools/check-welt.mjs` checks the tasks.
 
+## The town (`public/welt/stadt/`)
+
+The world for **school children, 6 to 10**: skills with bigger numbers. Five places along one street
+(`TOWN` in `frame/ideas.js`); its rounds use the same frame as the nature world (`world: "stadt"`).
+
+- **Flower shop** (awake): tens and ones up to 1000 (`stellen`, see above).
+- **Market** (awake): the four operations, its own world (`welt/markt/`, below).
+- **Station** (asleep): later numbers in order, the number line, comparing, ordinals.
+- **Workshop** (asleep): later shapes, space and measuring.
+- **Weather station** (asleep): later the clock, time and data.
+
+A door leads to the thinking mountain, another back to the nature world.
+
 ## The thinking mountain (`public/welt/berg/`)
 
 A second world for **Mathe-Olympiade training, for children of 9 to 12** (starting at the level of
-grade 3 in Hamburg). The map of the nature world has a door to it ("Zum Denk-Berg"). The plan is the
+grade 3 in Hamburg). The town has a door to it ("Zum Denk-Berg"). The plan is the
 doc "Plan: Olympiade-Welt (Denk-Berg)".
 
 - **A mountain with twelve camps** in four heights (about the olympiad level of grades 3, 4, 5, 6) and
@@ -204,8 +223,8 @@ doc "Plan: Olympiade-Welt (Denk-Berg)".
 
 ## The market (`public/welt/markt/`)
 
-A third world for **the four basic operations, from age 6**. The map of the nature world has a door to
-it ("Zum Markt"). The plan is the doc "Rechen-Welt: Plan".
+A place of the town for **the four basic operations, from age 6**, with its own map. The town's
+market leads to it. The plan is the doc "Rechen-Welt: Plan".
 
 - **Five places:** four stands (fruit stall +, bread stall −, egg stall ·, packing table :) and in the
   middle the market square, where everything comes together in little stories (`stories.js`).

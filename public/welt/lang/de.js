@@ -83,7 +83,7 @@ const GPART = { 2: "die Hälfte", 4: "ein Viertel", 8: "ein Achtel", 3: "ein Dri
 export default {
   title: "AnkaPlay Welt",
   mapLabel: "Die Welt: such dir einen Ort aus",
-  places: { zahlen: "Wiese und Bach", teile: "Bau und Teich", gruppen: "Obstbaum und Nester", zaun: "Denk-Berg: der Zaun", haken: "Denk-Berg: alle der Reihe nach", huetten: "Denk-Berg: wer wohnt wo?", vorrat: "Denk-Berg: rückwärts denken", ameisen: "Denk-Berg: die Regel finden", waage: "Denk-Berg: die Marktwaage", stall: "Denk-Berg: der Stall", tanz: "Denk-Berg: der Tanzplatz", fels: "Denk-Berg: der Fels mit Zeichen", socken: "Denk-Berg: die Sockenkiste", steine: "Denk-Berg: der Steinhaufen", mauer: "Denk-Berg: die Zahlenmauer", regeln: "Wald", raum: "Hügel und See", daten: "Himmel" },
+  places: { zahlen: "Wiese und Bach", teile: "Bau und Teich", gruppen: "Obstbaum und Nester", zaun: "Denk-Berg: der Zaun", haken: "Denk-Berg: alle der Reihe nach", huetten: "Denk-Berg: wer wohnt wo?", vorrat: "Denk-Berg: rückwärts denken", ameisen: "Denk-Berg: die Regel finden", waage: "Denk-Berg: die Marktwaage", stall: "Denk-Berg: der Stall", tanz: "Denk-Berg: der Tanzplatz", fels: "Denk-Berg: der Fels mit Zeichen", socken: "Denk-Berg: die Sockenkiste", steine: "Denk-Berg: der Steinhaufen", mauer: "Denk-Berg: die Zahlenmauer", regeln: "Wald", raum: "Hügel und See", daten: "Himmel", blumen: "Stadt: Blumenladen" },
   whereTo: "Wohin möchtest du?",
   asleep: "Hier schläft noch alles.",
   comeHere: "Komm, hier geht es weiter!",
@@ -257,6 +257,19 @@ export default {
     },
   },
 
+
+  // ---------- Die Stadt: die Welt für Schulkinder (welt/stadt/)
+  stadt: {
+    title: "Die Stadt",
+    mapLabel: "Die Stadt: such dir einen Ort aus",
+    whereTo: "Wohin in der Stadt?",
+    asleep: "Hier wird noch gebaut.",
+    places: { bahnhof: "Bahnhof", blumen: "Blumenladen", markt: "Markt", werkstatt: "Werkstatt", wetter: "Wetterwarte" },
+    door: "Zur Stadt",
+    doorNote: "Für Schulkinder: Zahlen bis 1000, Rechnen, Denk-Berg",
+    natureDoor: "Zur Natur",
+    natureNote: "Die ersten Ideen: wie viele, dazu und weg",
+  },
 
   // ---------- Idee "Zehn": Zehnerfreunde (Bau und Teich). Zwei Zahlen, die zusammen voll machen.
   zehn: {
@@ -568,7 +581,7 @@ export default {
       hint: "Wie wird aus einer Zeile die nächste? Vergleiche die Zahlen rechts.",
     },
     pickWay: "Wie möchtest du spielen?",
-    toWorld: "Zur Welt",
+    toWorld: "Zur Stadt",
     door: "Zum Denk-Berg",
     doorNote: "Knobeln wie bei der Mathe-Olympiade",
     camps: {

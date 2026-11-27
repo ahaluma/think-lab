@@ -9,9 +9,14 @@
 // Four places are awake: the meadow with the idea "zahl" (a number says how many), the burrow with
 // "teile" (numbers are made of numbers), the forest with "muster" (a row goes on, because one piece
 // comes again and again) and the fruit tree with "gruppen" (groups of the same size, sharing fairly).
-// A place can hold more than one idea: the meadow also holds "stellen" (ten ones make a ten: tens and
-// ones, up to 1000), the burrow "zehn" (two numbers that fill a ten together: friends of ten). The map
-// then shows a choice of ideas at that place. The other places are on the map, asleep.
+// A place can hold more than one idea: the burrow also holds "zehn" (two numbers that fill a ten
+// together: friends of ten). The map then shows a choice of ideas at that place. The other places are
+// on the map, asleep.
+//
+// The nature world is for preschool children (3 to 6): the basic ideas with things to see and touch,
+// numbers up to 10. School children (6 to 10) train skills in the town (welt/stadt/, TOWN): tens and
+// ones at the flower shop, later the number line at the station, calculating at the market (welt/markt/), later shapes and measuring in the
+// workshop and data and time at the weather station.
 //
 // A second world grows next to it: the thinking mountain (welt/berg/), for Mathe-Olympiade training.
 // Its places are camps on the way up (MOUNTAIN). Each camp gives one thinking tool, and the camps
@@ -42,12 +47,22 @@ export const CARDS = {
  *  games: games from catalog.js that live at this place as they are (their own page, their own levels):
  *  games to play together, like the memory game. The map shows them below the five perspectives. */
 export const PLACES = [
-  { id: "zahlen", awake: true, ideas: ["zahl", "stellen"], games: ["zahlen-memory"] },
+  { id: "zahlen", awake: true, ideas: ["zahl"], games: ["zahlen-memory"] },
   { id: "teile", awake: true, ideas: ["teile", "zehn"] },
   { id: "gruppen", awake: true, ideas: ["gruppen"] },
   { id: "regeln", awake: true, ideas: ["muster"] },
   { id: "raum", awake: false },
   { id: "daten", awake: false },
+];
+
+/** The town (welt/stadt/): the world for school children. A place holds ideas played in the rounds of
+ *  welt/spiel/ (like the nature world), or leads to a world of its own (href: the market). */
+export const TOWN = [
+  { id: "bahnhof", awake: false },
+  { id: "blumen", awake: true, ideas: ["stellen"] },
+  { id: "markt", awake: true, href: "/welt/markt/" },
+  { id: "werkstatt", awake: false },
+  { id: "wetter", awake: false },
 ];
 
 /** The camps of the thinking mountain, from the foot to the top, four heights of three camps each.
@@ -78,22 +93,23 @@ export const campOf = (idea) => MOUNTAIN.find((c) => c.ideas?.includes(idea));
  * cards: the thinking card of a perspective, where the usual one (PERSPECTIVES) does not fit the idea.
  */
 export const IDEAS = {
-  zahl: { place: "zahlen", ranges: [5, 10, 20], cards: { machen: "nachpruefen", anwenden: "vergleichen" } },
-  // Tens and ones: ten flowers make a bunch, ten bunches a basket. Here the range is the biggest number:
-  // the teens and 20 (one bunch and some flowers), up to 50, up to 100, up to 1000.
-  // from: the map's animal leads only children of this age and older here (the place still opens for all).
-  stellen: { place: "zahlen", from: 6, ranges: [20, 50, 100, 1000], cards: { anwenden: "vergleichen" } },
-  teile: { place: "teile", ranges: [5, 10, 20], tasks: { forschen: 3 } },
-  // Friends of ten: friends of five (a hand), friends of ten (the ten-frame), and filling up to twenty.
-  zehn: { place: "teile", ranges: [5, 10, 20], cards: { machen: "ausprobieren", pruefen: "nachpruefen" } },
+  // The nature world is for preschool: numbers up to 5 and up to 10. Bigger numbers are school (the town).
+  zahl: { place: "zahlen", ranges: [5, 10], cards: { machen: "nachpruefen", anwenden: "vergleichen" } },
+  // The town, the flower shop: tens and ones. Ten flowers make a bunch, ten bunches a basket. Here the
+  // range is the biggest number: the teens and 20 (one bunch and some flowers), up to 50, 100, 1000.
+  // startAges: from 6 up to 20 (Klasse 1), from 7 up to 50, from 8 up to 100, from 9 up to 1000.
+  stellen: { place: "blumen", world: "stadt", ranges: [20, 50, 100, 1000], startAges: [0, 7, 8, 9], cards: { anwenden: "vergleichen" } },
+  teile: { place: "teile", ranges: [5, 10], tasks: { forschen: 3 } },
+  // Friends of ten: friends of five (a hand) and friends of ten (the ten-frame).
+  zehn: { place: "teile", ranges: [5, 10], cards: { machen: "ausprobieren", pruefen: "nachpruefen" } },
   // Here the range is not the size of the numbers but the length of the piece that comes again: 2, 3 or 4 things.
   muster: {
     place: "regeln",
     ranges: [5, 10, 20],
     cards: { sehen: "wiederholen", machen: "wiederholen", forschen: "wiederholen", anwenden: "vergleichen", pruefen: "vergleichen" },
   },
-  // Here the range is how many things there are to share in all: up to 6, 10 or 20.
-  gruppen: { place: "gruppen", ranges: [5, 10, 20], cards: { sehen: "teilen", machen: "teilen", anwenden: "teilen" } },
+  // Here the range is how many things there are to share in all: up to 6 or 10.
+  gruppen: { place: "gruppen", ranges: [5, 10], cards: { sehen: "teilen", machen: "teilen", anwenden: "teilen" } },
   // The thinking mountain (for 9 to 12), camp 1: posts and gaps. Here the range is a level:
   // 1 long fences, 2 with metres (and bells, towers), 3 backwards and with time, 4 masters (a field
   // with corners, time backwards). Level 4 is the hardest this family gets for 12-year-olds.
@@ -123,7 +139,7 @@ export const IDEAS = {
   mauer: { place: "mauer", world: "berg", ranges: [1, 2, 3, 4], startAt: 0 },
 };
 
-/** The map an idea lives on: "/welt/" or "/welt/berg/". */
+/** The map an idea lives on: "/welt/", "/welt/stadt/" or "/welt/berg/". */
 export const mapOf = (idea) => (IDEAS[idea]?.world ? `/welt/${IDEAS[idea].world}/` : "/welt/");
 
 /** The thinking card a round of this idea in this perspective gives. */
