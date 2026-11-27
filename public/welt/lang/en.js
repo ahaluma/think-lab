@@ -91,6 +91,8 @@ export default {
   whereTo: "Where would you like to go?",
   asleep: "Everything is still asleep here.",
   comeHere: "Come, this is where we go on!",
+  marktDoor: "To the market",
+  marktNote: "Plus, minus, times and divided by",
   pickWay: "How would you like to play?",
   allGames: "All games",
   save: "Back up",

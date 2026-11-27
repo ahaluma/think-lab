@@ -186,6 +186,33 @@ doc "Plan: Olympiade-Welt (Denk-Berg)".
 - **The voice** is the expedition's logbook: first person, short, dry and a bit cheeky. An original
   story with its own characters (the child's animal, the goat, the owl).
 
+## The market (`public/welt/markt/`)
+
+A third world for **the four basic operations, from age 6**. The map of the nature world has a door to
+it ("Zum Markt"). The plan is the doc "Rechen-Welt: Plan".
+
+- **Five places:** four stands (fruit stall +, bread stall −, egg stall ·, packing table :) and in the
+  middle the market square, where everything comes together in little stories (`stories.js`).
+- **Four summits per stand: up to 10, 20, 100, 1000**, all visible and open from the start. The child
+  starts wherever it wants; "bis 10" is suggested. Each summit has small steps (`STEPS` in `tasks.js`)
+  that end in "gemischt". Placement is fast: in the first two rounds, three right in a row move up mid-round.
+- **Five perspectives** (see, make, explore, use, check) on every summit. A star = one mixed round with
+  4 of 5 right at the first try; five stars set the flag 🚩. A flag on a higher summit fills the lower ones.
+- **Adapts both ways:** a good round steps up, two weak rounds (or a weak one marked "hard") step down,
+  three misses in a row make the next task easier. Two weak rounds high up while a lower summit has no
+  flag give a friendly hint ("zu hoch gewählt?") once a day – it never blocks.
+- **Learning box** for basic facts (`record.js`, boxes 1–5, fast and right moves up), so what wobbles comes
+  back sooner. Typical mistakes (one off, forgotten ten, smaller-from-bigger, swapped digits, wrong
+  operation, neighbour fact, remainder) get their own hint, and three of a kind bring a short bridge.
+- **Help ladder:** 1st miss says what the child chose and what to look at, 2nd shows a picture, 3rd the
+  way in small steps.
+- **Audio only up to 20:** a task whose numbers (answer included) are all ≤ 20 is read aloud and its
+  feedback spoken; above 20 only the short right/wrong tones. `readAloud=false` in the profile turns it off.
+- **Market square** opens when plus and minus up to 10 have their flag. Five stages: one step, pick the
+  operation, two steps, one number too many, backwards. It uses only number ranges already reached.
+- The parents' page shows per stand the summits, stars, current step, secure facts, shaky facts and the
+  most common mistake. `node tools/check-markt.mjs` checks every task generator and the stories.
+
 ## Languages
 
 Every page speaks German, English and Nepali (नेपाली). The start page has flag buttons; the choice is saved on the device and the read-aloud voice switches with it. Without a choice, the phone's language is used, otherwise German.

@@ -192,6 +192,8 @@ for (const [id, icon] of Object.entries(CARDS)) {
 
 $("doorName").textContent = T.berg.door;
 $("doorNote").textContent = T.berg.doorNote;
+$("marketName").textContent = T.marktDoor;
+$("marketNote").textContent = T.marktNote;
 
 $("caption").textContent = T.whereTo;
 const asked = placeOf(new URLSearchParams(location.search).get("o"));
