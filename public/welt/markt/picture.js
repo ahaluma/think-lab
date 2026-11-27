@@ -7,6 +7,8 @@
 //   picture(t)                 → the picture of a task (help after the second miss, "see", …)
 //   material(n, { range, add, take, cls }) → n as dots or blocks (the board "make" redraws it)
 
+import { num } from "../../shared/i18n.js";
+
 export function el(tag, cls, text) {
   const e = document.createElement(tag);
   if (cls) e.className = cls;
@@ -95,9 +97,10 @@ export function picture(t) {
     if (a <= 100) box.append(rows(c, b, { bags: true, extra: rest }));
     else {
       box.append(blocks(a, "a"), sign("→"));
-      const bags = el("div", "bag-row");
-      for (let i = 0; i < b; i++) bags.append(el("span", "bag", "🛍️"));
-      box.append(bags);
+      // One bag with its size: "always b in a bag" (the question asks how many bags).
+      const bag = el("div", "bag-row");
+      bag.append(el("span", "bag", "🛍️"), el("strong", "", `= ${num(b)}`));
+      box.append(bag);
     }
   }
   return box;

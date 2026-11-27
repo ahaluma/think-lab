@@ -111,52 +111,23 @@ function numberTry(t, ctx) {
   };
 }
 
-// ---------- 👁️ See: which task does the picture show?
+// ---------- 👁️ See: the picture shows the task, the child reads the answer from it
 
 function sehen(box, t, ctx) {
+  // The picture always shows the whole task; the number asked is its result.
+  const u = { ...t, gap: "c", answer: t.c };
+  const eq = equation(u, ctx);
+  box.append(eq);
   const pic = picture(t);
   box.append(pic);
-  const S = SIGN[t.op];
-  const right = `${t.a} ${S} ${t.b}`;
-  const step = t.range > 100 ? 100 : t.range > 20 ? 10 : 1;
-  const other = { plus: "−", minus: "+", mal: "+", geteilt: "−" }[t.op];
-  const wrong = [
-    `${t.a} ${S} ${t.b + step}`,
-    `${t.a} ${S} ${Math.max(1, t.b - step)}`,
-    `${t.a + step} ${S} ${t.b}`,
-    `${t.a} ${other} ${t.b}`,
-  ].filter((x) => x !== right);
-  const options = ctx.r.shuffle([right, ...ctx.r.sample([...new Set(wrong)], 2)]);
-  const holder = el("div", "picks");
-  for (const o of options) {
-    const b = el("button", "btn pick");
-    b.type = "button";
-    b.textContent = o.replace(/\d+/g, (d) => ctx.num(Number(d)));
-    b.addEventListener("click", () => {
-      if (ctx.locked()) return;
-      if (o === right) {
-        b.classList.add("right");
-        ctx.solved(ctx.T.full(t, ctx.num), t);
-      } else {
-        b.classList.add("shake");
-        const kind = o.includes(other) ? "rechenart" : null;
-        ctx.miss(null, kind, ctx.T.seeMiss);
-      }
-    });
-    holder.append(b);
-  }
-  box.append(holder);
-  ctx.tell(ctx.T.seeAsk, audible(t));
+  ctx.tell(ctx.T.seeAsk[t.op](t, ctx.num, t.max <= 20), audible(u));
+  answer(box, u, ctx, eq.gapBox, numberTry(u, ctx));
   ctx.started();
   return {
     help() {
-      ctx.tell(ctx.T.seeHelp[t.op], audible(t));
+      ctx.tell(ctx.T.seeHelp[t.op], audible(u));
     },
-    way() {
-      // One wrong choice goes away: two are left.
-      const wrongOne = [...holder.querySelectorAll(".pick")].find((b, i) => options[i] !== right && !b.disabled);
-      if (wrongOne) wrongOne.disabled = true;
-    },
+    way: helpers(box, u, ctx, pic).way,
   };
 }
 

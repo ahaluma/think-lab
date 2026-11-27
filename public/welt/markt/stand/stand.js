@@ -129,9 +129,10 @@ const ctx = {
   tap: () => sound.tap(),
   locked: () => busy,
   started: () => (shownAt = Date.now()),
+  // Three answers to tap only up to 10; from the summit "bis 20" on, the child types the result.
   get choices() {
-    if (PLATZ) return current.max <= 20 && !profiles.typeAnswers(kid);
-    return current.range <= 20 && markt.step(OP, RANGE) === 0 && !profiles.typeAnswers(kid);
+    if (PLATZ) return current.max <= 10 && !profiles.typeAnswers(kid);
+    return current.range <= 10 && !profiles.typeAnswers(kid);
   },
   ops: Object.keys(markt.allowed()),
 
