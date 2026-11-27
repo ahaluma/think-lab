@@ -154,7 +154,7 @@ public/welt/
 │   ├── voice.js           ← every sentence is spoken (if on) and always shown as text
 │   └── parts.js           ← building blocks of the boards: pictures, the number sign, number buttons
 ├── stadt/                 ← the town: map of the school world (TOWN in frame/ideas.js)
-├── ideas/<idea>/          ← one idea: zahl (the meadow), teile and zehn (the burrow), stellen, reihe and formen (the town) …
+├── ideas/<idea>/          ← one idea: zahl (the meadow), teile and zehn (the burrow), stellen, reihe, formen and zeit (the town) …
 │   ├── tasks.js           ← the tasks of the five perspectives (data only)
 │   └── boards.js          ← how each perspective looks and reacts
 ├── spiel/                 ← one round: tasks, one surprise from another perspective, a thinking card
@@ -208,7 +208,14 @@ The world for **school children, 6 to 10**: skills with bigger numbers. Five pla
   longer?"). Check: the owl names the shape and mixes up the usual pairs (square and rectangle, cube
   and square, a turned square is still a square). Shapes and solids are SVG drawn in
   `ideas/formen/boards.js`.
-- **Weather station** (asleep): later the clock, time and data.
+- **Weather station** (awake): the clock, the calendar, charts and chance (`zeit`). Three levels
+  (`startAges`: 6, 7, 8): 1 full hours, a picture chart (one picture a day), a bag with a clear
+  favourite colour; 2 half and quarter hours, bars with a scale, "how many more?", certain / possible /
+  impossible; 3 every five minutes, "in 3 hours", "in 4 days". See: read the clock (the wrong choices
+  are swapped hands and the hour one off). Make: set the clock with hour and minute buttons. Explore:
+  take balls out of the bag as often as you like, then say which colour comes most, or whether a
+  colour is certain, possible or impossible. Use: two weeks of weather as a chart, later the clock and
+  the week. Check: the owl reads the clock and likes to swap the hands.
 
 A door leads to the thinking mountain, another back to the nature world.
 

@@ -73,7 +73,7 @@ export default {
   worldStats: (rounds, date) => `${rounds} ${rounds === 1 ? "Runde" : "Runden"} · zuletzt ${date}`,
   worldFirst: (right, of) => `${right} von ${of} beim ersten Versuch richtig`,
   worldStates: { new: "neu", played: "gespielt", understood: "verstanden" },
-  worldRange: { formen: (n) => `Stufe ${n}`, numbers: (n) => `Zahlen bis ${n}`, zehn: (n) => `auffüllen bis ${n}`, gruppen: (n, k, most) => `bis zu ${most} Dinge teilen`, zaun: () => "Pfähle und Lücken", muster: (n, k) => `Reihen aus Stücken mit ${k} Dingen` },
+  worldRange: { zeit: (n) => `Stufe ${n}`, formen: (n) => `Stufe ${n}`, numbers: (n) => `Zahlen bis ${n}`, zehn: (n) => `auffüllen bis ${n}`, gruppen: (n, k, most) => `bis zu ${most} Dinge teilen`, zaun: () => "Pfähle und Lücken", muster: (n, k) => `Reihen aus Stücken mit ${k} Dingen` },
   moved: (place) => `ausgeblendet, jetzt in der Welt (${place})`,
   weekdays: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };
