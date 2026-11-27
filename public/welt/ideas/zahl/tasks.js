@@ -19,8 +19,8 @@
 //   key – short text that tells tasks apart, for "not the same task again".
 //
 // These are the ideas of the old games "Blitzblick" (sehen), "Wie viele?" (machen, pruefen),
-// "Zahlenzug" (forschen), "Wo sind mehr?", "Wer kommt dazu?" and "Gleich machen" (anwenden), in the
-// frame of the new world.
+// "Zahlenzug" (forschen), "Wo sind mehr?", "Wer kommt dazu?" and the first levels of "Gleich machen"
+// (anwenden), in the frame of the new world, with numbers up to 10.
 
 export const NUMBERS = { 5: [1, 5], 10: [4, 10], 20: [11, 20] }; // the numbers of each range
 export const FLOWERS = ["🌼", "🌷", "🌻", "🌸"];
@@ -68,8 +68,8 @@ const makers = {
     const kind = r.pick(["compare", "compare", "dazu", "gleich"]);
     const [left, right] = r.shuffle(TO_COMPARE);
     if (kind === "dazu") {
-      // One more, one less: some are there, one comes or goes (up to 20 sometimes two).
-      const d = (r.chance(0.5) ? 1 : -1) * (range > 10 && r.chance(0.4) ? 2 : 1);
+      // One more, one less: some are there, one comes or goes (up to 10 sometimes two).
+      const d = (r.chance(0.5) ? 1 : -1) * (range > 5 && r.chance(0.35) ? 2 : 1);
       const n = r.int(Math.max(range > 5 ? lo - 2 : 1, 1, 1 - d), Math.min(hi, hi - d));
       return { kind, n, d, answer: n + d, animal: left, key: `d${n}:${d}` };
     }

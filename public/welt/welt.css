@@ -921,6 +921,35 @@ button.pic {
   line-height: 1;
 }
 
+/* Lay the path: the mixed-up stones lie on the bank, tap them in order. */
+.stones-scene .stones:has(> :nth-child(4):last-child) {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.stone-bank {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+button.stone.loose {
+  width: 74px;
+  font-family: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+button.stone.loose.used {
+  visibility: hidden;
+}
+
+.stone.glow-next {
+  background: var(--sun);
+  animation: nudge 1.2s ease-in-out infinite;
+}
+
 /* Anwenden: two groups, tap the side with more (or fewer). */
 .cmp-scene {
   display: flex;
@@ -3078,4 +3107,94 @@ body[data-world="berg"] .caption.quiet {
 
 .stellen-owl .bundles {
   padding-bottom: 6px;
+}
+
+/* Anwenden: "the same" is an answer too. */
+.same-btn {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-size: 20px;
+}
+
+.same-btn.right {
+  background: #c9efb4;
+}
+
+/* One more, one less: the sign shows who comes or who goes. */
+.dazu-scene {
+  position: relative;
+  min-height: 150px;
+  padding-bottom: 46px;
+}
+
+.dazu-sign {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+  font-size: 24px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.dazu-sign:empty {
+  display: none;
+}
+
+.dazu-sign.in {
+  background: #c9efb4;
+}
+
+.dazu-sign.out {
+  background: #ffd6cc;
+}
+
+/* Make both sides the same: tap animals so they go home, or tap the house so one comes out. */
+.equal-side {
+  box-sizing: border-box;
+  min-width: 0;
+  cursor: default;
+}
+
+.equal-side .pic {
+  cursor: pointer;
+}
+
+.equal-side .pic.unpaired {
+  opacity: 0.35;
+}
+
+.house-row {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 24px;
+}
+
+.house-row.right {
+  justify-content: flex-end;
+}
+
+.house-btn {
+  position: relative;
+  padding: 6px 16px;
+  font-size: 34px;
+}
+
+.house-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  min-width: 28px;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  background: var(--sun);
+  font-size: 16px;
+  text-align: center;
 }

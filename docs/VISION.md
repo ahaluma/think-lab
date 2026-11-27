@@ -68,13 +68,11 @@ The goal is to cover the mathematics of the **Hamburg Bildungsplan** for Vorschu
 
 ## The games
 
-Since November 2026 most number ideas live in the new world (`/welt/`), split by age: the nature world for preschool (counting, seeing at a glance, numbers made of numbers, friends of ten, sharing, patterns, all up to 10) and the town for school (tens and ones up to 1000 at the flower shop; plus, minus, times and divided by at the market). "Wie viele?", "Blitzblick", "Zahlenhaus" and "Plus" were deleted for that. The table lists the games still on the start page or kept for parents to switch back on.
+Since November 2026 most number ideas live in the new world (`/welt/`), split by age: the nature world for preschool (counting, seeing at a glance, numbers made of numbers, friends of ten, sharing, patterns, all up to 10) and the town for school (tens and ones up to 1000 at the flower shop; plus, minus, times and divided by at the market). "Wie viele?", "Blitzblick", "Zahlenhaus", "Plus", "Wo sind mehr?" and "Wer kommt dazu?" were deleted for that. The table lists the games still on the start page or kept for parents to switch back on.
 
 | Game | Concept it teaches | Ages |
 | --- | --- | --- |
-| Wo sind mehr? | Comparing amounts (more, fewer, the same) | 3–6 |
 | Zahlenzug | Number order: before, after, missing number | 3–8 |
-| Wer kommt dazu? | One more, one less | 4–6 |
 | Zehnerfreunde | Pairs that make 10 | 4–8 |
 | Gleich machen | Difference and first minus | 4–8 |
 | Gerecht teilen | Fair sharing, halving, first dividing | 4–8 |

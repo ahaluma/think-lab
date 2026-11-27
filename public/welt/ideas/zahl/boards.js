@@ -301,7 +301,7 @@ function compare(host, t, ctx) {
     locked = true;
     sameBtn.classList.add("right");
     showCounts();
-    ctx.solved(Z.doneSame(ctx.word(t.a)));
+    ctx.solved(Z.doneSame(ctx.word(t.a), t.a));
   });
 
   function showCounts() {
@@ -338,14 +338,14 @@ function dazu(host, t, ctx) {
     if (n !== t.answer) {
       shake(b);
       b.disabled = true;
-      ctx.miss(Z.dazuMiss(ctx.word(t.n), t.d, ctx.word(k)));
+      ctx.miss(Z.dazuMiss(ctx.word(t.n), t.d, ctx.word(k), t.n));
       return;
     }
     locked = true;
     b.classList.add("right");
     bush.hidden = true;
     meadow.replaceWith(group(t.answer, t.animal));
-    ctx.solved(Z.dazuDone(ctx.word(t.n), t.d, ctx.word(k), ctx.word(t.answer)));
+    ctx.solved(Z.dazuDone(ctx.word(t.n), t.d, ctx.word(k), ctx.word(t.answer), t.answer));
   });
   answers.classList.add("waiting");
   host.append(scene, answers);
@@ -378,7 +378,7 @@ function dazu(host, t, ctx) {
     hint() {
       bush.hidden = true;
       meadow.hidden = false;
-      return t.d > 0 ? Z.dazuHintIn : Z.dazuHintOut;
+      return (t.d > 0 ? Z.dazuHintIn : Z.dazuHintOut)(k, ctx.word(k));
     },
   };
 }
@@ -448,7 +448,7 @@ function gleich(host, t, ctx) {
     }
     locked = true;
     const k = ctx.word(moved);
-    ctx.solved((t.how === "weg" ? Z.equalDoneWeg : Z.equalDoneDazu)(k, moved, ctx.word(goal)));
+    ctx.solved((t.how === "weg" ? Z.equalDoneWeg : Z.equalDoneDazu)(k, moved, ctx.word(goal), goal));
   });
 
   const houseRow = el("div", "house-row" + (active === 0 ? "" : " right"));
