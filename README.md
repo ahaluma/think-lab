@@ -154,7 +154,7 @@ public/welt/
 │   ├── voice.js           ← every sentence is spoken (if on) and always shown as text
 │   └── parts.js           ← building blocks of the boards: pictures, the number sign, number buttons
 ├── stadt/                 ← the town: map of the school world (TOWN in frame/ideas.js)
-├── ideas/<idea>/          ← one idea: zahl (the meadow), teile and zehn (the burrow), stellen (the town) …
+├── ideas/<idea>/          ← one idea: zahl (the meadow), teile and zehn (the burrow), stellen and reihe (the town) …
 │   ├── tasks.js           ← the tasks of the five perspectives (data only)
 │   └── boards.js          ← how each perspective looks and reacts
 ├── spiel/                 ← one round: tasks, one surprise from another perspective, a thinking card
@@ -191,7 +191,14 @@ The world for **school children, 6 to 10**: skills with bigger numbers. Five pla
 
 - **Flower shop** (awake): tens and ones up to 1000 (`stellen`, see above).
 - **Market** (awake): the four operations, its own world (`welt/markt/`, below).
-- **Station** (asleep): later numbers in order, the number line, comparing, ordinals.
+- **Station** (awake): every number has its place (`reihe`). The track is the number line, with three
+  ranges by its end: 20, 100, 1000 (`startAges`: 6, 7, 9). See: where does the train stop? Make: tap the
+  place on the track where it must stop. Explore: wagons carry a row (+2, +5, +10, +50, +100, also
+  going down), one number is missing. Use: compare with <, = and > (same tens or swapped digits on
+  purpose), the number just before or after (across a ten or hundred), and up to 20 ordinal numbers
+  ("tap the third wagon"). Check: the owl compares by the last digit and is often wrong. The hint puts
+  both numbers on the track: the smaller one stands further left. It holds the ideas of "Zahlenzug"
+  and "Wer ist Erster?", which stay for now.
 - **Workshop** (asleep): later shapes, space and measuring.
 - **Weather station** (asleep): later the clock, time and data.
 
