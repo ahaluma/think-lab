@@ -12,6 +12,7 @@ export default {
   save: "Sichern",
   privacy: "Datenschutz",
   whereTo: "Willkommen auf dem Markt! Tippe auf einen Stand.",
+  geld: { name: "Geldstand", pick: "Wie willst du am Geldstand spielen?" },
   stands: { plus: "Obststand", minus: "Brotstand", mal: "Eierstand", geteilt: "Packtisch" },
   opWord: OP,
   summit: (n) => `bis ${n}`,

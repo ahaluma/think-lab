@@ -190,7 +190,7 @@ The world for **school children, 6 to 10**: skills with bigger numbers. Five pla
 (`TOWN` in `frame/ideas.js`); its rounds use the same frame as the nature world (`world: "stadt"`).
 
 - **Flower shop** (awake): tens and ones up to 1000 (`stellen`, see above).
-- **Market** (awake): the four operations, its own world (`welt/markt/`, below).
+- **Market** (awake): the four operations and the money stand, its own world (`welt/markt/`, below).
 - **Station** (awake): every number has its place (`reihe`). The track is the number line, with three
   ranges by its end: 20, 100, 1000 (`startAges`: 6, 7, 9). See: where does the train stop? Make: tap the
   place on the track where it must stop. Explore: wagons carry a row (+2, +5, +10, +50, +100, also
@@ -280,6 +280,12 @@ market leads to it. The plan is the doc "Rechen-Welt: Plan".
   operation, two steps, one number too many, backwards. It uses only number ranges already reached.
 - The parents' page shows per stand the summits, stars, current step, secure facts, shaky facts and the
   most common mistake. `node tools/check-markt.mjs` checks every task generator and the stories.
+- **Money stand** (idea `geld`, at the bottom of the map): euro coins and notes in whole euros, three
+  ranges by the most money in a task: 10 (1 €, 2 €, 5 €), 20 (also 10 €), 100 (also 20 €, 50 €)
+  (`startAges`: 6, 7, 8). See: how much is on the counter? Make: pay a price exactly from the wallet
+  (praise when it took the fewest pieces). Explore: pay the same price in two different ways. Use: two
+  things together, change from a note, and "is it enough?". Check: the owl counts the pieces instead
+  of the euros, misses a coin or counts one twice. It runs in the common round frame, like the town ideas.
 
 ## Languages
 

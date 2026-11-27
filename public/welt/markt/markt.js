@@ -15,6 +15,7 @@ import * as profiles from "../../shared/profiles.js";
 import * as markt from "./record.js";
 import { OPS, RANGES, STEPS } from "./tasks.js";
 import { STAGES } from "./stories.js";
+import * as record from "../frame/record.js";
 
 const T = await texts(import.meta.url);
 fill(T);
@@ -106,8 +107,55 @@ function platz() {
   return g;
 }
 
+/** The money stand at the front: euro coins and notes. Its rounds are the world frame's (idea "geld"). */
+function geldStand() {
+  const x = 180, y = 318;
+  const g = node("g", { class: "place stand geld", tabindex: 0, role: "button", "aria-label": T.geld.name });
+  node("rect", { x: x - 60, y: y - 40, width: 120, height: 80, fill: "transparent" }, g);
+  node("rect", { x: x - 50, y: y - 10, width: 100, height: 26, rx: 4, fill: "#c48a4e", stroke: "#1b2140", "stroke-width": 3 }, g);
+  node("rect", { x: x - 24, y: y - 34, width: 48, height: 24, rx: 4, fill: "#d9dde6", stroke: "#1b2140", "stroke-width": 3 }, g);
+  text(x, y - 16, "€", { "font-size": 16, "font-weight": 900 }, g);
+  text(x - 30, y + 8, "🪙", { "font-size": 15 }, g);
+  text(x + 30, y + 8, "💶", { "font-size": 15 }, g);
+  const grown = record.grown("geld");
+  if (grown) text(x + 52, y - 26, "🌼", { "font-size": 12 }, g);
+  text(x, y + 34, T.geld.name, { "font-size": 13, "font-weight": 800, class: "stand-name" }, g);
+  const go = () => {
+    sound.tap();
+    openGeld();
+  };
+  g.addEventListener("click", go);
+  g.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && go());
+  return g;
+}
+
 for (const op of OPS) $("stands").append(stand(op));
 $("stands").append(platz());
+$("stands").append(geldStand());
+
+function openGeld() {
+  $("panelTitle").textContent = T.geld.name;
+  $("summits").innerHTML = "";
+  $("summitNote").textContent = "";
+  const list = $("persp");
+  list.innerHTML = "";
+  list.hidden = false;
+  const next = record.suggest("geld");
+  const MARK = { new: "", played: "🌱", understood: "🌼" };
+  for (const p of markt.PERSPECTIVES) {
+    const state = record.state("geld", p);
+    const a = document.createElement("a");
+    a.href = `/welt/spiel/?i=geld&p=${p}`;
+    a.className = `${state}${p === next ? " next pulse" : ""}`;
+    a.setAttribute("aria-label", T.perspectives[p]);
+    a.innerHTML = `<span class="p-icon">${ICON[p]}</span><span class="p-name">${T.perspectives[p]}</span><span class="p-state">${MARK[state] ?? ""}</span>`;
+    list.append(a);
+  }
+  $("panel").hidden = false;
+  $("panel").scrollIntoView({ block: "nearest", behavior: "smooth" });
+  history.replaceState(null, "", "?o=geld");
+  tell(T.geld.pick);
+}
 
 // ---------- A stand: four summits, then five perspectives
 
@@ -189,6 +237,7 @@ const params = new URLSearchParams(location.search);
 const o = params.get("o");
 if (OPS.includes(o)) openStand(o, RANGES.includes(Number(params.get("r"))) ? Number(params.get("r")) : undefined);
 else if (o === "platz") openPlatz();
+else if (o === "geld") openGeld();
 else {
   $("caption").textContent = T.whereTo;
   lastText = T.whereTo;
