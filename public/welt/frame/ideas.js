@@ -61,7 +61,7 @@ export const TOWN = [
   { id: "bahnhof", awake: true, ideas: ["reihe"] },
   { id: "blumen", awake: true, ideas: ["stellen"] },
   { id: "markt", awake: true, href: "/welt/markt/" },
-  { id: "werkstatt", awake: false },
+  { id: "werkstatt", awake: true, ideas: ["formen"] },
   { id: "wetter", awake: false },
 ];
 
@@ -102,6 +102,9 @@ export const IDEAS = {
   // The town, the station: every number has its place. The track is the number line; order, before and
   // after, comparing with <, = and >, and (up to 20) ordinal numbers. The range is the end of the track.
   reihe: { place: "bahnhof", world: "stadt", ranges: [20, 100, 1000], startAges: [0, 7, 9], cards: { anwenden: "vergleichen", pruefen: "vergleichen" } },
+  // The town, the workshop: shapes and solids, symmetry, measuring. The range is a level: 1 the plain
+  // shapes, 2 more corners and turned shapes, 3 solids and comparing lengths.
+  formen: { place: "werkstatt", world: "stadt", ranges: [1, 2, 3], startAges: [0, 7, 8] },
   teile: { place: "teile", ranges: [5, 10], tasks: { forschen: 3 } },
   // Friends of ten: friends of five (a hand) and friends of ten (the ten-frame).
   zehn: { place: "teile", ranges: [5, 10], cards: { machen: "ausprobieren", pruefen: "nachpruefen" } },

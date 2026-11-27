@@ -3462,3 +3462,149 @@ b.cmp-gap.right {
 .count-row .chip.gap {
   border-style: dashed;
 }
+
+/* ---------- Idea "Formen" (the workshop): shapes, the mirror, the ruler. */
+.shape-scene {
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: #fff6e0;
+}
+
+.shape-svg {
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.name-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.name-row[hidden] {
+  display: none;
+}
+
+.name-btn {
+  min-width: 100px;
+  padding: 10px 14px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.name-btn.right {
+  background: #c9efb4;
+}
+
+.hint-text {
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+}
+
+.corner {
+  cursor: pointer;
+}
+
+.corner-hit {
+  fill: rgba(255, 255, 255, 0.01);
+  stroke: transparent;
+}
+
+.corner.on .corner-hit {
+  fill: var(--sun);
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+.corner.glow .corner-hit {
+  fill: rgba(255, 200, 58, 0.6);
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
+.corner-no {
+  font-size: 17px;
+  font-weight: 900;
+  fill: var(--ink);
+  pointer-events: none;
+}
+
+.corner-dot {
+  fill: var(--pink);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.mirror-scene {
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  background: #fff6e0;
+}
+
+.mirror-grid {
+  display: grid;
+  gap: 3px;
+  width: min(100%, 300px);
+}
+
+.m-cell {
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border: 2px solid #c6b48f;
+  border-radius: 4px;
+  background: #fff;
+}
+
+button.m-cell {
+  cursor: pointer;
+  font: inherit;
+}
+
+.m-cell.on {
+  background: var(--blue);
+  border-color: var(--ink);
+}
+
+.mirror-grid.v .m-cell.after-line {
+  box-shadow: -5px 0 0 -1px var(--pink);
+}
+
+.mirror-grid.h .m-cell.below-line {
+  box-shadow: 0 -5px 0 -1px var(--pink);
+}
+
+.m-cell.glow-next {
+  background: rgba(255, 200, 58, 0.7);
+  animation: nudge 1.2s ease-in-out infinite;
+}
+
+.mirror-grid.done .m-cell.on {
+  background: var(--ok);
+}
+
+.ruler-scene {
+  padding: 12px 8px;
+  background: #fff;
+}
+
+.ruler-svg {
+  width: 100%;
+  height: auto;
+}
+
+.cm-no {
+  font-size: 12px;
+  font-weight: 800;
+  fill: var(--ink);
+}
+
+.thing-icon {
+  font-size: 22px;
+}

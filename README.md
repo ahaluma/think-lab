@@ -154,7 +154,7 @@ public/welt/
 │   ├── voice.js           ← every sentence is spoken (if on) and always shown as text
 │   └── parts.js           ← building blocks of the boards: pictures, the number sign, number buttons
 ├── stadt/                 ← the town: map of the school world (TOWN in frame/ideas.js)
-├── ideas/<idea>/          ← one idea: zahl (the meadow), teile and zehn (the burrow), stellen and reihe (the town) …
+├── ideas/<idea>/          ← one idea: zahl (the meadow), teile and zehn (the burrow), stellen, reihe and formen (the town) …
 │   ├── tasks.js           ← the tasks of the five perspectives (data only)
 │   └── boards.js          ← how each perspective looks and reacts
 ├── spiel/                 ← one round: tasks, one surprise from another perspective, a thinking card
@@ -199,7 +199,15 @@ The world for **school children, 6 to 10**: skills with bigger numbers. Five pla
   ("tap the third wagon"). Check: the owl compares by the last digit and is often wrong. The hint puts
   both numbers on the track: the smaller one stands further left. It holds the ideas of "Zahlenzug"
   and "Wer ist Erster?", which stay for now.
-- **Workshop** (asleep): later shapes, space and measuring.
+- **Workshop** (awake): shapes and solids, the mirror, the ruler (`formen`). Three levels instead of
+  number ranges (`startAges`: 6, 7, 8): 1 the plain shapes lying straight, 2 five and six corners,
+  turned and uneven shapes, 3 solids (cube, cuboid, sphere, cylinder, cone, pyramid). See: name the
+  shape. Make: the mirror, colour the other half (from level 3 also across). Explore: tap every corner
+  once; at level 3 count faces, edges, corners of a solid (the back edges dashed). Use: measure with
+  the ruler in centimetres (from level 2 the thing does not start at 0, at level 3 also "how much
+  longer?"). Check: the owl names the shape and mixes up the usual pairs (square and rectangle, cube
+  and square, a turned square is still a square). Shapes and solids are SVG drawn in
+  `ideas/formen/boards.js`.
 - **Weather station** (asleep): later the clock, time and data.
 
 A door leads to the thinking mountain, another back to the nature world.
