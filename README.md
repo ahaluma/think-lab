@@ -82,7 +82,7 @@ ideas at that place (`ideaTabs` in `lang/`), then the five perspectives of the c
 
 | Place | Idea | See 👁️ | Make ✋ | Explore 🔍 | Use 🔑 | Check ✅ |
 | --- | --- | --- | --- | --- | --- | --- |
-| Meadow and stream | `zahl`: a number says how many | flowers at a glance | pick n flowers | the missing stepping stone | where are more? | the owl has counted |
+| Meadow and stream | `zahl`: a number says how many | flowers at a glance | pick n flowers | the missing stepping stone (also counting back), mixed-up stones in order | more, fewer or the same; one more, one less; make both sides the same | the owl has counted |
 | Burrow and pond | `teile`: numbers are made of numbers | animals hide in the burrow | split on two leaves | the hollow tree | a hidden part | the owl adds |
 | Burrow and pond | `zehn`: friends of ten | frogs on lily pads: how many are free? | fill the nut box | the staircase of friends | 7 + ? = 10 | the owl's friends: right or one off? |
 | Fruit tree and nests | `gruppen`: groups of the same size, sharing fairly | eggs under the hen | share among the animals | think first: does it come out even? | cherries: for how many birds is it enough? | the owl shared: who has too many? |
@@ -116,7 +116,16 @@ hard cases on purpose: the ones said first ("4 Einer und 3 Zehner"), more than n
 und 13 Einer"), and zeros in the middle (305). The start range goes by age (`startAges` in `IDEAS`): 6 the teens,
 7 up to 50, 8 up to 100, 9 up to 1000.
 
-The meadow holds the ideas of the old games "Wo sind mehr?" and "Zahlenzug", the forest the idea of
+**One more, one less ("dazu und weg") without signs.** At the meadow "use" mixes three kinds of
+task: compare two groups (more, fewer, or "the same" as its own answer); one or two animals come or go
+while a bush hides the meadow from the second round on, so the child thinks "one more" instead of
+counting again; and make both sides the same, by sending animals home from the fuller side or (up to
+10) letting some come out of the house on the other. No plus or minus sign appears: preschool
+children see the story. "Explore" sometimes has the frog hop back (counting backwards) or the stones
+lie mixed up and are laid in order. "Wo sind mehr?" and "Wer kommt dazu?" were deleted for this;
+"Gleich machen" has moved, because its later levels (numbers only, with signs) belong to school.
+
+The meadow holds the ideas of the old games "Zahlenzug" and "Gleich machen", the forest the idea of
 "Muster-Kette", the fruit tree the idea of "Gerecht teilen", the burrow the idea of "Zehnerfreunde".
 These games have **moved**: in `catalog.js` they carry `moved: "<idea>"` and are no longer on the
 start page (`shared/fit.js`). Their folders stay until the world covers everything they do, and
@@ -380,7 +389,7 @@ Where a game has tasks (rounds), one function makes each task, so every round is
   ```
 - **Testing:** open a game with `?seed=7` in the address (`/games/zahlenzug/?seed=7`) and it deals the same tasks every time (at the same level). Without a seed every game is different. `node tools/check-tasks.mjs` (optional, nothing to install) makes 2000 tasks per level of every game with a `tasks.js`, runs `check()` on them and shows how many different tasks each level has.
 
-`zahlenzug` is the example; `wo-sind-mehr`, `wer-kommt-dazu`, `zehnerfreunde`, `gleich-machen`, `gerecht-teilen`, `wer-ist-erster`, `zahlen-memory`, `muster-kette`, `groessen`, `raumlage`, `reihenfolge`, `sortieren`, `genau-hinschauen` and `formen` use it too.
+`zahlenzug` is the example; `zehnerfreunde`, `gleich-machen`, `gerecht-teilen`, `wer-ist-erster`, `zahlen-memory`, `muster-kette`, `groessen`, `raumlage`, `reihenfolge`, `sortieren`, `genau-hinschauen` and `formen` use it too.
 
 ## Guidelines for every game
 
@@ -394,9 +403,7 @@ Where a game has tasks (rounds), one function makes each task, so every round is
 
 | Game        | Folder              | Skill            | For the child                                                                                             |
 | ----------- | ------------------- | ---------------- | --------------------------------------------------------------------------------------------------------- |
-| Wo sind mehr? | `games/wo-sind-mehr/` | `zahlen/vergleichen` | Two groups of the same animal: tap the one with more. Levels go from big differences (5 vs 2) to close ones (7 vs 6), then add a "the same" button, then sometimes ask "where are fewer?". After the answer both groups show their number. |
 | Zahlenzug | `games/zahlenzug/` | `zahlen/reihe` | A train with numbered wagons. Find the missing wagon, say which number comes after or before, or hang the mixed-up wagons on in order (each one is read out). Levels: 1–4, 1–5, after/before up to 10, trains starting anywhere up to 10, after/before up to 20. The train drives off after each right answer. |
-| Wer kommt dazu? | `games/wer-kommt-dazu/` | `rechnen/dazu-weg` | Two steps: first count the animals on the meadow, then one hops in or runs away: how many are there now? Trains one more / one less without plus or minus signs. Levels: animals stay visible, then they hide behind a bush first (think, don't recount; after two wrong answers the bush opens), then two animals at once, up to 10. |
 | Zehnerfreunde | `games/zehnerfreunde/` | `rechnen/zerlegen` | How many are missing to 10? A ten-frame (2 × 5 places) with animals: tap how many places are still empty. At the end the missing animals fill the empty places (on green): "Sieben und drei sind zusammen zehn." Levels: one row of 5; 10 with the top row full; any amount; animals mixed up in the frame; frame shown only briefly (tap to look again); only numbers 7 + ? = 10 (after two wrong answers the frame helps); also ? + 3 = 10. |
 | Gleich machen | `games/gleich-machen/` | `rechnen/minus` | Two meadows, one with more animals: make them equal. A first step towards minus. The child taps animals on the fuller meadow and they hop into their house (tap the house: one comes back), then ✓. Right: both groups jump and the sum shows (7 − 3 = 4): "Drei Hasen gehen nach Hause. Jetzt sind auf beiden Wiesen vier." After two wrong answers the animals line up in pairs, a line joins partners and the ones without a partner glow. Tapping the smaller meadow, too many or too few count as wrong. Levels: up to 5, up to 10; then give the number with pictures (7 − ? = 4: one of three, or the number pad from 8), then numbers only (the pairs help after two wrong answers); then the other way round: "Wie viele müssen dazu?" (tap the house of the smaller meadow, 4 + ? = 7), numbers only, away or more mixed up to 10 and up to 20. |
 | Wer ist Erster? | `games/wer-ist-erster/` | `zahlen/ordnung` | Ordinal numbers: the animals queue for ice cream, the one at the ice-cream cart is the first. "Tippe auf das dritte Tier!" Levels: first or last (3–4 animals), first to third, first to fifth (sometimes "the last"), "Das wievielte Tier ist der Löwe?" (one of three answers like "3.", the number pad from 8), "Wer steht direkt vor / hinter dem Löwen?", up to the eighth, counting from the back ("das zweite Tier von hinten"), then all mixed. A wrong tap says what it was ("Das ist das zweite Tier."); after two wrong answers the places 1, 2, 3 … appear under the animals (from the back on "von hinten" tasks). The animal found gets its place in green. |

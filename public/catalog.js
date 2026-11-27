@@ -74,11 +74,9 @@ export const CATEGORIES = [
 //           longer on the start page: the child plays its idea in the world. Parents can switch it back on.
 
 export const GAMES = [
-  { id: "wo-sind-mehr", moved: "zahl", ages: [3, 6], skill: "zahlen/vergleichen", name: { de: "Wo sind mehr?", en: "Where are more?", ne: "कतातिर धेरै?" }, icon: "⚖️", color: "#8fd3ff" },
   { id: "zahlenzug", moved: "zahl", ages: [3, 8], skill: "zahlen/reihe", name: { de: "Zahlenzug", en: "Number train", ne: "अङ्क रेल" }, icon: "🚂", color: "#ffb3c7" },
-  { id: "wer-kommt-dazu", ages: [4, 6], skill: "rechnen/dazu-weg", name: { de: "Wer kommt dazu?", en: "Who's coming?", ne: "को आयो?" }, icon: "🐇", color: "#9fdc8a" },
   { id: "zehnerfreunde", moved: "zehn", ages: [4, 8], skill: "rechnen/zerlegen", name: { de: "Zehnerfreunde", en: "Ten friends", ne: "दसका साथी" }, icon: "🔟", color: "#b8e6d0" },
-  { id: "gleich-machen", ages: [4, 8], skill: "rechnen/minus", name: { de: "Gleich machen", en: "Make it equal", ne: "बराबर बनाऊ" }, icon: "🤝", color: "#c9efb4" },
+  { id: "gleich-machen", moved: "zahl", ages: [4, 8], skill: "rechnen/minus", name: { de: "Gleich machen", en: "Make it equal", ne: "बराबर बनाऊ" }, icon: "🤝", color: "#c9efb4" },
   { id: "gerecht-teilen", moved: "gruppen", ages: [4, 8], skill: "rechnen/teilen", name: { de: "Gerecht teilen", en: "Fair share", ne: "बराबर बाँड" }, icon: "🍪", color: "#f6d7b0" },
   { id: "wer-ist-erster", ages: [4, 7], skill: "zahlen/ordnung", name: { de: "Wer ist Erster?", en: "Who's first?", ne: "को पहिलो?" }, icon: "🥇", color: "#ffd6e8" },
   { id: "zahlen-memory", moved: "zahl", ages: [3, 7], skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
