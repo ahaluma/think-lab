@@ -23,6 +23,10 @@ export default {
   switchKid: "Switch child",
   addKidsHint: "For parents: add children",
   newWorld: "New: explore the world",
+  natureWorld: "Nature",
+  natureAges: "ages 3–6",
+  townWorld: "The town",
+  townAges: "ages 6–10",
 
   // The number pad (shared/numpad.js): older children type the answer.
   yourAnswer: "Your answer",

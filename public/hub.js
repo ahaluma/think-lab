@@ -123,6 +123,9 @@ function drawGames() {
   const root = $("categories");
   root.innerHTML = "";
   const kid = profiles.current();
+  // The world that fits the child's age comes first: nature up to 5, the town from 6.
+  const age = profiles.age(kid);
+  $("townWorld").classList.toggle("first", age !== null && age >= 6);
 
   for (const category of CATEGORIES) {
     const games = gamesIn(category.id).filter((g) => visible(g, kid));

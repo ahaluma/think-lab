@@ -224,8 +224,41 @@
   }
 }
 
-/* The door to the new world. */
-.world-door {
+/* The doors to the two worlds: nature (preschool) and the town (school). */
+.world-doors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
   margin: 12px 0 18px;
+}
+
+.world-doors[hidden] {
+  display: none;
+}
+
+.world-door {
+  min-width: 0;
+  margin: 0;
+  padding: 12px;
+  gap: 10px;
   background: #dff3d3;
+}
+
+.world-door.town {
+  background: #ffe6c7;
+}
+
+.world-door > span:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.world-door small {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.world-door.first {
+  order: -1;
 }

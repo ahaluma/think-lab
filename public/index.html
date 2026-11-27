@@ -45,10 +45,16 @@
         <span aria-hidden="true">👧👦</span><span data-t="addKidsHint">Für Eltern: Kinder anlegen</span>
       </a>
 
-      <!-- The door to the new world (public/welt/), which is growing next to the games. -->
-      <a class="card add-kids world-door" id="world" href="/welt/">
-        <span aria-hidden="true">🌳</span><span data-t="newWorld">Neu: die Welt entdecken</span>
-      </a>
+      <!-- The doors to the two worlds: nature for preschool children, the town for school children
+           (public/welt/, public/welt/stadt/). hub.js puts the one that fits the child's age first. -->
+      <div class="world-doors" id="world">
+        <a class="card add-kids world-door" id="natureWorld" href="/welt/">
+          <span aria-hidden="true">🌳</span><span><strong data-t="natureWorld">Die Natur</strong><small data-t="natureAges">3–6 Jahre</small></span>
+        </a>
+        <a class="card add-kids world-door town" id="townWorld" href="/welt/stadt/">
+          <span aria-hidden="true">🏙️</span><span><strong data-t="townWorld">Die Stadt</strong><small data-t="townAges">6–10 Jahre</small></span>
+        </a>
+      </div>
 
       <div class="categories" id="categories"></div>
       <footer class="hub-foot">
