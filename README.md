@@ -206,6 +206,8 @@ it ("Zum Markt"). The plan is the doc "Rechen-Welt: Plan".
   operation, neighbour fact, remainder) get their own hint, and three of a kind bring a short bridge.
 - **Help ladder:** 1st miss says what the child chose and what to look at, 2nd shows a picture, 3rd the
   way in small steps.
+- **Answers:** on the summit "bis 10" the child taps one of three numbers; from "bis 20" on it types the
+  result on the number pad. "See" shows the task with its picture and asks in plain words for the result.
 - **Audio only up to 20:** a task whose numbers (answer included) are all ≤ 20 is read aloud and its
   feedback spoken; above 20 only the short right/wrong tones. `readAloud=false` in the profile turns it off.
 - **Market square** opens when plus and minus up to 10 have their flag. Five stages: one step, pick the
