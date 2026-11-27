@@ -3833,3 +3833,113 @@ button.m-cell {
   font-size: 15px;
   padding: 8px 10px;
 }
+
+/* ---------- Idea "Geld" (the money stand): coins, notes, price tags. */
+.money-scene {
+  display: grid;
+  gap: 10px;
+  padding: 14px 10px;
+  background: #fff6e0;
+}
+
+.counter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 52px;
+  padding: 8px;
+  border-radius: 12px;
+  background: #c48a4e33;
+}
+
+.money {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border: 2px solid var(--ink);
+  font-family: inherit;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+button.money {
+  cursor: pointer;
+  padding: 0;
+}
+
+.coin {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f4d36b 55%, #c9a227 56%);
+}
+
+.coin.v2 {
+  width: 44px;
+  height: 44px;
+  background: radial-gradient(circle, #d9dde6 52%, #f4d36b 53%);
+}
+
+.note {
+  width: 66px;
+  height: 36px;
+  border-radius: 4px;
+}
+
+.note.v5 { background: #c9ccd3; }
+.note.v10 { background: #f2a7a0; }
+.note.v20 { background: #9cc0f0; }
+.note.v50 { background: #f7c27a; }
+
+.wallet {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.shop-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.price-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 3px solid var(--ink);
+  border-radius: 10px 30px 30px 10px;
+  background: #fff;
+  font-size: 20px;
+}
+
+.price-thing {
+  font-size: 28px;
+}
+
+.paid {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+}
+
+.money-sum {
+  text-align: center;
+  font-size: 20px;
+}
+
+.money-ways {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}

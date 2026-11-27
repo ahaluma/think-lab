@@ -108,6 +108,9 @@ export const IDEAS = {
   // The town, the weather station: the clock, the calendar, reading charts, chance. The range is a
   // level: 1 full hours and pictures, 2 half and quarter hours and bars, 3 five minutes and time spans.
   zeit: { place: "wetter", world: "stadt", ranges: [1, 2, 3], startAges: [0, 7, 8] },
+  // The market, the money stand: euro coins and notes (whole euros). Its own place on the market map,
+  // with the rounds of the world frame. The range is the most money in a task: 10, 20, 100 €.
+  geld: { place: "geld", world: "markt", ranges: [10, 20, 100], startAges: [0, 7, 8] },
   teile: { place: "teile", ranges: [5, 10], tasks: { forschen: 3 } },
   // Friends of ten: friends of five (a hand) and friends of ten (the ten-frame).
   zehn: { place: "teile", ranges: [5, 10], cards: { machen: "ausprobieren", pruefen: "nachpruefen" } },

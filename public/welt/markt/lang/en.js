@@ -12,6 +12,7 @@ export default {
   save: "Save",
   privacy: "Privacy",
   whereTo: "Welcome to the market! Tap a stall.",
+  geld: { name: "Money stand", pick: "How do you want to play at the money stand?" },
   stands: { plus: "Fruit stall", minus: "Bread stall", mal: "Egg stall", geteilt: "Packing table" },
   opWord: OP,
   summit: (n) => `up to ${n}`,

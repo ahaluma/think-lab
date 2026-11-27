@@ -11,6 +11,7 @@ export default {
   save: "सुरक्षित गर",
   privacy: "गोपनीयता",
   whereTo: "बजारमा स्वागत छ! एउटा पसलमा थिच।",
+  geld: { name: "पैसा पसल", pick: "पैसा पसलमा कसरी खेल्ने?" },
   stands: { plus: "फलफूल पसल", minus: "रोटी पसल", mal: "अण्डा पसल", geteilt: "प्याक गर्ने टेबल" },
   opWord: OP,
   summit: (n) => `${n} सम्म`,
