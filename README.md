@@ -184,8 +184,8 @@ spots in `map.js`, and list the two new files in `public/sw.js`. A round is `/we
 
 A round has no points, no clock and no streak. After a round in the nature world the done screen shows
 the flower bed of the place with the new flower coming up, and the same flower blooms once on the map
-when the child goes back. Small children are not asked how it felt; the town still asks (easy, just
-right, hard), the market too.
+when the child goes back. Children up to 10 are not asked how it felt (nature world, town, market): two weak rounds
+take the numbers down by themselves. Only the thinking mountain still asks (easy, just right, hard).
 
 **Every round, every world: the whole question stays in sight** (`frame/question.js`). What a board says
 before the child first taps is the question: it goes into a box at the top and stays until the next task,

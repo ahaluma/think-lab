@@ -36,8 +36,11 @@ const BIGGER = T[IDEA]?.bigger ?? T.bigger;
 const SMALLER = T[IDEA]?.smaller ?? T.smaller;
 /** "A new flower grows": the mountain says it in its own words. */
 const GREW = T[IDEA]?.grew ?? T.grew;
-/** The nature world (3 to 6 years): no "how was it?" after a round, and the new flower is shown. */
+/** The nature world (3 to 6 years): the new flower is shown after a round. */
 const NATURE = !IDEAS[IDEA].world;
+/** Only the thinking mountain (9 to 12) asks "how was it?" after a round. The nature world and the
+ *  town do not: two weak rounds take the numbers down by themselves (record.settle). */
+const ASK_FEEL = IDEAS[IDEA].world === "berg";
 /** A place on the map of the nature world has room for this many flowers (FLOWER_SPOTS in map.js). */
 const BED = 12;
 const FLOWERS = ["🌸", "🌼", "🌷", "🌺"];
@@ -260,9 +263,9 @@ async function finish() {
   $("cardName").textContent = T.cards[CARD].name;
   $("cardText").textContent = T.cards[CARD].text;
   for (const b of $("feel").children) b.classList.remove("on");
-  // Small children are not asked how it was: two weak rounds take the numbers down by themselves.
-  $("feel").hidden = NATURE;
-  if (NATURE && moved <= 0) record.settle(IDEA, P.id, range);
+  // Children up to 10 are not asked how it was: two weak rounds take the numbers down by themselves.
+  $("feel").hidden = !ASK_FEEL;
+  if (!ASK_FEEL && moved <= 0) record.settle(IDEA, P.id, range);
   $("bed").hidden = true;
   const flower = NATURE && flowerBed();
   show("done");
@@ -274,7 +277,7 @@ async function finish() {
   // The town has no flowers: it only says when the numbers get bigger. The mountain has its logbook.
   if (moved > 0) await tell(BIGGER);
   else if (IDEAS[IDEA].world === "berg") await tell(GREW);
-  if (!NATURE) tell(T.feelQuestion);
+  if (ASK_FEEL) tell(T.feelQuestion);
 }
 
 // ---------- Wire up
