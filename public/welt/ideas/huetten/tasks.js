@@ -185,7 +185,7 @@ function liarTask(r) {
 /** Kombi with camp 2: some clues, then: how many arrangements are still possible? */
 function countTask(r, level) {
   const n = level === 3 ? 3 : 4;
-  const kind = level === 4 && r.chance(0.5) ? "seats" : "grid";
+  const kind = level === 4 && r.chance(0.3) ? "seats" : "grid";
   const types = kind === "seats" ? ["end", "next", "apart", "leftof"] : ["not", "not", "is"];
   const all = worlds(n, 1);
   for (let tries = 0; tries < 100; tries++) {

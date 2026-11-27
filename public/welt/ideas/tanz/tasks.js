@@ -49,9 +49,10 @@ function gaussTask(r) {
 
 /** n children, groups (teams, compartments) of k: how many left over, or how many groups needed. */
 function groupTask(r, level, story = r.pick(["teams", "zug"])) {
-  const k = level === 1 ? 2 : r.int(3, 8);
-  let n = r.int(k + 1, level <= 2 ? 40 : 99);
-  if (n % k === 0) n++;
+  const k = level === 1 ? 3 : r.int(3, 8);
+  let n;
+  do n = r.int(k + 1, level <= 2 ? 40 : 99);
+  while (n % k === 0);
   const full = Math.floor(n / k);
   const rest = n % k;
   const answer = story === "zug" ? full + (rest ? 1 : 0) : rest;

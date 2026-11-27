@@ -107,7 +107,7 @@ function tournament(r, level, big = false) {
 }
 
 function seats(r, level) {
-  const n = level === 3 ? r.int(3, 5) : r.int(4, 5);
+  const n = level === 3 ? r.int(3, 5) : r.int(4, 6);
   const kids = ICONS.kids.slice(0, n);
   if (level === 4) {
     const together = 2 * fact(n - 1);

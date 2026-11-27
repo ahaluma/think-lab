@@ -57,8 +57,10 @@ function basketTask(r) {
 /** two together weigh s, one is d heavier: the heavier one? */
 function sumTask(r, level) {
   const story = r.pick(["taschen", "hunde", "kisten"]);
-  const light = level === 3 ? r.int(2, 15) : r.int(10, 60);
-  const d = r.int(1, level === 3 ? 8 : 25);
+  // kg that fit the thing: school bags a few kg, dogs up to 40, boxes up to 85
+  const [lo, hi, dd] = { taschen: [2, 8, 5], hunde: level === 3 ? [3, 15, 8] : [5, 30, 12], kisten: level === 3 ? [2, 15, 8] : [10, 60, 25] }[story];
+  const light = r.int(lo, hi);
+  const d = r.int(1, dd);
   const heavy = light + d;
   return { story, a: { s: light + heavy, d, light, twice: 2 * heavy }, answer: heavy, tool: "summe", key: `s${story}${light}${d}` };
 }

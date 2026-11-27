@@ -122,11 +122,12 @@ function rectTask(r) {
 }
 
 function storyTask(r, level, kombi) {
-  if (kombi && r.chance(0.3)) return rectTask(r);
+  if (kombi && r.chance(0.2)) return rectTask(r);
   if (level === 1) return r.pick([() => fanTask(r, 1), () => fanTask(r, 1), () => squareTask(r, 1)])();
   if (level === 2) return r.pick([() => fanTask(r, 2), () => squareTask(r, 2), () => clockTask(r)])();
   if (level === 3) return r.pick([() => netTask(r), () => squareTask(r, 3), () => fanTask(r, 3), () => clockTask(r)])();
-  return r.pick([() => cubeTask(r), () => foldTask(r), () => netTask(r), () => rectTask(r), () => squareTask(r, 4)])();
+  // with Kombi the rectangles already come often enough (above)
+  return r.pick([() => cubeTask(r), () => foldTask(r), () => netTask(r), ...(kombi ? [] : [() => rectTask(r)]), () => squareTask(r, 4)])();
 }
 
 /** Ausprobieren: find every triangle in a fan by choosing its two sides (and the line across). */

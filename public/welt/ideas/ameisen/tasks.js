@@ -79,7 +79,7 @@ function shapeTask(r, level) {
 /** matches: figure n of a row of squares (triangles, two rows) */
 function stickTask(r, level, kombi = false) {
   const shape = kombi ? "quadrate" : level === 4 ? r.pick(["quadrate", "dreiecke", "doppel"]) : r.pick(["quadrate", "dreiecke"]);
-  const n = kombi ? 25 : r.int(level === 3 ? 10 : 20, level === 3 ? 30 : 99);
+  const n = kombi ? r.int(12, 60) : r.int(level === 3 ? 10 : 20, level === 3 ? 30 : 99);
   const f = STICKS[shape];
   return { story: kombi ? "zaunreihe" : "hoelzer", a: { shape, n, first: f(1), step: f(2) - f(1), jumps: n - 1 }, shape, pic: { sticks: shape, upTo: 3 }, answer: f(n), tool: kombi ? "zaun" : "streich", key: `s${shape}${n}${kombi}` };
 }
