@@ -259,7 +259,9 @@ async function finish() {
   show("done");
   sound.win();
   celebrate();
-  for (const b of $("feel").children) b.classList.remove("on");
+  // No "how was it?" at the market (6 to 10 years): two weak rounds take a sub-step down by themselves
+  // (markt.round), so the feel buttons stay hidden.
+  $("feel").hidden = true;
   const aud = PLATZ ? PLATZ_LOUD : RANGE <= 20;
   if (PLATZ) {
     const won = markt.platzRound(PLATZ, { first: firstTries, tasks: ROUND });
@@ -269,7 +271,6 @@ async function finish() {
     const text = won ? T.platz.won : markt.platzWon(PLATZ) ? T.platz.again : T.noStar(num(firstTries), num(ROUND));
     $("cardText").textContent = text;
     await tell(`${T.done} ${text}`, aud);
-    tell(T.feelQuestion, aud);
     return;
   }
   const wasMixed = markt.step(OP, RANGE) >= mixed(OP, RANGE);
@@ -290,7 +291,6 @@ async function finish() {
   const text = lines.join(" ");
   $("cardText").textContent = text;
   await tell(`${T.done} ${text}`, aud);
-  tell(T.feelQuestion, aud);
 }
 
 // ---------- Wire up

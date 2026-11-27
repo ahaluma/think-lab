@@ -5,8 +5,8 @@
 //   record.range("teile")                 → the number range the child plays this idea in (5, 10 …)
 //   record.task("teile", "sehen", 5, true) → one task done: right the first time?
 //   record.round("teile", "sehen", 5, { first: 4, tasks: 5, card }) → a finished round
-//   record.feel("teile", "sehen", 5, "ok") → what the child said about it (town and mountain)
-//   record.settle("teile", "sehen", 5)    → the nature world asks nothing: two weak rounds take the numbers down
+//   record.feel("teile", "sehen", 5, "ok") → what the child said about it (only the mountain asks)
+//   record.settle("teile", "sehen", 5)    → nature world and town ask nothing: two weak rounds take the numbers down
 //   record.state("teile", "sehen")        → "new" | "played" | "understood" (in the current range)
 //   record.suggest("teile")               → the perspective to play next
 //   record.won("zaun", "sehen")           → the thinking mountain: this perspective has its star ⭐
@@ -29,7 +29,7 @@
 // Understood: 8 of the last 10 tasks right the first time, played on two different days.
 // Bigger numbers: when three perspectives of the range had a good last round (share ≥ GOOD).
 // Smaller numbers again: the child said "hard" and the round was weak (share ≤ WEAK). The nature world
-// (3 to 6 years) does not ask how it was: there two weak rounds of an idea in a row do it (rec.weak).
+// and the town (3 to 10 years) do not ask how it was: there two weak rounds of an idea in a row do it (rec.weak).
 
 import { store } from "../../shared/store.js";
 import * as profiles from "../../shared/profiles.js";
@@ -212,7 +212,7 @@ export function feel(idea, p, r, said) {
   return moved;
 }
 
-/** After a round in the nature world, which asks no "how was it?" (small children cannot judge that yet):
+/** After a round in the nature world or the town, which ask no "how was it?" (children up to 10 cannot judge that well):
  *  the second weak round of an idea in a row (share ≤ WEAK) takes the numbers one range down.
  *  Returns −1 when they get smaller, otherwise 0. */
 export function settle(idea, p, r) {
