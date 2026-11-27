@@ -2552,3 +2552,530 @@ body[data-world="berg"] .caption.quiet {
   flex-direction: column;
   gap: 6px;
 }
+
+/* ====================== A place with more than one idea: choose the idea first ====================== */
+.idea-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.idea-tabs[hidden] {
+  display: none;
+}
+
+.idea-tab {
+  flex: 1;
+  min-height: 48px;
+  padding: 4px 8px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.idea-tab.on {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ====================== Idea "Zehn": friends of ten ====================== */
+.ten-frames {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.ten-frame {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 6px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.spot {
+  width: clamp(36px, 10vw, 46px);
+  height: clamp(36px, 10vw, 46px);
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  font-size: clamp(22px, 6.4vw, 30px);
+  line-height: 1;
+}
+
+.spot.empty {
+  background: #fff;
+}
+
+.show-empty .spot.empty,
+.spot.free {
+  border: 3px dashed var(--go);
+  background: #fff3c4;
+  animation: nudge 1s ease-in-out 2;
+}
+
+.pads .spot {
+  background: #6cc070;
+}
+
+.pads .spot.empty {
+  background: #9ad79a;
+}
+
+.zehn-pond {
+  display: grid;
+  place-items: center;
+  min-height: 150px;
+  background: #8fd3ff;
+}
+
+.fog-cover {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: #57b86a;
+  font-size: 64px;
+  cursor: pointer;
+}
+
+.fog-cover[hidden] {
+  display: none;
+}
+
+.hint-text {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.zehn-box-scene {
+  display: grid;
+  place-items: center;
+  min-height: 150px;
+  background: linear-gradient(var(--sky) 0 30%, var(--grass) 30%);
+}
+
+.nut-box {
+  position: relative;
+  padding: 6px;
+  border: 4px solid var(--ink);
+  border-radius: 14px;
+  background: #c79a62;
+}
+
+.holes .spot.empty {
+  background: #6b4a2b;
+}
+
+.holes .spot.full {
+  background: #e3c79a;
+}
+
+.holes .spot.b {
+  background: #ffe08a;
+}
+
+.rolled {
+  position: absolute;
+  right: -10px;
+  bottom: -28px;
+  font-size: 26px;
+}
+
+.paw {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.paw-icon {
+  font-size: 40px;
+}
+
+.paw .thing {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.zehn-tools,
+.stellen-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.zehn-tools .take-btn {
+  min-width: 140px;
+  font-size: 28px;
+}
+
+.zehn-stairs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff;
+}
+
+.stair-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.stair-row.ask {
+  background: #fff3c4;
+}
+
+.stair-row.glow {
+  outline: 4px solid var(--sun);
+}
+
+.mini .ten-frame {
+  gap: 2px;
+  padding: 3px;
+  border-width: 2px;
+  border-radius: 8px;
+}
+
+.mini .spot {
+  width: 15px;
+  height: 15px;
+  border-width: 2px;
+}
+
+.mini .spot.full {
+  background: var(--go);
+}
+
+.mini .spot.full.b {
+  background: var(--blue);
+}
+
+.mini.ten-frames {
+  gap: 4px;
+}
+
+.show-stairs .stair-row:not(.ask) .spot.b {
+  animation: nudge 1s ease-in-out 2;
+}
+
+.sum-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.sum-line .op {
+  color: var(--muted);
+}
+
+.sum-line .gap {
+  min-width: 1.6em;
+  padding: 0 6px;
+  border: 3px dashed var(--ink);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.sum-line .gap.found,
+.pv-cell.found {
+  border-style: solid;
+  background: var(--ok);
+  color: #fff;
+}
+
+.zehn-sum {
+  display: grid;
+  place-items: center;
+  min-height: 110px;
+  background: #fff;
+}
+
+.zehn-sum .sum-line {
+  font-size: 40px;
+}
+
+.owl-frame {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.owl-frame .mini .spot {
+  width: 24px;
+  height: 24px;
+}
+
+.owl-frame .over {
+  color: var(--blue);
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+/* ====================== Idea "Stellen": tens and ones ====================== */
+.stellen-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 150px;
+  background: linear-gradient(var(--sky) 0 25%, var(--grass) 25%);
+}
+
+.bundles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14px;
+}
+
+.b-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+}
+
+.b-group.ones {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  gap: 4px;
+}
+
+.b-group.glow {
+  outline: 4px solid var(--sun);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* One flower (a one), a bunch of ten flowers tied with a ribbon (a ten), a basket of ten bunches (a hundred). */
+.flower {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: radial-gradient(#ffc83a 0 30%, #e8488a 32%);
+  cursor: default;
+}
+
+.bunch {
+  position: relative;
+  width: 18px;
+  height: 104px;
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  background:
+    radial-gradient(circle at 50% 5px, #ffc83a 0 3px, #e8488a 3.5px 7px, transparent 7.5px) 0 0 / 100% 10px repeat-y,
+    #3f9b57;
+}
+
+.bunch::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: 47px;
+  height: 7px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  background: var(--blue);
+}
+
+.hundred {
+  width: 104px;
+  height: 104px;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 5px 5px, #e8488a 0 3.5px, transparent 4px) 0 0 / 10px 10px,
+    #c79a62;
+}
+
+.bundles.small .flower {
+  width: 12px;
+  height: 12px;
+  border-width: 1.5px;
+}
+
+.bundles.small .bunch {
+  width: 10px;
+  height: 56px;
+  border-width: 1.5px;
+  background:
+    radial-gradient(circle at 50% 2.8px, #e8488a 0 2.4px, transparent 2.6px) 0 0 / 100% 5.6px repeat-y,
+    #3f9b57;
+}
+
+.bundles.small .bunch::after {
+  top: 24px;
+  height: 5px;
+  left: -3px;
+  right: -3px;
+  border-width: 1.5px;
+}
+
+.bundles.small .hundred {
+  width: 56px;
+  height: 56px;
+  border-width: 2px;
+  background:
+    radial-gradient(circle at 2.8px 2.8px, #e8488a 0 2.2px, transparent 2.4px) 0 0 / 5.6px 5.6px,
+    #c79a62;
+}
+
+.make .flower,
+.make .bunch,
+.make .hundred {
+  cursor: pointer;
+}
+
+.b-labels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.b-labels .chip {
+  font-size: 17px;
+}
+
+.stellen-goal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.stellen-goal > b,
+.stellen-number {
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.add-btn,
+.op-btn {
+  min-width: 92px;
+  min-height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.add-icon.h { width: 30px; height: 30px; border: 2px solid var(--ink); border-radius: 6px; background: #c79a62; }
+.add-icon.z { width: 12px; height: 40px; border: 2px solid var(--ink); border-radius: 6px; background: #3f9b57; }
+.add-icon.e { width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 50%; background: #e8488a; }
+
+.op-btn.e { background: #ffd0e0; }
+.op-btn.z { background: #c9efb4; }
+.op-btn.h { background: #f6d7b0; }
+
+.stellen-tools[hidden],
+.know-btn[hidden] {
+  display: none;
+}
+
+.explore-pic {
+  min-height: 60px;
+}
+
+.pv-table {
+  display: inline-flex;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.pv-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 64px;
+  text-align: center;
+}
+
+.pv-col + .pv-col {
+  border-left: 3px solid var(--ink);
+}
+
+.pv-head {
+  padding: 2px 0;
+  border-bottom: 3px solid var(--ink);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.pv-col:nth-last-child(1) .pv-head { background: #ffd0e0; }
+.pv-col:nth-last-child(2) .pv-head { background: #c9efb4; }
+.pv-col:nth-last-child(3) .pv-head { background: #f6d7b0; }
+
+.pv-cell {
+  min-height: 52px;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.pv-cell.gap {
+  margin: 4px;
+  border: 3px dashed var(--ink);
+  border-radius: 10px;
+}
+
+.pv-cell.over {
+  color: var(--go);
+}
+
+.pv-words {
+  display: flex;
+  gap: 8px;
+}
+
+.pv-words .chip {
+  font-size: 24px;
+}
+
+.stellen-use {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+}
+
+.stellen-answer {
+  min-width: 120px;
+}
+
+.stellen-owl .bundles {
+  padding-bottom: 6px;
+}

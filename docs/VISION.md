@@ -68,18 +68,16 @@ The goal is to cover the mathematics of the **Hamburg Bildungsplan** for Vorschu
 
 ## The games
 
+Since November 2026 most number ideas live in the new world (`/welt/`): counting, seeing at a glance, tens and ones up to 1000 and friends of ten at the meadow and the burrow, and plus, minus, times and divided by at the market. "Wie viele?", "Blitzblick", "Zahlenhaus" and "Plus" were deleted for that. The table lists the games still on the start page or kept for parents to switch back on.
+
 | Game | Concept it teaches | Ages |
 | --- | --- | --- |
-| Wie viele? | Counting up to 10 | 3–6 |
 | Wo sind mehr? | Comparing amounts (more, fewer, the same) | 3–6 |
-| Blitzblick | Seeing small amounts at a glance (subitizing) | 3–8 |
 | Zahlenzug | Number order: before, after, missing number | 3–8 |
 | Wer kommt dazu? | One more, one less | 4–6 |
-| Zahlenhaus | Decomposing numbers (part, part, whole) | 5–8 |
 | Zehnerfreunde | Pairs that make 10 | 4–8 |
 | Gleich machen | Difference and first minus | 4–8 |
 | Gerecht teilen | Fair sharing, halving, first dividing | 4–8 |
-| Plus | Adding up to 1000, with ten-frames and a place-value chart as help | 5–10 |
 | Wer ist Erster? | Ordinal numbers | 4–7 |
 | Zahlen-Memory | Matching numbers to amounts | 3–7 |
 | Muster-Kette | Patterns and number sequences (up to primes and Fibonacci) | 3–12 |

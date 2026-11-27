@@ -74,18 +74,14 @@ export const CATEGORIES = [
 //           longer on the start page: the child plays its idea in the world. Parents can switch it back on.
 
 export const GAMES = [
-  { id: "wie-viele", moved: "zahl", ages: [3, 6], skill: "zahlen/zaehlen", name: { de: "Wie viele?", en: "How many?", ne: "कतिवटा?" }, icon: "🍎", color: "#ffc83a" },
   { id: "wo-sind-mehr", moved: "zahl", ages: [3, 6], skill: "zahlen/vergleichen", name: { de: "Wo sind mehr?", en: "Where are more?", ne: "कतातिर धेरै?" }, icon: "⚖️", color: "#8fd3ff" },
-  { id: "blitzblick", moved: "zahl", ages: [3, 8], skill: "zahlen/simultan", name: { de: "Blitzblick", en: "Quick look", ne: "झट्ट हेर" }, icon: "⚡", color: "#c9b6ff" },
   { id: "zahlenzug", moved: "zahl", ages: [3, 8], skill: "zahlen/reihe", name: { de: "Zahlenzug", en: "Number train", ne: "अङ्क रेल" }, icon: "🚂", color: "#ffb3c7" },
   { id: "wer-kommt-dazu", ages: [4, 6], skill: "rechnen/dazu-weg", name: { de: "Wer kommt dazu?", en: "Who's coming?", ne: "को आयो?" }, icon: "🐇", color: "#9fdc8a" },
-  { id: "zahlenhaus", ages: [5, 8], skill: "rechnen/zerlegen", name: { de: "Zahlenhaus", en: "Number house", ne: "अङ्क घर" }, icon: "🏠", color: "#ffd9a8" },
-  { id: "zehnerfreunde", ages: [4, 8], skill: "rechnen/zerlegen", name: { de: "Zehnerfreunde", en: "Ten friends", ne: "दसका साथी" }, icon: "🔟", color: "#b8e6d0" },
+  { id: "zehnerfreunde", moved: "zehn", ages: [4, 8], skill: "rechnen/zerlegen", name: { de: "Zehnerfreunde", en: "Ten friends", ne: "दसका साथी" }, icon: "🔟", color: "#b8e6d0" },
   { id: "gleich-machen", ages: [4, 8], skill: "rechnen/minus", name: { de: "Gleich machen", en: "Make it equal", ne: "बराबर बनाऊ" }, icon: "🤝", color: "#c9efb4" },
   { id: "gerecht-teilen", moved: "gruppen", ages: [4, 8], skill: "rechnen/teilen", name: { de: "Gerecht teilen", en: "Fair share", ne: "बराबर बाँड" }, icon: "🍪", color: "#f6d7b0" },
-  { id: "plus", ages: [5, 10], skill: "rechnen/plus", name: { de: "Plus", en: "Plus", ne: "जोड" }, icon: "➕", color: "#ffc4a3" },
   { id: "wer-ist-erster", ages: [4, 7], skill: "zahlen/ordnung", name: { de: "Wer ist Erster?", en: "Who's first?", ne: "को पहिलो?" }, icon: "🥇", color: "#ffd6e8" },
-  { id: "zahlen-memory", ages: [3, 7], skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
+  { id: "zahlen-memory", moved: "zahl", ages: [3, 7], skill: "zahlen/erkennen", name: { de: "Zahlen-Memory", en: "Number memory", ne: "अङ्क जोडी" }, icon: "🃏", color: "#c9e7ff" },
   { id: "muster-kette", moved: "muster", ages: [3, 12], skill: "logik/muster", name: { de: "Muster-Kette", en: "Pattern chain", ne: "ढाँचा माला" }, icon: "🔁", color: "#ffe08a" },
   { id: "groessen", ages: [3, 7], skill: "messen/groessen", name: { de: "Größen vergleichen", en: "Compare sizes", ne: "नाप तुलना" }, icon: "📏", color: "#ffd2a6" },
   { id: "raumlage", ages: [3, 7], skill: "logik/raumlage", name: { de: "Wo ist es?", en: "Where is it?", ne: "कहाँ छ?" }, icon: "🧸", color: "#ffd0e8" },
