@@ -58,7 +58,7 @@ export const PLACES = [
 /** The town (welt/stadt/): the world for school children. A place holds ideas played in the rounds of
  *  welt/spiel/ (like the nature world), or leads to a world of its own (href: the market). */
 export const TOWN = [
-  { id: "bahnhof", awake: false },
+  { id: "bahnhof", awake: true, ideas: ["reihe"] },
   { id: "blumen", awake: true, ideas: ["stellen"] },
   { id: "markt", awake: true, href: "/welt/markt/" },
   { id: "werkstatt", awake: false },
@@ -99,6 +99,9 @@ export const IDEAS = {
   // range is the biggest number: the teens and 20 (one bunch and some flowers), up to 50, 100, 1000.
   // startAges: from 6 up to 20 (Klasse 1), from 7 up to 50, from 8 up to 100, from 9 up to 1000.
   stellen: { place: "blumen", world: "stadt", ranges: [20, 50, 100, 1000], startAges: [0, 7, 8, 9], cards: { anwenden: "vergleichen" } },
+  // The town, the station: every number has its place. The track is the number line; order, before and
+  // after, comparing with <, = and >, and (up to 20) ordinal numbers. The range is the end of the track.
+  reihe: { place: "bahnhof", world: "stadt", ranges: [20, 100, 1000], startAges: [0, 7, 9], cards: { anwenden: "vergleichen", pruefen: "vergleichen" } },
   teile: { place: "teile", ranges: [5, 10], tasks: { forschen: 3 } },
   // Friends of ten: friends of five (a hand) and friends of ten (the ten-frame).
   zehn: { place: "teile", ranges: [5, 10], cards: { machen: "ausprobieren", pruefen: "nachpruefen" } },

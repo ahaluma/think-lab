@@ -27,7 +27,7 @@ $("map").setAttribute("aria-label", S.mapLabel);
 
 const STATE_MARK = { new: "", played: "🌱", understood: "🌼" };
 /** Where the child's animal stands at a place that has rounds to play. */
-const WALKER_AT = { blumen: [166, 236] };
+const WALKER_AT = { bahnhof: [56, 236], blumen: [166, 236] };
 const kid = profiles.current();
 
 for (const g of document.querySelectorAll(".place")) {

@@ -3198,3 +3198,267 @@ body[data-world="berg"] .caption.quiet {
   font-size: 16px;
   text-align: center;
 }
+
+/* ---------- Idea "Reihe" (the station): the track is the number line. */
+.track-scene {
+  padding: 46px 22px 34px;
+  background: #eef3f8;
+}
+
+.tap-track {
+  cursor: pointer;
+}
+
+.track {
+  position: relative;
+  height: 24px;
+}
+
+.track-line {
+  position: absolute;
+  inset: 10px 0 auto;
+  height: 6px;
+  border-radius: 3px;
+  background: #8a5a33;
+  box-shadow: 0 6px 0 -2px #9aa5b4;
+}
+
+.tick {
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 16px;
+  margin-left: -1px;
+  background: var(--ink);
+}
+
+.tick.long {
+  top: -10px;
+  width: 3px;
+  height: 26px;
+  margin-left: -1.5px;
+}
+
+.track-label {
+  position: absolute;
+  top: 18px;
+  transform: translateX(-50%);
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.track-mark {
+  position: absolute;
+  transform: translateX(-50%);
+  transition: left 0.25s ease;
+}
+
+.track-mark.train {
+  bottom: 6px;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.track-mark.train.right {
+  filter: drop-shadow(0 0 6px var(--ok));
+}
+
+.track-mark.stop {
+  top: 18px;
+  min-width: 30px;
+  padding: 0 4px;
+  border: 3px dashed var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 15px;
+  text-align: center;
+}
+
+.track-mark.stop.right {
+  border-style: solid;
+  background: #c9efb4;
+}
+
+.track-mark.flag {
+  bottom: 12px;
+  padding: 0 6px;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.track-mark.flag.a {
+  background: #ffd0e8;
+}
+
+.track-mark.flag.b {
+  bottom: 40px;
+  background: #cfeaff;
+}
+
+.track-scene:has(.flag) {
+  padding-top: 76px;
+}
+
+/* The train: engine in front (left), wagons behind it. */
+.wagon-scene {
+  padding: 16px 8px;
+  background: #eef3f8;
+}
+
+.wagons {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+}
+
+.engine {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.wagon {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 62px;
+  min-height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 4px 2px;
+  border: 3px solid var(--ink);
+  border-radius: 8px 8px 4px 4px;
+  background: #ffd0a6;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.wagon.gap {
+  border-style: dashed;
+  background: #fff;
+}
+
+.wagons.ordinal .wagon {
+  padding: 4px 0;
+  cursor: pointer;
+  font-size: clamp(16px, 5vw, 24px);
+}
+
+.wagons .engine {
+  flex: none;
+}
+
+.wagon.right {
+  background: #c9efb4;
+}
+
+.wagon .place-no {
+  position: absolute;
+  bottom: -22px;
+  font-size: 13px;
+}
+
+.wagons.ordinal {
+  padding-bottom: 20px;
+}
+
+.wagon-steps {
+  display: flex;
+  justify-content: center;
+}
+
+/* Compare: two numbers and the sign in the middle. */
+.compare-scene {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 20px 10px;
+}
+
+.cmp-num {
+  min-width: 64px;
+  padding: 6px 10px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+  font-size: 32px;
+  text-align: center;
+}
+
+.cmp-num.gap {
+  border-style: dashed;
+}
+
+.cmp-gap {
+  font-size: 32px;
+  font-weight: 900;
+}
+
+b.cmp-gap {
+  min-width: 48px;
+  border: 3px dashed var(--ink);
+  border-radius: 12px;
+  text-align: center;
+}
+
+b.cmp-gap.right {
+  border-style: solid;
+  background: #c9efb4;
+}
+
+.sign-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.sign-row[hidden] {
+  display: none;
+}
+
+.sign-btn {
+  min-width: 76px;
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.sign-btn.right {
+  background: #c9efb4;
+}
+
+.cmp-bubble {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.cmp-bubble .said.wrong {
+  color: var(--go);
+  text-decoration: line-through;
+}
+
+.cmp-bubble .said.right {
+  color: var(--ok);
+}
+
+.count-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.count-row .chip.now {
+  background: var(--sun);
+}
+
+.count-row .chip.gap {
+  border-style: dashed;
+}
