@@ -32,13 +32,14 @@ function machen(host, t, ctx) {
       win(host, t, M.done(ctx.num(big.filter(Boolean).length)));
     }
   };
+  const icons = M.icons?.[t.story] ?? t.icons; // the language may show its own coins
   big.forEach((_, i) => {
-    const b = button("btn swap-btn", M.swap, t.icons[0]);
+    const b = button("btn swap-btn", M.swap, icons[0]);
     b.addEventListener("click", () => {
       if (done) return;
       ctx.tap();
       big[i] = !big[i];
-      b.textContent = t.icons[big[i] ? 1 : 0];
+      b.textContent = icons[big[i] ? 1 : 0];
       b.classList.toggle("big", big[i]);
       show();
     });
