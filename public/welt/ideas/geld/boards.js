@@ -15,12 +15,15 @@ function pad(box, ctx, digits, onCheck) {
 
 const ICON = { bread: "🍞", cheese: "🧀", honey: "🍯", melon: "🍉", pumpkin: "🎃", cake: "🎂", ball: "⚽", book: "📖" };
 const sum = (list) => list.reduce((a, b) => a + b, 0);
-const euro = (ctx, n) => `${ctx.num(n)} €`;
+// Money in the language's own currency: the language file may give geld.money (in a sentence) and
+// geld.face (short, on a coin, a note or a price tag). Without them: euros.
+const euro = (ctx, n) => ctx.T.geld.money?.(ctx.num(n)) ?? `${ctx.num(n)} €`;
+const face = (ctx, n) => ctx.T.geld.face?.(ctx.num(n)) ?? `${ctx.num(n)} €`;
 
 /** One coin or note. */
 function piece(ctx, v, tag = "span", label = "") {
   const p = tag === "button" ? button(`money ${v >= 5 ? "note" : "coin"} v${v}`, label, "") : el("span", `money ${v >= 5 ? "note" : "coin"} v${v}`);
-  p.append(el("b", "", `${ctx.num(v)} €`));
+  p.append(el("b", "", face(ctx, v)));
   return p;
 }
 
@@ -33,7 +36,7 @@ function counter(ctx, money) {
 /** A price tag on a thing. */
 function tag(ctx, thing, price) {
   const t = el("div", "price-tag");
-  t.append(el("span", "price-thing", ICON[thing] ?? "🛍️"), el("b", "", euro(ctx, price)));
+  t.append(el("span", "price-thing", ICON[thing] ?? "🛍️"), el("b", "", face(ctx, price)));
   return t;
 }
 
@@ -124,7 +127,7 @@ export function machen(host, t, ctx) {
       ctx.tap();
       draw();
     }));
-    sumBox.textContent = helped ? `= ${euro(ctx, sum(on))}` : "";
+    sumBox.textContent = helped ? `= ${face(ctx, sum(on))}` : "";
     check.disabled = !on.length;
   }
   const w = wallet(ctx, t.range, (v) => {
@@ -203,7 +206,7 @@ export function forschen(host, t, ctx) {
       return;
     }
     found.push(key);
-    const chip = el("span", "chip pop", on.map((v) => ctx.num(v)).join(" + ") + ` = ${euro(ctx, s)}`);
+    const chip = el("span", "chip pop", on.map((v) => ctx.num(v)).join(" + ") + ` = ${face(ctx, s)}`);
     ways.append(chip);
     if (found.length >= t.ways) {
       locked = true;
@@ -288,10 +291,10 @@ export function anwenden(host, t, ctx) {
         if (t.kind === "change") {
           // Count up from the price to the note, like at the till.
           const row = el("div", "count-row pop");
-          row.append(el("span", "chip", euro(ctx, t.price)));
+          row.append(el("span", "chip", face(ctx, t.price)));
           const next10 = Math.min(t.paid, Math.ceil((t.price + 1) / 10) * 10);
-          if (next10 > t.price && next10 < t.paid) row.append(el("span", "chip", `+${ctx.num(next10 - t.price)} → ${euro(ctx, next10)}`));
-          row.append(el("span", "chip", `… → ${euro(ctx, t.paid)}`));
+          if (next10 > t.price && next10 < t.paid) row.append(el("span", "chip", `+${ctx.num(next10 - t.price)} → ${face(ctx, next10)}`));
+          row.append(el("span", "chip", `… → ${face(ctx, t.paid)}`));
           hintBox.append(row);
         }
       }
@@ -308,7 +311,7 @@ export function pruefen(host, t, ctx) {
   let locked = false;
   const scene = el("div", "scene card owl-scene");
   const talk = el("div", "talk");
-  const said = el("b", "said", euro(ctx, t.said));
+  const said = el("b", "said", face(ctx, t.said));
   const bubble = el("div", "bubble");
   bubble.append(said);
   talk.append(el("span", "owl", "🦉"), bubble);
@@ -344,7 +347,7 @@ export function pruefen(host, t, ctx) {
       locked = true;
       p.show(n);
       p.lock(true);
-      said.textContent = euro(ctx, n);
+      said.textContent = face(ctx, n);
       said.classList.remove("wrong");
       said.classList.add("right");
       ctx.solved(G.fixed(euro(ctx, n)));
